@@ -1,0 +1,78 @@
+#!/bin/bash
+
+readonly INDENTATION="    "
+readonly DIR_SRC="src"
+readonly DIR_USERSCRIPTER=".userscripter"
+readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
+readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
+readonly CMD_BUILD="./build"
+readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
+
+function abort() {
+    echo
+    echo "Initialization canceled. No files were modified."
+    exit 0
+}
+
+function echoFilesToOverwrite() {
+    shopt -s globstar
+    for f in $DIR_EXAMPLE/**; do
+        filename=${f//\.userscripter\/example\//}
+        if [ -f "src/$filename" ]; then
+            echo "$INDENTATION$filename"
+        fi
+    done
+}
+
+# Help message:
+if [ "$1" == "--help" ]; then
+    echo "This script initializes a new userscript by copying an example code base into $DIR_SRC/. Any existing files are overwritten."
+    exit 0
+fi
+
+echo "Initializing userscript ..."
+
+if [ -e $DIR_SRC ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
+    # Source directory exists and has some content.
+    echo
+    echo "WARNING! These files in $DIR_SRC/ will be overwritten:"
+    echo
+    echoFilesToOverwrite
+    echo
+    while true; do
+        read -p "Are you sure you want to do this (y/N)? " choice
+        case "$choice" in 
+          y|Y ) break;;
+          n|N ) abort;;
+          "" ) abort;;
+          * ) echo $CONFIRMATION_ANSWER;;
+        esac
+    done
+
+    while true; do
+        read -p "I will ask again, since this cannot be undone. Are you sure (y/N)? " choice
+        case "$choice" in 
+          y|Y ) break;;
+          n|N ) abort;;
+          "" ) abort;;
+          * ) echo $CONFIRMATION_ANSWER;;
+        esac
+    done
+fi
+
+if [ ! -e $DIR_SRC ]; then
+    mkdir $DIR_SRC
+fi
+
+echo
+echo "Copying example code into $DIR_SRC/ ..."
+cp -r --force $DIR_EXAMPLE/* $DIR_SRC
+
+
+if [ $? -eq 0 ]; then
+    echo "Done!"
+    echo
+    echo "Run this to build the userscript:"
+    echo
+    echo "$INDENTATION$CMD_BUILD"
+fi

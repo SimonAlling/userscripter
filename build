@@ -1,0 +1,184 @@
+#!/bin/bash
+
+readonly ERROR_PREFIX=$'---- ERROR -----------------------------------------------------\n\n'
+readonly INDENTATION="    "
+readonly NODE="Node.js"
+readonly NPM="npm"
+readonly URL_NODE="https://nodejs.org"
+readonly MSG_NOT_WRITTEN="Userscript file could not be assembled."
+readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
+readonly DIR_NODE_MODULES="node_modules"
+readonly DIR_BUILD=".userscripter/build"
+readonly DIR_SRC="src"
+readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
+readonly FILE_WEBPACK_CONFIG="webpack.config.js"
+readonly FILE_TS_CONFIG="tsconfig.json"
+readonly FILE_ENTRY="$DIR_SRC/main.ts"
+readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
+readonly CMD_INIT="./init"
+readonly CMD_BUILD="./build"
+readonly CMD_INSTALL="npm install"
+readonly CMD_REBUILD="npm rebuild"
+readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
+
+# Help message:
+if [ "$1" == "--help" ]; then
+    echo "To build for general development:"
+    echo
+    echo "$INDENTATION$CMD_BUILD"
+    echo
+    echo "To build for development with improved debugging:"
+    echo
+    echo "$INDENTATION$CMD_BUILD --debug"
+    echo
+    echo "To build for production:"
+    echo
+    echo "$INDENTATION$CMD_BUILD --production"
+    echo
+    exit 0
+fi
+
+# Check if source code directory exists:
+if [ ! -d $DIR_SRC ]; then
+    echo
+    echo "$ERROR_PREFIX""Source code directory not found."
+    echo
+    echo "I couldn't find $DIR_SRC/ in this directory."
+    echo
+    echo "$MSG_TRY_THIS"
+    echo "$INDENTATION$CMD_INIT"
+    echo
+    exit 1
+fi
+
+# Check if entry file exists:
+if [ ! -f $FILE_ENTRY ]; then
+    echo
+    echo "$ERROR_PREFIX""Entry file not found."
+    echo
+    echo "I couldn't find $FILE_ENTRY in this directory."
+    echo
+    echo "$MSG_TRY_THIS"
+    echo "$INDENTATION$CMD_INIT"
+    echo
+    exit 2
+fi
+
+# Check if Node.js exists:
+if [ "$(type node)" == "" ]; then
+    echo
+    echo "$ERROR_PREFIX$NODE not found."
+    echo
+    echo "It seems that $NODE is not installed. You can find it here:"
+    echo
+    echo "$INDENTATION$URL_NODE"
+    echo
+    exit 10
+fi
+
+# Check if npm exists:
+if [ "$(type npm)" == "" ]; then
+    echo
+    echo "$ERROR_PREFIX$NPM not found."
+    echo
+    echo "It seems that $NPM is not installed. You can try reinstalling $NODE to fix this problem. $NODE can be found here:"
+    echo
+    echo "$INDENTATION$URL_NODE"
+    echo
+    exit 10
+fi
+
+# Check if node_modules exists:
+if [ ! -e $DIR_NODE_MODULES ]; then
+    echo
+    echo "$ERROR_PREFIX$DIR_NODE_MODULES/ not found."
+    echo
+    echo "I couldn't find $DIR_NODE_MODULES/ in this directory. This probably means that the necessary dependencies are not installed."
+    echo
+    echo "$MSG_TRY_THIS"
+    echo "$INDENTATION$CMD_INSTALL"
+    echo
+    exit 11
+fi
+
+# Check if Webpack exists:
+if [ ! -e $CMD_WEBPACK ] || [ ! -e $DIR_WEBPACK ]; then
+    echo "$ERROR_PREFIX""Webpack not found."
+    echo
+    echo "I need Webpack to be installed locally, i.e. in $DIR_NODE_MODULES/ in this directory, but I couldn't find it there."
+    echo
+    echo "$MSG_TRY_THIS"
+    echo "$INDENTATION$CMD_INSTALL"
+    echo
+    echo "If that doesn't work, you can try this:"
+    echo
+    echo "$INDENTATION$CMD_REBUILD"
+    echo
+    echo "And if that doesn't work, you can try this:"
+    echo
+    echo "$INDENTATION$CMD_DELETE_NODE_MODULES"
+    echo "$INDENTATION$CMD_INSTALL"
+    echo
+    exit 12
+fi
+
+# Check if Webpack config file exists:
+if [ ! -e $FILE_WEBPACK_CONFIG ]; then
+    echo "$ERROR_PREFIX""Webpack config file not found."
+    echo
+    echo "I need the file $FILE_WEBPACK_CONFIG in order to build, but I couldn't find it in this directory."
+    echo
+    exit 13
+fi
+
+# Check if TypeScript config file exists:
+if [ ! -e $FILE_TS_CONFIG ]; then
+    echo "$ERROR_PREFIX""TypeScript config file not found."
+    echo
+    echo "I need the file $FILE_TS_CONFIG in order to build, but I couldn't find it in this directory."
+    echo
+    exit 14
+fi
+
+# Check config and metadata and exit if they are invalid:
+node $DIR_BUILD/init.js
+if [ $? -gt 0 ]; then
+    echo
+    echo
+    echo "Config/metadata validation failed. $MSG_NOT_WRITTEN"
+    echo
+    exit 20
+fi
+
+echo
+
+# Run Webpack:
+if [ "$1" == "--production" ]; then
+    echo "Building for production..."
+    $CMD_WEBPACK --optimize-minimize
+elif [ "$1" == "--debug" ]; then
+    echo "Building for development with source maps..."
+    $CMD_WEBPACK --devtool inline-source-map
+else
+    echo "Building for development..."
+    $CMD_WEBPACK
+fi
+
+# Exit if Webpack build failed:
+if [ $? -gt 0 ]; then
+    echo
+    echo "Webpack build failed. $MSG_NOT_WRITTEN"
+    echo
+    exit 30
+fi
+
+# Assemble userscript:
+node $DIR_BUILD/assemble.js
+
+# Exit if assembly failed:
+if [ $? -gt 0 ]; then
+    echo
+    echo "Userscript assembly failed. $MSG_NOT_WRITTEN"
+    echo
+    exit 40
+fi

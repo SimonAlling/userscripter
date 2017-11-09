@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "*",
+                ".userscripter/*"
+                "src/*"
+            ]
+        },
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "target": "es6",
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "preserveConstEnums": true
+    }
+}

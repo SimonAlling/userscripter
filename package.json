@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.2.1",
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-preset-env": "^1.6.0",
+    "extract-comments": "^0.10.1",
+    "strip-comments": "^0.4.4",
+    "ts-type-guards": "^0.1.5",
+    "typescript": "^2.4.1",
+    "webpack": "^3.0.0"
+  }
+}
