@@ -12,9 +12,11 @@ readonly DIR_BUILD=".userscripter/build"
 readonly DIR_SRC="src"
 readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
 readonly FILE_WEBPACK_CONFIG="webpack.config.js"
+readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
+readonly CMD_MINIFY="$DIR_NODE_MODULES/.bin/babel --minified --no-comments --out-file $FILE_WEBPACK_OUTPUT $FILE_WEBPACK_OUTPUT"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
 readonly CMD_INSTALL="npm install"
@@ -153,14 +155,11 @@ fi
 echo
 
 # Run Webpack:
-if [ "$1" == "--production" ]; then
-    echo "Building for production..."
-    $CMD_WEBPACK --optimize-minimize
-elif [ "$1" == "--debug" ]; then
-    echo "Building for development with source maps..."
+if [ "$1" == "--debug" ]; then
+    echo "Building with source maps..."
     $CMD_WEBPACK --devtool inline-source-map
 else
-    echo "Building for development..."
+    echo "Building..."
     $CMD_WEBPACK
 fi
 
@@ -170,6 +169,14 @@ if [ $? -gt 0 ]; then
     echo "Webpack build failed. $MSG_NOT_WRITTEN"
     echo
     exit 30
+fi
+
+echo
+
+# Minify:
+if [ "$1" == "--production" ]; then
+    echo "Minifying..."
+    $CMD_MINIFY
 fi
 
 # Assemble userscript:

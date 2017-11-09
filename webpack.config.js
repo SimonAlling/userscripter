@@ -25,7 +25,15 @@ module.exports = {
                             useBabel: true,
                             useCache: true,
                             allowJs: true,
-                            target: "es6",
+                            babelOptions: {
+                                presets: [
+                                    ["env", {
+                                        targets: {
+                                            browsers: ["last 3 versions"]
+                                        },
+                                    }]
+                                ],
+                            },
                         }
                     },
                     // Populate global userscript config constants:

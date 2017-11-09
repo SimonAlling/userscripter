@@ -45,7 +45,7 @@ To build the userscript:
 
     ./build
 
-To build with JavaScript optimization and minimization:
+To build with JavaScript minification:
 
     ./build --production
 
