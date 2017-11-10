@@ -7,19 +7,19 @@ const PREFIX_DEFAULT: string = "[Logger]";
 
 export default function(prefix: string = PREFIX_DEFAULT) {
     return {
-        log: function(str: string): void {
+        log(str: string): void {
             console.log(prefix, str);
         },
 
-        logInfo: function(str: string): void {
+        logInfo(str: string): void {
             console.info(prefix, str);
         },
 
-        logWarning: function(str: string): void {
+        logWarning(str: string): void {
             console.warn(prefix, str);
         },
 
-        logError: function(str: string): void {
+        logError(str: string): void {
             console.error(prefix, str);
         },
     };
