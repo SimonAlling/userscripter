@@ -18,6 +18,6 @@ html body {
 }
 
 ${SITE.SELECTOR_HEADING}::before, ${SITE.SELECTOR_HEADING}::after {
-    content: " ${"*".repeat(CONFIG.NUMBER_OF_ASTERISKS)} ";
+    content: " ${CONFIG.HEADING_PREFIX_AND_SUFFIX} ";
 }
 `

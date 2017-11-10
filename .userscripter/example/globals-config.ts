@@ -21,7 +21,7 @@ const c = prefixer(PREFIX_CLASS);
 
 
 // EXAMPLE CODE:
-export const NUMBER_OF_ASTERISKS: number = 3;
+export const HEADING_PREFIX_AND_SUFFIX: string = "★";
 
 export const ID_STYLE_ELEMENT = i("main-style-element");
 
