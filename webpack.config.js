@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const DIR_BUILD = "./.userscripter/build/";
-const IO = require(DIR_BUILD + "IO.js");
+const IO = require(DIR_BUILD + "io.js");
 
 const EXTENSIONS = ["ts", "js"];
 
