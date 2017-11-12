@@ -7,6 +7,7 @@ readonly NPM="npm"
 readonly URL_NODE="https://nodejs.org"
 readonly MSG_NOT_WRITTEN="Userscript file could not be assembled."
 readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
+readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly DIR_NODE_MODULES="node_modules"
 readonly DIR_BUILD=".userscripter/build"
 readonly DIR_SRC="src"
@@ -22,6 +23,8 @@ readonly CMD_BUILD="./build"
 readonly CMD_INSTALL="npm install"
 readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
+
+cd $DIR_ROOT
 
 # Help message:
 if [ "$1" == "--help" ]; then

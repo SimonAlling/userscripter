@@ -1,12 +1,15 @@
 #!/bin/bash
 
 readonly INDENTATION="    "
+readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly DIR_SRC="src"
 readonly DIR_USERSCRIPTER=".userscripter"
 readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
 readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
 readonly CMD_BUILD="./build"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
+
+cd $DIR_ROOT
 
 function abort() {
     echo
