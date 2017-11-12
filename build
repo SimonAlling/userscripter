@@ -24,7 +24,7 @@ readonly CMD_INSTALL="npm install"
 readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 
-cd $DIR_ROOT
+cd "$DIR_ROOT"
 
 # Help message:
 if [ "$1" == "--help" ]; then

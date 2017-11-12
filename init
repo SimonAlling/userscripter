@@ -9,7 +9,7 @@ readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
 readonly CMD_BUILD="./build"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 
-cd $DIR_ROOT
+cd "$DIR_ROOT"
 
 function abort() {
     echo
