@@ -28,7 +28,6 @@ try {
     const outputFileName = Userscripter.readConfig().id + IO.EXTENSION_USERSCRIPT;
     Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
 } catch (err) {
-    throw err;
     log("");
     if (err instanceof RequiredPropertyMissingException) {
         const missingKeys = err.missingKeys;
