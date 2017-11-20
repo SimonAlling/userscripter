@@ -57,6 +57,8 @@ Userscripts are usually installed through a browser extension, for example [Grea
 
 Build the userscript (as described under [_Build_](#build) above), install it in your browser and go to [example.com](http://example.com). If you did not modify anything, you should see a green background and a heading telling you that the userscript is working.
 
+![Example.com with Example Userscript][example-userscript-working]
+
 
 
 ## Code
@@ -160,3 +162,8 @@ The _generated_ metadata (after population of config constants) must match the u
 Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
 
     .userscripter/validation/metadata-required.json
+
+
+
+
+[example-userscript-working]: ./.userscripter/doc/images/example-userscript-working.png "Example.com with Example Userscript"
