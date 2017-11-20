@@ -84,20 +84,25 @@ In the source code, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is a
 
 `config.json`:
 
-    {
-        "id": "example-userscript"
-    }
+```json
+{
+    "id": "example-userscript"
+}
+```
 
 Source code:
 
-    const ID     = "%USERSCRIPT_CONFIG_id%"; // Typical usage.
-    const ID_BAD =  %USERSCRIPT_CONFIG_id% ; // No quotation marks here.
+```javascript
+const ID     = "%USERSCRIPT_CONFIG_id%"; // Typical usage.
+const ID_BAD =  %USERSCRIPT_CONFIG_id% ; // No quotation marks here.
+```
 
 Generated code:
 
-    const ID     = "example-userscript"; // What we wanted.
-    const ID_BAD =  example-userscript ; // ReferenceError or undesired behavior!
-
+```javascript
+const ID     = "example-userscript"; // What we wanted.
+const ID_BAD =  example-userscript ; // ReferenceError or undesired behavior!
+```
 
 
 ### Metadata
