@@ -13,7 +13,7 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
 ### Prerequisites
 
 * **[Node.js](https://nodejs.org) with npm is required.**
-* **If you are using Windows**, you may need to install and use [Git Bash](https://git-scm.com/downloads), [Linux Subsystem](https://msdn.microsoft.com/en-us/commandline/wsl/install-win10) or similar to be able to build.
+* **If you are using Windows**, you need to install and use [Git Bash](https://git-scm.com/downloads), [Linux Subsystem](https://msdn.microsoft.com/en-us/commandline/wsl/install-win10) or similar to be able to build.
 
 
 ### Download
@@ -43,11 +43,11 @@ To build with JavaScript minification:
 The resulting userscript is saved as `id.user.js`, where `id` is the slug described under [_Configuration_](#configuration) below. If you have not changed anything, this file will be named `example-userscript.user.js`.
 
 
-### Userscript installation
+### Install the userscript
 
-After building a userscript, you'll want to install it in the browser.
+After building a userscript, you'll want to install it in your browser.
 
-Userscripts are usually installed through a browser extension, for example [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/) (Firefox) or [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) (Chrome). Please refer to the documentation for your browser/extension.
+Userscripts are usually installed through a browser extension, for example **Greasemonkey** ([Firefox](greasemonkey-firefox)) or **Tampermonkey** ([Chrome](tampermonkey-chrome), [Firefox](tampermonkey-firefox)). Please refer to the documentation for your browser/extension.
 
 * [Greasemonkey Manual:Installing Scripts](https://wiki.greasespot.net/Greasemonkey_Manual:Installing_Scripts)
 * [How to install new scripts to Tampermonkey](http://tampermonkey.net/faq.php#Q102)
@@ -55,7 +55,7 @@ Userscripts are usually installed through a browser extension, for example [Grea
 
 ### Verify your installation
 
-Build the userscript (as described under [_Build_](#build) above), install it in your browser and go to [example.com](http://example.com). If you did not modify anything, you should see a green background and a heading telling you that the userscript is working.
+Build the userscript, install it in your browser and go to [example.com](http://example.com). If you did not modify anything, you should see a green background and a heading telling you that the userscript is working:
 
 ![Example.com with Example Userscript][example-userscript-working]
 
@@ -70,19 +70,17 @@ Changes to any of the files described below are applied when building the usersc
 
 Open `config.json` and edit its content to fit your needs:
 
-* `id`: a slug for use in filenames, URLs etc
-* `name`: your userscript's name
-* `version`: userscript version as a string
-* `description`: a description of your userscript
-* `author`: your name
-* `hostname`: the website on which the userscript should run
-* `sitename`: the name of the website on which the userscript should run (if applicable)
-* `namespace`: your own website
-* `run-at`: [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
+* `id` – a slug for use in filenames, URLs etc
+* `name` – your userscript's name
+* `version` – userscript version as a string
+* `description` – a description of your userscript
+* `author` – your name
+* `hostname` – the website on which the userscript should run
+* `sitename` – the name of the website on which the userscript should run (if applicable)
+* `namespace` – your own website
+* `run-at` – [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
 
-Only string values are allowed.
-
-In the files described below, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is any of the properties described above (`id`, `name` etc), are automatically replaced by the build script. Example:
+In the source code, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is any of the properties described above (`id`, `name` etc), are automatically replaced by the build script. Example:
 
 `config.json`:
 
@@ -90,10 +88,10 @@ In the files described below, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, wher
         "id": "example-userscript"
     }
 
-JavaScript file:
+Source code:
 
-    const ID     = "%USERSCRIPT_CONFIG_id%";
-    const ID_BAD =  %USERSCRIPT_CONFIG_id%; // No quotation marks here.
+    const ID     = "%USERSCRIPT_CONFIG_id%"; // Typical usage.
+    const ID_BAD =  %USERSCRIPT_CONFIG_id% ; // No quotation marks here.
 
 Generated code:
 
@@ -106,7 +104,7 @@ Generated code:
 
 The userscript metadata sits in `config/metadata.txt`. Feel free to edit its contents at any time.
 
-The `@match` and `@include` directives are a bit special since their functionalities extend beyond what `config.json` provides and since their syntax is not entirely obvious. More information can be found in [the Google Chrome developer documentation](https://developer.chrome.com/extensions/match_patterns). In most cases, setting `hostname` properly in `config.json` will do.
+The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `config.json` provides and since their syntax is not entirely obvious. More information can be found in [the Google Chrome developer documentation](match-patterns). In most cases, setting `hostname` properly in `config.json` will do.
 
 
 ### Script
@@ -115,23 +113,22 @@ The actual userscript code resides in `.ts` files so that TypeScript can be used
 
 The following files in `src/` make up the core of the userscript:
 
-* **`main.ts`**
-Contains the following important functions:
-    * **`beforeLoad()`**
-    Code that can and should be run before the DOM is loaded, such as inserting CSS.
-    * **`afterLoad()`**
+* **`main.ts`** contains the following important functions:
+    * **`beforeLoad()`**\
+    Code that should be run before the DOM is loaded, such as inserting CSS.
+    * **`afterLoad()`**\
     Code that requires that the DOM be accessible. Called when the `DOMContentLoaded` event is fired.
 
-* **`userscript-css.ts`**
+* **`userscript-css.ts`**\
 All CSS modules used by the userscript.
 
-* **`userscript-operations.ts`**
+* **`userscript-operations.ts`**\
 All operations performed by the userscript.
 
-* **`globals-site.ts`**
+* **`globals-site.ts`**\
 Constants that must be kept coherent with the host site, such as CSS selectors, regexes, pathnames, etc.
 
-* **`globals-config.ts`**
+* **`globals-config.ts`**\
 Constants that can be freely configured by the userscript author, such as text content.
 
 (The distinction between `globals-site.ts` and `globals-config.ts` is purely conventional.)
@@ -143,7 +140,7 @@ Constants that can be freely configured by the userscript author, such as text c
 The build script is intended to protect against typos and facilitate well-written userscripts. Therefore, it checks the config and metadata and refuses to build if something is wrong.
 
 
-### Config
+### Configuration
 
 Some properties are required in the config file (`config/config.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
 
@@ -166,4 +163,8 @@ Some properties are also required in the same sense as the required config prope
 
 
 
+[greasemonkey-firefox]: https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/
+[tampermonkey-chrome]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
+[tampermonkey-firefox]: https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/
 [example-userscript-working]: ./.userscripter/doc/images/example-userscript-working.png "Example.com with Example Userscript"
+[match-patterns]: https://developer.chrome.com/extensions/match_patterns
