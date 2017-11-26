@@ -19,10 +19,12 @@ export const TIMEOUT_OPERATIONS: number = 500; // ms
 const i = prefixer(PREFIX_ID);
 const c = prefixer(PREFIX_CLASS);
 
+export const ID_STYLE_ELEMENT = i("main-style-element");
+// <<<<<<< EXAMPLE
 
 // EXAMPLE CODE:
 export const HEADING_PREFIX_AND_SUFFIX: string = "★";
 
-export const ID_STYLE_ELEMENT = i("main-style-element");
-
 export const CLASS_FOOBAR = c("foobar");
+// =======
+// >>>>>>> CLEAN

@@ -11,6 +11,7 @@ This file is not supposed to contain any logic like conditions for certain CSS s
 
 export default
 
+// <<<<<<< EXAMPLE
 `
 html body {
     background-color: rgb(144, 238, 144);
@@ -21,3 +22,9 @@ ${SITE.SELECTOR_HEADING}::before, ${SITE.SELECTOR_HEADING}::after {
     content: " ${CONFIG.HEADING_PREFIX_AND_SUFFIX} ";
 }
 `
+;
+// =======
+`
+`
+;
+// >>>>>>> CLEAN

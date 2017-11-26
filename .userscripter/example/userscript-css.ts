@@ -1,6 +1,9 @@
 import { StylesheetModule } from "lib/stylesheet-manager";
 import CSS_MAIN_STYLESHEET from "css/stylesheet";
+// <<<<<<< EXAMPLE
 import CSS_FOOBARS from "css/foobars";
+// =======
+// >>>>>>> CLEAN
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
 
@@ -26,12 +29,15 @@ const STYLESHEET_MODULES: StylesheetModule[] = [
         condition: ALWAYS,
         css: CSS_MAIN_STYLESHEET,
     },
+// <<<<<<< EXAMPLE
 
     // Foobars:
     {
         condition: ALWAYS,
         css: CSS_FOOBARS,
     },
+// =======
+// >>>>>>> CLEAN
 ];
 
 export default STYLESHEET_MODULES;
