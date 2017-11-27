@@ -12,6 +12,8 @@ readonly ARGUMENT_EXAMPLE="--example"
 
 cd "$DIR_ROOT"
 
+shopt -s globstar
+
 function abort() {
     echo
     echo "Initialization canceled. No files were modified."
