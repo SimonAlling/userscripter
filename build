@@ -146,7 +146,7 @@ if [ ! -e $FILE_TS_CONFIG ]; then
 fi
 
 # Check config and metadata and exit if they are invalid:
-node $DIR_BUILD/init.js
+node $DIR_BUILD/prepare.js
 if [ $? -gt 0 ]; then
     echo
     echo
