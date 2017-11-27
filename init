@@ -30,7 +30,15 @@ function echoFilesToOverwrite() {
 
 # Help message:
 if [ "$1" == "--help" ]; then
-    echo "This script initializes a new userscript by creating an example code base in $DIR_SRC/. Any existing files are overwritten."
+    echo "Usage: init [$ARGUMENT_EXAMPLE]"
+    echo
+    echo "Options:"
+    echo "$INDENTATION""$ARGUMENT_EXAMPLE      Include example code"
+    echo
+    echo "This script initializes a new userscript by creating a boilerplate code base"
+    echo "in $DIR_SRC/. Any existing files are overwritten."
+    echo
+    echo "If the $ARGUMENT_EXAMPLE flag is used, some example code is included."
     exit 0
 fi
 
