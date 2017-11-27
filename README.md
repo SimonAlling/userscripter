@@ -34,9 +34,11 @@ and wait for it to finish.
 
 To initialize an example userscript:
 
-    ./init
+    ./init --example
 
-This copies an example code base into the `src/` directory in this repo.
+This creates an example code base in the `src/` directory in this repo.
+
+(`./init` without `--example` initializes a clean userscript without any example code.)
 
 
 ### Build
