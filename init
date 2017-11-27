@@ -9,6 +9,7 @@ readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
 readonly CMD_BUILD="./build"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly ARGUMENT_EXAMPLE="--example"
+readonly ARGUMENT_HELP="--help"
 
 cd "$DIR_ROOT"
 
@@ -21,17 +22,16 @@ function abort() {
 }
 
 function echoFilesToOverwrite() {
-    shopt -s globstar
-    for f in $DIR_EXAMPLE/**; do
-        filename=${f//\.userscripter\/example\//}
-        if [ -f "src/$filename" ]; then
+    for f in "$DIR_EXAMPLE"/**; do
+        filename="${f//$DIR_EXAMPLE\//}"
+        if [ -f "$DIR_SRC/$filename" ]; then
             echo "$INDENTATION$filename"
         fi
     done
 }
 
 # Help message:
-if [ "$1" == "--help" ]; then
+if [ "$1" == "$ARGUMENT_HELP" ]; then
     echo "Usage: init [$ARGUMENT_EXAMPLE]"
     echo
     echo "Options:"
@@ -44,13 +44,13 @@ if [ "$1" == "--help" ]; then
     exit 0
 fi
 
-if [ "$1" == $ARGUMENT_EXAMPLE ]; then
+if [ "$1" == "$ARGUMENT_EXAMPLE" ]; then
     echo "Initializing userscript with example code ..."
 else
     echo "Initializing clean userscript ..."
 fi
 
-if [ -e $DIR_SRC ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
+if [ -e "$DIR_SRC" ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
     # Source directory exists and has some content.
     echo
     echo "WARNING! These files in $DIR_SRC/ will be overwritten:"
@@ -63,7 +63,7 @@ if [ -e $DIR_SRC ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
           y|Y ) break;;
           n|N ) abort;;
           "" ) abort;;
-          * ) echo $CONFIRMATION_ANSWER;;
+          * ) echo "$CONFIRMATION_ANSWER";;
         esac
     done
 
@@ -73,32 +73,33 @@ if [ -e $DIR_SRC ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
           y|Y ) break;;
           n|N ) abort;;
           "" ) abort;;
-          * ) echo $CONFIRMATION_ANSWER;;
+          * ) echo "$CONFIRMATION_ANSWER";;
         esac
     done
 fi
 
-if [ ! -e $DIR_SRC ]; then
-    mkdir $DIR_SRC
+if [ ! -e "$DIR_SRC" ]; then
+    mkdir "$DIR_SRC"
 fi
 
 
+echo
 argumentToInit=""
-if [ "$1" == $ARGUMENT_EXAMPLE ]; then
+if [ "$1" == "$ARGUMENT_EXAMPLE" ]; then
     echo "Creating example code base in $DIR_SRC/ ..."
-    argumentToInit=$ARGUMENT_EXAMPLE
+    argumentToInit="$ARGUMENT_EXAMPLE"
 else
     echo "Creating clean code base in $DIR_SRC/ ..."
 fi
 
 
-cp -r --force $DIR_EXAMPLE/* $DIR_SRC
+cp -r --force "$DIR_EXAMPLE"/* "$DIR_SRC"
 
-for f in $DIR_EXAMPLE/**; do
-    if [ ! -d $f ]; then
+for f in "$DIR_EXAMPLE"/**; do
+    if [ ! -d "$f" ]; then
         file_dest="${f/$DIR_EXAMPLE/$DIR_SRC}"
-        echo "Creating $file_dest ..."
-        cat $f | node $DIR_BUILD/init.js $argumentToInit > $file_dest
+        echo "$INDENTATION""Creating $file_dest ..."
+        cat "$f" | node "$DIR_BUILD/init.js" "$argumentToInit" > "$file_dest"
     fi
 done
 
