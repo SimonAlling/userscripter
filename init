@@ -98,8 +98,12 @@ cp -r --force "$DIR_EXAMPLE"/* "$DIR_SRC"
 for f in "$DIR_EXAMPLE"/**; do
     if [ ! -d "$f" ]; then
         file_dest="${f/$DIR_EXAMPLE/$DIR_SRC}"
-        echo "$INDENTATION""Creating $file_dest ..."
         cat "$f" | node "$DIR_BUILD/init.js" "$argumentToInit" > "$file_dest"
+        if [ ! -s "$file_dest" ]; then
+            rm "$file_dest"
+        else
+            echo "$INDENTATION""$file_dest"
+        fi
     fi
 done
 
