@@ -8,6 +8,7 @@ readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
 readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
 readonly CMD_BUILD="./build"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
+readonly ARGUMENT_EXAMPLE="--example"
 
 cd "$DIR_ROOT"
 
@@ -29,11 +30,15 @@ function echoFilesToOverwrite() {
 
 # Help message:
 if [ "$1" == "--help" ]; then
-    echo "This script initializes a new userscript by copying an example code base into $DIR_SRC/. Any existing files are overwritten."
+    echo "This script initializes a new userscript by creating an example code base in $DIR_SRC/. Any existing files are overwritten."
     exit 0
 fi
 
-echo "Initializing userscript ..."
+if [ "$1" == $ARGUMENT_EXAMPLE ]; then
+    echo "Initializing userscript with example code ..."
+else
+    echo "Initializing clean userscript ..."
+fi
 
 if [ -e $DIR_SRC ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
     # Source directory exists and has some content.
@@ -67,9 +72,25 @@ if [ ! -e $DIR_SRC ]; then
     mkdir $DIR_SRC
 fi
 
-echo
-echo "Copying example code into $DIR_SRC/ ..."
+
+argumentToInit=""
+if [ "$1" == $ARGUMENT_EXAMPLE ]; then
+    echo "Creating example code base in $DIR_SRC/ ..."
+    argumentToInit=$ARGUMENT_EXAMPLE
+else
+    echo "Creating clean code base in $DIR_SRC/ ..."
+fi
+
+
 cp -r --force $DIR_EXAMPLE/* $DIR_SRC
+
+for f in $DIR_EXAMPLE/**; do
+    if [ ! -d $f ]; then
+        file_dest="${f/$DIR_EXAMPLE/$DIR_SRC}"
+        echo "Creating $file_dest ..."
+        cat $f | node $DIR_BUILD/init.js $argumentToInit > $file_dest
+    fi
+done
 
 
 if [ $? -eq 0 ]; then

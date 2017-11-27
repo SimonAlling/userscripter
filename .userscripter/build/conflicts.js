@@ -75,3 +75,7 @@ function conflictResolver(tagToKeep) {
         }, content);
     };
 }
+
+module.exports = {
+    conflictResolver,
+};
