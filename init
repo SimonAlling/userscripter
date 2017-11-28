@@ -17,10 +17,13 @@ readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
+readonly CMD_GIT="git"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
 readonly ARGUMENT_EXAMPLE="--example"
 readonly ARGUMENT_HELP="--help"
+readonly URL_REPO="https://github.com/SimonAlling/userscripter"
+readonly REMOTE_USERSCRIPTER="userscripter"
 
 cd "$DIR_ROOT"
 
@@ -39,6 +42,57 @@ function echoFilesToOverwrite() {
             echo "$INDENTATION$filename"
         fi
     done
+}
+
+function printRepoHelp() {
+    echo "Enter the URL of the Git repo for your userscript. Examples:"
+    echo
+    echo "$INDENTATION""HTTPS:"
+    echo "$INDENTATION""https://github.com/JohnSmith/example-userscript"
+    echo
+    echo "$INDENTATION""SSH:"
+    echo "$INDENTATION""git@github.com:JohnSmith/example-userscript"
+    echo
+}
+
+function setupGitRepo() {
+    if [ "$(type $CMD_GIT)" == "" ]; then
+        echo "$CMD_GIT not found. Skipping this step."
+        echo
+    else
+        # Set up userscripter remote:
+        remotes_userscripter=$("$CMD_GIT" remote -v | grep "^$REMOTE_USERSCRIPTER\s" | wc -l)
+        if [ ! "$remotes_userscripter" == "0" ]; then
+            "$CMD_GIT" remote rm "$REMOTE_USERSCRIPTER"
+        fi
+        "$CMD_GIT" remote add            "$REMOTE_USERSCRIPTER" "$URL_REPO"
+        "$CMD_GIT" remote set-url --push "$REMOTE_USERSCRIPTER" "FETCH_ONLY"
+        # Prepare origin:
+        remotes_origin=$("$CMD_GIT" remote -v | grep "^origin\s" | wc -l)
+        if [ ! "$remotes_origin" == "0" ]; then
+            "$CMD_GIT" remote rm origin
+        fi
+        # Ask for origin:
+        while true; do
+            read -p "Please enter a repository URL or '?' for help: " choice
+            case "$choice" in
+                "?" ) printRepoHelp;;
+                "" ) ;;
+                * ) echo
+                    echo "Setting origin to $choice ..."
+                    "$CMD_GIT" remote add origin "$choice"
+                    if [ $? -eq 0 ]; then
+                        echo "Done. These are your Git remotes:"
+                    else
+                        echo "Failed to set origin. These are your Git remotes:"
+                    fi
+                    echo
+                    "$CMD_GIT" remote -v
+                    echo
+                    break;;
+            esac
+        done
+    fi
 }
 
 # Help message:
@@ -177,11 +231,10 @@ for f in "$DIR_EXAMPLE"/**; do
 done
 
 
-# Tweak .gitignore:
+# Update .gitignore:
 if [ $? -eq 0 ]; then
     echo
-    echo "Tweaking $FILE_GITIGNORE ..."
-    echo
+    echo "Updating $FILE_GITIGNORE ..."
     if [ ! -f "FILE_GITIGNORE" ]; then
         "$CMD_REPLACE" "\r?\n$DIR_SRC$" "" "$FILE_GITIGNORE" > /dev/null
     else
@@ -193,12 +246,27 @@ if [ $? -eq 0 ]; then
         echo "$ERROR_PREFIX""Failed to update $FILE_GITIGNORE."
         echo
         exit 40
+    else
+        echo "Done."
+        echo
     fi
 fi
 
 
+# Set up Git remotes:
+while true; do
+    read -p "Would you like to set up a Git repository for your userscript (y/n)? " choice
+    case "$choice" in
+      y|Y ) setupGitRepo; break;;
+      n|N ) break;;
+      * ) echo "$CONFIRMATION_ANSWER";;
+    esac
+done
+
+
 if [ $? -eq 0 ]; then
-    echo "Done!"
+    echo
+    echo "Initialization done!"
     echo
     echo "Run this to build the userscript:"
     echo
