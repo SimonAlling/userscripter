@@ -23,9 +23,12 @@ function beforeLoad(): void {
 function afterLoad(): void {
     log("DOMContentLoaded! Performing post-load actions ...");
     stopOperations(CONFIG.TIMEOUT_OPERATIONS);
+// <<<<<<< EXAMPLE
 
     // EXAMPLE CODE:
     log(`This page contains ${document.querySelectorAll("div").length} div(s).`);
+// =======
+// >>>>>>> CLEAN
 }
 
 // Make sure the userscript does not run more than once (e.g. if it is added twice or if the browser uses a cached page when navigating back and forward):

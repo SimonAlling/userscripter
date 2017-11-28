@@ -30,6 +30,17 @@ In the root directory of this repo (i.e. `userscripter`), run
 and wait for it to finish.
 
 
+### Initialize
+
+To initialize an example userscript:
+
+    ./init --example
+
+This creates an example code base in the `src/` directory in this repo.
+
+(`./init` without `--example` initializes a clean userscript without any example code.)
+
+
 ### Build
 
 To build the userscript:

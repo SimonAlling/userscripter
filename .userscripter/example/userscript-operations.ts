@@ -1,8 +1,11 @@
 import { ConditionalOperation, SUCCESS, FAILURE } from "lib/operation-manager";
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
+// <<<<<<< EXAMPLE
 
 import ACTION_INSERT_FOOBARS from "operations/insert-foobars";
+// =======
+// >>>>>>> CLEAN
 
 const ALWAYS: boolean = true;
 const NONE: string[] = [];
@@ -26,6 +29,7 @@ Not returning anything is equivalent to returning undefined, which is equivalent
 */
 
 const OPERATIONS: ConditionalOperation[] = [
+// <<<<<<< EXAMPLE
     // Change heading content:
     {
         description: "change heading content",
@@ -53,6 +57,8 @@ const OPERATIONS: ConditionalOperation[] = [
             document.title = document.title + ` [${CONFIG.USERSCRIPT_NAME} ${CONFIG.USERSCRIPT_VERSION_STRING}]`;
         },
     },
+// =======
+// >>>>>>> CLEAN
 ];
 
 export default OPERATIONS;
