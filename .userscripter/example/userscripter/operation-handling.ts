@@ -3,7 +3,7 @@ import * as CONFIG from "globals-config";
 import OPERATIONS from "userscript-operations";
 import { OperationManager, Operation } from "lib/operation-manager";
 import { compose, quote, formattedList } from "lib/utilities";
-import { log, logError } from "userscripter/logging"
+import { log, logError } from "userscripter/logging";
 
 
 function errorString(operation: Operation): string {
@@ -23,7 +23,7 @@ const operationManager = OperationManager(
     OPERATIONS.filter(op => op.condition), // operations whose conditions are met
     CONFIG.INTERVAL_OPERATIONS,            // time between each try
     compose(logError, errorString),        // what to do with operations that fail
-    () => log("Operations done!"),
+    () => log("Operations done!"),         // what to do when all operations have been performed
 );
 
 export function startOperations(): void  {
