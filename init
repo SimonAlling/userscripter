@@ -24,6 +24,7 @@ readonly ARGUMENT_EXAMPLE="--example"
 readonly ARGUMENT_HELP="--help"
 readonly URL_REPO="https://github.com/SimonAlling/userscripter"
 readonly REMOTE_USERSCRIPTER="userscripter"
+readonly REGEX_GIT_URL="^(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)?(\/?|\#[-\d\w._]+?)$"
 
 cd "$DIR_ROOT"
 
@@ -84,22 +85,28 @@ function setupGitRepo() {
         fi
         # Ask for origin:
         while true; do
-            read -p "Please enter a repository URL or '?' for help: " choice
+            read -p $'Please enter a repository URL, \'n\' for no remote repository or \'?\' for help:\n' choice
             case "$choice" in
                 "?" ) printRepoHelp;;
+                "n" ) break;;
                 "" ) ;;
-                * ) echo
-                    echo "Setting origin to $choice ..."
-                    git remote add origin "$choice"
-                    if [ $? -eq 0 ]; then
-                        echo "Done. These are your Git remotes:"
+                * ) if [ "$choice" ~= "$REGEX_GIT_URL" ]; then
+                        echo
+                        echo "Setting origin to $choice ..."
+                        git remote add origin "$choice"
+                        if [ $? -eq 0 ]; then
+                            echo "Done. These are your Git remotes:"
+                        else
+                            echo "Failed to set origin. These are your Git remotes:"
+                        fi
+                        echo
+                        git remote -v
+                        echo
+                        break;;
                     else
-                        echo "Failed to set origin. These are your Git remotes:"
+                        echo "That does not seem to be a valid Git URL."
+                        echo
                     fi
-                    echo
-                    git remote -v
-                    echo
-                    break;;
             esac
         done
     fi
