@@ -152,7 +152,7 @@ if [ "$(type npm)" == "" ]; then
 fi
 
 # Check if node_modules exists:
-if [ ! -e $DIR_NODE_MODULES ]; then
+if [ ! -e "$DIR_NODE_MODULES" ]; then
     echo
     echo "$ERROR_PREFIX$DIR_NODE_MODULES/ not found."
     echo
