@@ -24,7 +24,7 @@ readonly ARGUMENT_EXAMPLE="--example"
 readonly ARGUMENT_HELP="--help"
 readonly URL_REPO="https://github.com/SimonAlling/userscripter"
 readonly REMOTE_USERSCRIPTER="userscripter"
-readonly REGEX_GIT_URL="^(?:git|ssh|https?|git@[-\w.]+):(\/\/)?(.*?)(\.git)?(\/?|\#[-\d\w._]+?)$"
+readonly REGEX_GIT_URL='^(git|ssh|https?|git@.+):'
 
 cd "$DIR_ROOT"
 
@@ -90,7 +90,7 @@ function setupGitRepo() {
                 "?" ) printRepoHelp;;
                 "n" ) break;;
                 "" ) ;;
-                * ) if [ "$choice" ~= "$REGEX_GIT_URL" ]; then
+                * ) if [[ "$choice" =~ $REGEX_GIT_URL ]]; then
                         echo
                         echo "Setting origin to $choice ..."
                         git remote add origin "$choice"
@@ -102,11 +102,11 @@ function setupGitRepo() {
                         echo
                         git remote -v
                         echo
-                        break;;
+                        break
                     else
                         echo "That does not seem to be a valid Git URL."
                         echo
-                    fi
+                    fi;;
             esac
         done
     fi
