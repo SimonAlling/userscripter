@@ -1,11 +1,20 @@
 #!/bin/bash
 
+readonly ERROR_PREFIX=$'---- ERROR -----------------------------------------------------\n\n'
 readonly INDENTATION="    "
+readonly NODE="Node.js"
+readonly NPM="npm"
+readonly URL_NODE="https://nodejs.org"
+readonly DIR_NODE_MODULES="node_modules"
 readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 readonly DIR_SRC="src"
 readonly DIR_USERSCRIPTER=".userscripter"
 readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
 readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
+readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
+readonly CMD_INSTALL="npm install"
+readonly CMD_REBUILD="npm rebuild"
+readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly ARGUMENT_EXAMPLE="--example"
@@ -43,6 +52,45 @@ if [ "$1" == "$ARGUMENT_HELP" ]; then
     echo "If the $ARGUMENT_EXAMPLE flag is used, some example code is included."
     exit 0
 fi
+
+
+# Check if Node.js exists:
+if [ "$(type node)" == "" ]; then
+    echo
+    echo "$ERROR_PREFIX$NODE not found."
+    echo
+    echo "It seems that $NODE is not installed. You can find it here:"
+    echo
+    echo "$INDENTATION$URL_NODE"
+    echo
+    exit 10
+fi
+
+# Check if npm exists:
+if [ "$(type npm)" == "" ]; then
+    echo
+    echo "$ERROR_PREFIX$NPM not found."
+    echo
+    echo "It seems that $NPM is not installed. You can try reinstalling $NODE to fix this problem. $NODE can be found here:"
+    echo
+    echo "$INDENTATION$URL_NODE"
+    echo
+    exit 10
+fi
+
+# Check if node_modules exists:
+if [ ! -e $DIR_NODE_MODULES ]; then
+    echo
+    echo "$ERROR_PREFIX$DIR_NODE_MODULES/ not found."
+    echo
+    echo "I couldn't find $DIR_NODE_MODULES/ in this directory. This probably means that the necessary dependencies are not installed."
+    echo
+    echo "$MSG_TRY_THIS"
+    echo "$INDENTATION$CMD_INSTALL"
+    echo
+    exit 11
+fi
+
 
 if [ "$1" == "$ARGUMENT_EXAMPLE" ]; then
     echo "Initializing userscript with example code ..."
@@ -99,10 +147,29 @@ for f in "$DIR_EXAMPLE"/**; do
     if [ ! -d "$f" ]; then
         file_dest="${f/$DIR_EXAMPLE/$DIR_SRC}"
         cat "$f" | node "$DIR_BUILD/init.js" "$argumentToInit" > "$file_dest"
-        if [ ! -s "$file_dest" ]; then
-            rm "$file_dest"
+        if [ $? -gt 0 ]; then
+            echo
+            echo "$ERROR_PREFIX""Failed to create $file_dest."
+            echo
+            echo "$MSG_TRY_THIS"
+            echo "$INDENTATION$CMD_INSTALL"
+            echo
+            echo "If that doesn't work, you can try this:"
+            echo
+            echo "$INDENTATION$CMD_REBUILD"
+            echo
+            echo "And if that doesn't work, you can try this:"
+            echo
+            echo "$INDENTATION$CMD_DELETE_NODE_MODULES"
+            echo "$INDENTATION$CMD_INSTALL"
+            echo
+            exit 30
         else
-            echo "$INDENTATION""$file_dest"
+            if [ ! -s "$file_dest" ]; then
+                rm "$file_dest"
+            else
+                echo "$INDENTATION""$file_dest"
+            fi
         fi
     fi
 done
