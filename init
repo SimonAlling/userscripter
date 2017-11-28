@@ -11,6 +11,7 @@ readonly DIR_SRC="src"
 readonly DIR_USERSCRIPTER=".userscripter"
 readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
 readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
+readonly DIR_GIT=".git"
 readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
 readonly CMD_INSTALL="npm install"
 readonly CMD_REBUILD="npm rebuild"
@@ -60,6 +61,16 @@ function setupGitRepo() {
         echo "$CMD_GIT not found. Skipping this step."
         echo
     else
+        echo
+        echo "Setting up Git repository ..."
+        # Delete .git and initialize new repo:
+        rm -rf "$DIR_GIT" && "$CMD_GIT" init && "$CMD_GIT" add . && git commit -m "Initial commit"
+        if [ $? -gt 0 ]; then
+            echo "Failed to set up Git repository."
+            echo
+            exit 50
+        fi
+        echo
         # Set up userscripter remote:
         remotes_userscripter=$("$CMD_GIT" remote -v | grep "^$REMOTE_USERSCRIPTER\s" | wc -l)
         if [ ! "$remotes_userscripter" == "0" ]; then
