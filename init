@@ -18,7 +18,6 @@ readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
-readonly CMD_GIT="git"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
 readonly ARGUMENT_EXAMPLE="--example"
@@ -57,14 +56,14 @@ function printRepoHelp() {
 }
 
 function setupGitRepo() {
-    if [ "$(type $CMD_GIT)" == "" ]; then
-        echo "$CMD_GIT not found. Skipping this step."
+    if [ "$(type git)" == "" ]; then
+        echo "git not found. Skipping this step."
         echo
     else
         echo
         echo "Setting up Git repository ..."
         # Delete .git and initialize new repo:
-        rm -rf "$DIR_GIT" && "$CMD_GIT" init && "$CMD_GIT" add . && git commit -m "Initial commit"
+        rm -rf "$DIR_GIT" && git init && git add . && git commit -m "Initial commit"
         if [ $? -gt 0 ]; then
             echo "Failed to set up Git repository."
             echo
@@ -72,16 +71,16 @@ function setupGitRepo() {
         fi
         echo
         # Set up userscripter remote:
-        remotes_userscripter=$("$CMD_GIT" remote -v | grep "^$REMOTE_USERSCRIPTER\s" | wc -l)
+        remotes_userscripter=$(git remote -v | grep "^$REMOTE_USERSCRIPTER\s" | wc -l)
         if [ ! "$remotes_userscripter" == "0" ]; then
-            "$CMD_GIT" remote rm "$REMOTE_USERSCRIPTER"
+            git remote rm "$REMOTE_USERSCRIPTER"
         fi
-        "$CMD_GIT" remote add            "$REMOTE_USERSCRIPTER" "$URL_REPO"
-        "$CMD_GIT" remote set-url --push "$REMOTE_USERSCRIPTER" "FETCH_ONLY"
+        git remote add            "$REMOTE_USERSCRIPTER" "$URL_REPO"
+        git remote set-url --push "$REMOTE_USERSCRIPTER" "FETCH_ONLY"
         # Prepare origin:
-        remotes_origin=$("$CMD_GIT" remote -v | grep "^origin\s" | wc -l)
+        remotes_origin=$(git remote -v | grep "^origin\s" | wc -l)
         if [ ! "$remotes_origin" == "0" ]; then
-            "$CMD_GIT" remote rm origin
+            git remote rm origin
         fi
         # Ask for origin:
         while true; do
@@ -91,14 +90,14 @@ function setupGitRepo() {
                 "" ) ;;
                 * ) echo
                     echo "Setting origin to $choice ..."
-                    "$CMD_GIT" remote add origin "$choice"
+                    git remote add origin "$choice"
                     if [ $? -eq 0 ]; then
                         echo "Done. These are your Git remotes:"
                     else
                         echo "Failed to set origin. These are your Git remotes:"
                     fi
                     echo
-                    "$CMD_GIT" remote -v
+                    git remote -v
                     echo
                     break;;
             esac
