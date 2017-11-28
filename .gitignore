@@ -3,3 +3,4 @@ node_modules
 *.user.js
 .babelrc
 .awcache
+src

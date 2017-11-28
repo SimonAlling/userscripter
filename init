@@ -16,7 +16,9 @@ readonly CMD_INSTALL="npm install"
 readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
+readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
+readonly FILE_GITIGNORE=".gitignore"
 readonly ARGUMENT_EXAMPLE="--example"
 readonly ARGUMENT_HELP="--help"
 
@@ -173,6 +175,26 @@ for f in "$DIR_EXAMPLE"/**; do
         fi
     fi
 done
+
+
+# Tweak .gitignore:
+if [ $? -eq 0 ]; then
+    echo
+    echo "Tweaking $FILE_GITIGNORE ..."
+    echo
+    if [ ! -f "FILE_GITIGNORE" ]; then
+        "$CMD_REPLACE" "\r?\n$DIR_SRC$" "" "$FILE_GITIGNORE" > /dev/null
+    else
+        echo "$FILE_GITIGNORE not found; skipping this step."
+        echo
+    fi
+    if [ $? -gt 0 ]; then
+        echo
+        echo "$ERROR_PREFIX""Failed to update $FILE_GITIGNORE."
+        echo
+        exit 40
+    fi
+fi
 
 
 if [ $? -eq 0 ]; then
