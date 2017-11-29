@@ -108,7 +108,7 @@ Generated code:
 
 ```typescript
 const ID     = "example-userscript"; // What we wanted.
-const ID_BAD =  example-userscript ; // ReferenceError or undesired behavior!
+const ID_BAD =  example-userscript ; // Error or undesired behavior!
 ```
 
 
