@@ -1,5 +1,5 @@
 import { not, equals, compose } from "./utilities";
-import { is, only } from "ts-type-guards"
+import { is, isBoolean, only } from "ts-type-guards";
 
 export const SUCCESS: boolean = true;
 export const FAILURE: boolean = false;
@@ -31,7 +31,7 @@ export function OperationManager(allOperations: Operation[], interval: number, e
             return FAILURE;
         }
         const result = operation.action(...only(Element)(selectorMatches));
-        return result === undefined ? SUCCESS : result;
+        return isBoolean(result) ? result : SUCCESS;
     }
 
     function run(operations: Operation[]): void {
