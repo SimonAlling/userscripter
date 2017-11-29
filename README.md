@@ -8,6 +8,31 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
 * Stylesheet management
 
 
+## Table of contents
+
+  1. [Getting started](#getting-started)
+     1. [Prerequisites](#prerequisites)
+     1. [Download Userscripter](#download-userscripter)
+     1. [Install dependencies](#install-dependencies)
+     1. [Initialize](#initialize)
+     1. [Build](#build)
+     1. [Install the userscript](#install-the-userscript)
+     1. [Verify your installation](#verify-your-installation)
+  1. [Code](#code)
+     1. [Configuration](#configuration)
+     1. [Metadata](#metadata)
+     1. [Script](#script)
+  1. [How to create a userscript](#how-to-create-a-userscript)
+     1. [Inserting CSS](#inserting-css)
+     1. [Performing operations](#performing-operations)
+     1. [Global constants](#global-constants)
+     1. [Included libraries](#included-libraries)
+  1. [Validation](#validation)
+     1. [Configuration validation](#configuration-validation)
+     1. [Metadata validation](#metadata-validation)
+
+
+
 ## Getting started
 
 ### Prerequisites
