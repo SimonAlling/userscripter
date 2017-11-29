@@ -116,9 +116,6 @@ function setupGitRepo() {
 if [ "$1" == "$ARGUMENT_HELP" ]; then
     echo "Usage: init [$ARGUMENT_EXAMPLE]"
     echo
-    echo "Options:"
-    echo "$INDENTATION""$ARGUMENT_EXAMPLE      Include example code"
-    echo
     echo "This script initializes a new userscript by creating a boilerplate code base"
     echo "in $DIR_SRC/. Any existing files are overwritten."
     echo
