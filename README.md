@@ -232,7 +232,7 @@ Here, `heading` is the first element matching `body h1`, and `author` is the fir
 
 Userscripter makes sure that the TypeScript typechecker understands that `heading` and `author` actually are non-`null` `Element`s. But it cannot know that the `textContent` property is not `null`, so it will not allow `toUpperCase()` on it. This is the reason behind the seemingly redundant `if (heading.textContent !== null) { ... }` check.
 
-To signal failure from within the action, return `FAILURE` (alias for `false`). If you do not return anything, the operation is considered successful.
+To announce the result of an operation from within the action, return `SUCCESS` or `FAILURE` (alias for `true` and `false`, respectively). Not returning anything (or explicitly returning `undefined`) is equivalent to returning `SUCCESS`.
 
 Just like CSS modules, actions can be placed in their own files, typically in `operations/`, and imported from there (as demonstrated in [the example code](#initialize)).
 
