@@ -99,14 +99,14 @@ In the source code, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is a
 
 Source code:
 
-```javascript
+```typescript
 const ID     = "%USERSCRIPT_CONFIG_id%"; // Typical usage.
 const ID_BAD =  %USERSCRIPT_CONFIG_id% ; // No quotation marks here.
 ```
 
 Generated code:
 
-```javascript
+```typescript
 const ID     = "example-userscript"; // What we wanted.
 const ID_BAD =  example-userscript ; // ReferenceError or undesired behavior!
 ```
@@ -192,7 +192,7 @@ A userscript typically consists primarily of **CSS to be inserted** and **operat
 
 `userscript-css.ts` defines the CSS that should be inserted by the userscript. It contains a list where each item looks like this example snippet:
 
-```javascript
+```typescript
 {
     condition: ALWAYS,
     css: "body { color: red; }",
@@ -210,7 +210,7 @@ Operations are basically everything that involves modifying the host page (excep
 
 `userscript-operations.ts` defines the operations that the userscript should try to perform. It contains a list of items like this one:
 
-```javascript
+```typescript
 {
     description: "change heading content",
     condition: ALWAYS,
@@ -249,7 +249,7 @@ As described [above](#script), `globals-site.ts` is intended for data that must 
 
 For example, instead of `[ "body h1", ".author" ]` above, one should typically write `[ SITE.SELECTOR_HEADING, SITE.SELECTOR_AUTHOR ]` and define those constants in `globals-site.ts` like so:
 
-```javascript
+```typescript
 export const SELECTOR_HEADING = "body h1";
 export const SELECTOR_AUTHOR = ".author";
 ```
@@ -267,7 +267,7 @@ Userscripter includes some useful libraries that you can import and use:
 
 Example:
 
-```javascript
+```typescript
 import { isElement } from "lib/html";
 import { isString } from "ts-type-guards";
 
