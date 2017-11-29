@@ -16,9 +16,11 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
 * **If you are using Windows**, you need to install and use [Git Bash](https://git-scm.com/downloads), [Linux Subsystem](https://msdn.microsoft.com/en-us/commandline/wsl/install-win10) or similar to be able to build.
 
 
-### Download
+### Download Userscripter
 
-Use `git clone` or download as ZIP.
+    git clone https://github.com/SimonAlling/userscripter
+
+or download as ZIP.
 
 
 ### Install dependencies
@@ -38,18 +40,12 @@ To initialize an example userscript:
 
 This creates an example code base in the `src/` directory in this repo.
 
-(`./init` without `--example` initializes a clean userscript without any example code.)
-
 
 ### Build
 
 To build the userscript:
 
     ./build
-
-To build with JavaScript minification:
-
-    ./build --production
 
 The resulting userscript is saved as `id.user.js`, where `id` is the slug described under [_Configuration_](#configuration) below. If you have not changed anything, this file will be named `example-userscript.user.js`.
 
