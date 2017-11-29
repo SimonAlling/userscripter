@@ -258,7 +258,7 @@ if (isElement(elem) && isString(elem.textContent)) {
 The build script is intended to protect against typos and facilitate well-written userscripts. Therefore, it checks the config and metadata and refuses to build if something is wrong.
 
 
-### Configuration
+### Configuration validation
 
 Some properties are required in the config file (`config/config.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
 
@@ -270,7 +270,7 @@ It is possible to tweak the required and optional properties by editing these fi
     .userscripter/validation/config-optional.json
 
 
-### Metadata
+### Metadata validation
 
 The _generated_ metadata (after population of config constants) must match the userscript specification in terms of syntax.
 
