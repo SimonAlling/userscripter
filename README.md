@@ -174,6 +174,111 @@ Some properties are also required in the same sense as the required config prope
 
 
 
+## How to create a userscript
+
+These files and folders in `src/` are the most relevant ones for a userscript creator:
+
+* `css/`
+* `operations/`
+* `globals-config.ts`
+* `globals-site.ts`
+* `userscript-css.ts`
+* `userscript-operations.ts`
+
+A userscript typically consists primarily of **CSS to be inserted** and **operations to be performed**.
+
+
+### Inserting CSS
+
+`userscript-css.ts` defines the CSS that should be inserted by the userscript. It contains a list where each item looks like this example snippet:
+
+```javascript
+{
+    condition: ALWAYS,
+    css: "body { color: red; }",
+},
+```
+
+`condition` is a `boolean` which can be used to control when the particular CSS module should be inserted. `ALWAYS` means that the module is always inserted.
+
+You can put CSS modules in the `css/` folder and import them into `userscript-css.ts`. [The example code base](#initialize) shows an example of this.
+
+
+### Performing operations
+
+Operations are basically everything that involves modifying the host page (except inserting CSS), e.g. changing the content of elements.
+
+`userscript-operations.ts` defines the operations that the userscript should try to perform. It contains a list of items like this one:
+
+```javascript
+{
+    description: "change heading content",
+    condition: ALWAYS,
+    selectors: [ "body h1", ".author" ],
+    action: (heading, author) => {
+        if (heading.textContent !== null) {
+            heading.textContent = heading.textContent.toUpperCase() + " by " + author.textContent;
+        }
+    },
+},
+```
+
+The structure of this snippet is as follows:
+
+* `description` is just a description of what the operation is supposed to do. It makes it easier to detect if the operation fails, e.g. because the site has changed its content.
+* `condition` is exactly like described under _Inserting CSS_ above.
+* `selectors` is a list of CSS selectors identifying the elements used by the operation.
+* `action` is what should be done. It is a function whose arguments should correspond to `selectors`. Userscripter handles the lookup of elements in the host page and calls this function as soon as they are available.
+
+Here, `heading` is the first element matching `body h1`, and `author` is the first element matching `.author`. If the elements are not found at all, the operation fails and an error message is logged to the console.
+
+Userscripter makes sure that the TypeScript typechecker understands that `heading` and `author` actually are non-`null` `Element`s. But it cannot know that the `textContent` property is not `null`, so it will not allow `toUpperCase()` on it. This is the reason behind the seemingly redundant `if (heading.textContent !== null) { ... }` check.
+
+To signal failure from within the action, return `FAILURE` (alias for `false`). If you do not return anything, the operation is considered successful.
+
+Just like CSS modules, actions can be placed in their own files, typically in `operations/`, and imported from there (as demonstrated in [the example code](#initialize)).
+
+
+### Global constants
+
+Userscripter is designed to scale, and to help the userscript creator cope with the problem of host sites breaking userscripts every now and then by changing their content.
+
+Therefore, it is generally recommended to use the files `globals-site.ts` and `globals-config.ts` for strings and other configuration data, instead of hardcoding them ad-hoc. The former approach makes for a much more maintainable userscript.
+
+As described [above](#script), `globals-site.ts` is intended for data that must be kept coherent with the host site, such as CSS selectors and regexes, while configuration parameters chosen by the userscript creator should reside in `globals-config.ts`.
+
+For example, instead of `[ "body h1", ".author" ]` above, one should typically write `[ SITE.SELECTOR_HEADING, SITE.SELECTOR_AUTHOR ]` and define those constants in `globals-site.ts` like so:
+
+```javascript
+export const SELECTOR_HEADING = "body h1";
+export const SELECTOR_AUTHOR = ".author";
+```
+
+
+### Included libraries
+
+Userscripter includes some useful libraries that you can import and use:
+
+* [`ts-type-guards`](https://www.npmjs.com/package/ts-type-guards)
+* [`lib/html`](.userscripter/lib/html.ts)
+* [`lib/versioning`](.userscripter/lib/versioning.ts)
+* [`lib/utilities`](.userscripter/lib/utilities.ts)
+* [`userscripter/logging`](.userscripter/example/userscripter/logging.ts)
+
+Example:
+
+```javascript
+import { isElement } from "lib/html";
+import { isString } from "ts-type-guards";
+
+// ...
+
+if (isElement(elem) && isString(elem.textContent)) {
+    // ...
+}
+```
+
+
 
 [greasemonkey-firefox]: https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/
 [tampermonkey-chrome]: https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo
