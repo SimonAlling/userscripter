@@ -147,33 +147,6 @@ Constants that can be freely configured by the userscript author, such as text c
 
 
 
-## Validation
-
-The build script is intended to protect against typos and facilitate well-written userscripts. Therefore, it checks the config and metadata and refuses to build if something is wrong.
-
-
-### Configuration
-
-Some properties are required in the config file (`config/config.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
-
-If one or more required properties are missing in the config file, the build script will refuse to build. Unrecognized properties will just yield a warning.
-
-It is possible to tweak the required and optional properties by editing these files, respectively:
-
-    .userscripter/validation/config-required.json
-    .userscripter/validation/config-optional.json
-
-
-### Metadata
-
-The _generated_ metadata (after population of config constants) must match the userscript specification in terms of syntax.
-
-Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
-
-    .userscripter/validation/metadata-required.json
-
-
-
 ## How to create a userscript
 
 These files and folders in `src/` are the most relevant ones for a userscript creator:
@@ -277,6 +250,33 @@ if (isElement(elem) && isString(elem.textContent)) {
     // ...
 }
 ```
+
+
+
+## Validation
+
+The build script is intended to protect against typos and facilitate well-written userscripts. Therefore, it checks the config and metadata and refuses to build if something is wrong.
+
+
+### Configuration
+
+Some properties are required in the config file (`config/config.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
+
+If one or more required properties are missing in the config file, the build script will refuse to build. Unrecognized properties will just yield a warning.
+
+It is possible to tweak the required and optional properties by editing these files, respectively:
+
+    .userscripter/validation/config-required.json
+    .userscripter/validation/config-optional.json
+
+
+### Metadata
+
+The _generated_ metadata (after population of config constants) must match the userscript specification in terms of syntax.
+
+Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
+
+    .userscripter/validation/metadata-required.json
 
 
 
