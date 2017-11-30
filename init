@@ -61,6 +61,17 @@ function setupGitRepo() {
         echo "git not found. Skipping this step."
         echo
     else
+        if [ -d "$DIR_GIT" ]; then
+            while true; do
+                echo
+                read -p "This will replace the existing Git repository in this directory by a fresh one. If you just cloned into Userscripter, this is completely safe. Continue (y/n)? " choice
+                case "$choice" in
+                  y|Y ) break;;
+                  n|N ) echo "Skipping Git repository setup."; return;;
+                  * ) echo "$CONFIRMATION_ANSWER";;
+                esac
+            done
+        fi
         echo
         echo "Setting up Git repository ..."
         # Delete .git and initialize new repo:
