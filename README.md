@@ -104,11 +104,11 @@ Open `config.json` and edit its content to fit your needs:
 
 * `id` – a slug for use in filenames, URLs etc
 * `name` – your userscript's name
-* `version` – userscript version as a string
+* `version` – userscript version (without any prefix)
 * `description` – a description of your userscript
 * `author` – your name
-* `hostname` – the website on which the userscript should run
-* `sitename` – the name of the website on which the userscript should run (if applicable)
+* `hostname` – the hostname of the website on which the userscript should run
+* `sitename` – the name of the host site (or e.g. `"the host site"`)
 * `namespace` – your own website
 * `run-at` – [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
 
