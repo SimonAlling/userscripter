@@ -3,9 +3,9 @@
 A template/framework for quickly creating complex [userscripts](https://wiki.greasespot.net/User_script). Features include:
 
 * Global constants (userscript name, version etc)
+* Safe DOM operations
 * TypeScript support
-* DOM operation management
-* Stylesheet management
+* Automatic Git repo setup
 
 
 ## Table of contents
