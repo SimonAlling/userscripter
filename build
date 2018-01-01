@@ -16,6 +16,8 @@ readonly FILE_WEBPACK_CONFIG="webpack.config.js"
 readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
+readonly FLAG_PRODUCTION="--production"
+readonly FLAG_DEBUG="--debug"
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
@@ -25,22 +27,46 @@ readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 
 cd "$DIR_ROOT"
 
+function printHelp() {
+    echo "Usage: build [$FLAG_PRODUCTION] [$FLAG_DEBUG]"
+    echo
+    echo "Examples:"
+    echo
+    echo "General development:"
+    echo
+    echo "${INDENTATION}build"
+    echo
+    echo "With source maps:"
+    echo
+    echo "${INDENTATION}build --debug"
+    echo
+    echo "With transpilation and minification:"
+    echo
+    echo "${INDENTATION}build --production"
+    echo
+}
+
 # Help message:
-if [ "$1" == "--help" ]; then
-    echo "To build for general development:"
-    echo
-    echo "$INDENTATION$CMD_BUILD"
-    echo
-    echo "To build for development with improved debugging:"
-    echo
-    echo "$INDENTATION$CMD_BUILD --debug"
-    echo
-    echo "To build for production:"
-    echo
-    echo "$INDENTATION$CMD_BUILD --production"
-    echo
-    exit 0
-fi
+for arg in "$@"; do
+    if [ "$arg" == "--help" -o "$arg" == "-h" ]; then
+        printHelp
+        exit 0
+    fi
+done
+
+mode=""
+# Determine mode:
+for arg in "$@"; do
+    if [ "$arg" == "$FLAG_DEBUG" ]; then
+        mode="$FLAG_DEBUG"
+    fi
+done
+# --production overrides --debug:
+for arg in "$@"; do
+    if [ "$arg" == "$FLAG_PRODUCTION" ]; then
+        mode="$FLAG_PRODUCTION"
+    fi
+done
 
 # Check if source code directory exists:
 if [ ! -d $DIR_SRC ]; then
@@ -157,14 +183,14 @@ fi
 echo
 
 # Run Webpack:
-if [ "$1" == "--production" ]; then
-    echo "Building with minification..."
+if [ "$mode" == "$FLAG_PRODUCTION" ]; then
+    echo "Building for production..."
     $CMD_WEBPACK --env.production
-elif [ "$1" == "--debug" ]; then
+elif [ "$mode" == "$FLAG_DEBUG" ]; then
     echo "Building with source maps..."
     $CMD_WEBPACK --devtool inline-source-map
 else
-    echo "Building..."
+    echo "Building for development... (use $FLAG_PRODUCTION to build with transpilation and minification)"
     $CMD_WEBPACK
 fi
 
