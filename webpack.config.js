@@ -2,10 +2,19 @@ const webpack = require("webpack");
 const path = require("path");
 const DIR_BUILD = "./.userscripter/build/";
 const IO = require(DIR_BUILD + "io.js");
+const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const EXTENSIONS = ["ts", "js"];
 
-module.exports = {
+function onlyTruthy(array) {
+    return array.filter(Boolean);
+}
+
+module.exports = (env = {}) => {
+
+const PRODUCTION = Boolean(env.production);
+
+return {
     entry: {
         "userscript": IO.FILE_MAIN,
     },
@@ -22,7 +31,7 @@ module.exports = {
                     {
                         loader: 'awesome-typescript-loader',
                         options: {
-                            useBabel: true,
+                            useBabel: PRODUCTION,
                             useCache: true,
                             allowJs: true,
                             babelOptions: {
@@ -43,10 +52,11 @@ module.exports = {
                     },
                 ],
                 // Only include source directory and libraries:
-                include: [
+                include: onlyTruthy([
                     path.resolve(__dirname, IO.DIR_SOURCE),
                     path.resolve(__dirname, IO.DIR_LIBRARY),
-                ],
+                    PRODUCTION && path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
+                ]),
                 // Only run .js and .ts files through the loaders:
                 test: new RegExp("\\.(" + EXTENSIONS.join("|") + ")$"),
             },
@@ -65,7 +75,10 @@ module.exports = {
             "userscripter-loader": path.join(__dirname, DIR_BUILD + "userscripter-loader.js"),
         },
     },
-    plugins: [
-        new webpack.optimize.ModuleConcatenationPlugin(),
-    ],
+    plugins: onlyTruthy([
+        PRODUCTION && new webpack.optimize.ModuleConcatenationPlugin(),
+        PRODUCTION && new MinifyPlugin(),
+    ]),
+};
+
 };
