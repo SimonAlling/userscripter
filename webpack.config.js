@@ -28,6 +28,7 @@ module.exports = {
                             babelOptions: {
                                 presets: [
                                     ["env", {
+                                        modules: false, // don't touch ES6 module syntax
                                         targets: {
                                             browsers: ["last 3 versions"]
                                         },
@@ -64,4 +65,7 @@ module.exports = {
             "userscripter-loader": path.join(__dirname, DIR_BUILD + "userscripter-loader.js"),
         },
     },
+    plugins: [
+        new webpack.optimize.ModuleConcatenationPlugin(),
+    ],
 };
