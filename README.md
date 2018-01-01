@@ -224,7 +224,7 @@ Operations are basically everything that involves modifying the host page (excep
 The structure of this snippet is as follows:
 
 * `description` is just a description of what the operation is supposed to do. It makes it easier to detect if the operation fails, e.g. because the site has changed its content.
-* `condition` is exactly like described under _Inserting CSS_ above.
+* `condition` is exactly as described under _Inserting CSS_ above.
 * `selectors` is a list of CSS selectors identifying the elements used by the operation.
 * `action` is what should be done. It is a function whose arguments should correspond to `selectors`. Userscripter handles the lookup of elements in the host page and calls this function as soon as they are available.
 
