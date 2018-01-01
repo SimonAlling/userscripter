@@ -20,8 +20,8 @@ readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
-readonly ARGUMENT_EXAMPLE="--example"
-readonly ARGUMENT_HELP="--help"
+readonly COMMAND_EXAMPLE="example"
+readonly COMMAND_CLEAN="clean"
 readonly URL_REPO="https://github.com/SimonAlling/userscripter"
 readonly REMOTE_USERSCRIPTER="userscripter"
 readonly REGEX_GIT_URL='^(git|ssh|https?|git@.+):'
@@ -43,6 +43,23 @@ function echoFilesToOverwrite() {
             echo "$INDENTATION$filename"
         fi
     done
+}
+
+function printHelp() {
+    echo "Usage: init [--help] MODE"
+    echo
+    echo "Initialize a new userscript by creating a boilerplate code base in $DIR_SRC/."
+    echo "Any existing files are overwritten."
+    echo
+    echo "These modes are available:"
+    echo
+    echo "$INDENTATION$COMMAND_CLEAN      Initialize a clean userscript"
+    echo "$INDENTATION$COMMAND_EXAMPLE    Initialize a userscript with example code"
+    echo
+    echo "Example:"
+    echo
+    echo "${INDENTATION}init $COMMAND_EXAMPLE"
+    echo
 }
 
 function printRepoHelp() {
@@ -124,16 +141,20 @@ function setupGitRepo() {
 }
 
 # Help message:
-if [ "$1" == "$ARGUMENT_HELP" ]; then
-    echo "Usage: init [$ARGUMENT_EXAMPLE]"
-    echo
-    echo "This script initializes a new userscript by creating a boilerplate code base"
-    echo "in $DIR_SRC/. Any existing files are overwritten."
-    echo
-    echo "If the $ARGUMENT_EXAMPLE flag is used, some example code is included."
-    exit 0
-fi
+for arg in "$@"; do
+    if [ "$arg" == "--help" -o "$arg" == "-h" ]; then
+        printHelp
+        exit 0
+    fi
+done
 
+mode=""
+# Check command:
+case "$1" in
+    "$COMMAND_EXAMPLE" ) mode="$COMMAND_EXAMPLE";;
+    "$COMMAND_CLEAN" ) mode="$COMMAND_CLEAN";;
+    * ) printHelp; exit 1;;
+esac
 
 # Check if Node.js exists:
 if [ "$(type node)" == "" ]; then
@@ -173,7 +194,7 @@ if [ ! -e "$DIR_NODE_MODULES" ]; then
 fi
 
 
-if [ "$1" == "$ARGUMENT_EXAMPLE" ]; then
+if [ "$mode" == "$COMMAND_EXAMPLE" ]; then
     echo "Initializing userscript with example code ..."
 else
     echo "Initializing clean userscript ..."
@@ -214,9 +235,9 @@ fi
 
 echo
 argumentToInit=""
-if [ "$1" == "$ARGUMENT_EXAMPLE" ]; then
+if [ "$mode" == "$COMMAND_EXAMPLE" ]; then
     echo "Creating example code base in $DIR_SRC/ ..."
-    argumentToInit="$ARGUMENT_EXAMPLE"
+    argumentToInit="$COMMAND_EXAMPLE"
 else
     echo "Creating clean code base in $DIR_SRC/ ..."
 fi

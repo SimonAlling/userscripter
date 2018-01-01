@@ -61,7 +61,7 @@ and wait for it to finish.
 
 To initialize an example userscript:
 
-    ./init --example
+    ./init example
 
 This creates an example code base in the `src/` directory in this repo.
 

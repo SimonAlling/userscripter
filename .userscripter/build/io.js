@@ -3,7 +3,7 @@ const DIR_SOURCE     = "./src/";
 const DIR_LIBRARY    = "./.userscripter/lib/";
 const DIR_VALIDATION = "./.userscripter/validation/";
 
-const ARGUMENT_EXAMPLE = "--example";
+const ARGUMENT_EXAMPLE = "example";
 
 const FILE_METADATA               = DIR_CONFIG + "metadata.txt";
 const FILE_METADATA_REQUIRED_TAGS = DIR_VALIDATION + "metadata-required.json";
