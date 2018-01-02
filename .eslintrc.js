@@ -25,9 +25,9 @@ module.exports = {
             {
                 "vars": "local",
                 // Don't warn about unused CONFIG, SITE, log, logInfo, logWarning, logError:
-                "varsIgnorePattern": "^(CONFIG)|(SITE)|(log((Info)|(Warning)|(Error))?)$",
+                "varsIgnorePattern": "^(CONFIG|SITE|log(Info|Warning|Error)?)$",
             }
         ],
         "no-console": 0,
-    }
+    },
 };
