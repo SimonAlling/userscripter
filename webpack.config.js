@@ -5,6 +5,7 @@ const IO = require(DIR_BUILD + "io.js");
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 const EXTENSIONS = ["ts", "js"];
+const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 
 function onlyTruthy(array) {
     return array.filter(Boolean);
@@ -46,10 +47,6 @@ module.exports = (env = {}) => {
                                 },
                             }
                         },
-                        // Populate global userscript config constants:
-                        {
-                            loader: 'userscripter-loader',
-                        },
                     ],
                     // Only include source directory and libraries:
                     include: onlyTruthy([
@@ -57,8 +54,22 @@ module.exports = (env = {}) => {
                         path.resolve(__dirname, IO.DIR_LIBRARY),
                         PRODUCTION && path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
                     ]),
-                    // Only run .js and .ts files through the loaders:
-                    test: new RegExp("\\.(" + EXTENSIONS.join("|") + ")$"),
+                    // Only run source code files through the loaders:
+                    test: REGEX_SOURCE_CODE,
+                },
+                // Preprocessing:
+                {
+                    loaders: [
+                        // Populate global userscript config constants:
+                        {
+                            loader: "userscripter-loader",
+                        },
+                    ],
+                    include: [
+                        path.resolve(__dirname, IO.DIR_SOURCE),
+                        path.resolve(__dirname, IO.DIR_LIBRARY),
+                    ],
+                    test: REGEX_SOURCE_CODE,
                 },
             ],
         },
