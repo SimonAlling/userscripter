@@ -2,10 +2,14 @@ const webpack = require("webpack");
 const path = require("path");
 const DIR_BUILD = "./.userscripter/build/";
 const IO = require(DIR_BUILD + "io.js");
+const Userscripter = require(DIR_BUILD + "userscripter");
 const MinifyPlugin = require("babel-minify-webpack-plugin");
+const WebpackStrip = require('webpack-strip');
 
 const EXTENSIONS = ["ts", "js"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
+const LOG_LEVELS = Userscripter.LOG_LEVELS;
+const LOG_LEVELS_ALL = LOG_LEVELS.ALL;
 
 function onlyTruthy(array) {
     return array.filter(Boolean);
@@ -13,6 +17,7 @@ function onlyTruthy(array) {
 
 module.exports = (env = {}) => {
 
+    const logLevel = LOG_LEVELS[env.logLevel] || LOG_LEVELS_ALL;
     const PRODUCTION = Boolean(env.production);
 
     return {
@@ -59,12 +64,16 @@ module.exports = (env = {}) => {
                 },
                 // Preprocessing:
                 {
-                    loaders: [
+                    loaders: onlyTruthy([
+                        // Strip logging:
+                        (logLevel !== LOG_LEVELS_ALL) && {
+                            loader: WebpackStrip.loader(...Userscripter.logFunctionsToRemove(logLevel)),
+                        },
                         // Populate global userscript config constants:
                         {
                             loader: "userscripter-loader",
                         },
-                    ],
+                    ]),
                     include: [
                         path.resolve(__dirname, IO.DIR_SOURCE),
                         path.resolve(__dirname, IO.DIR_LIBRARY),

@@ -14,6 +14,21 @@ const REPLACEMENT_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPE
 // All recognized replacement keys:
 const REPLACEMENT_KEYS = REPLACEMENT_KEYS_REQUIRED.concat(REPLACEMENT_KEYS_OPTIONAL);
 
+const LOG_LEVELS = {
+    ALL: 0,
+    INFO: 1,
+    WARNING: 2,
+    ERROR: 3,
+    NONE: 4,
+};
+// Index is level; higher level is less verbose:
+const LOG_FUNCTIONS_BY_LEVEL = [
+    [ "log"       , "console.log"   ],
+    [ "logInfo"   , "console.info"  ],
+    [ "logWarning", "console.warn"  ],
+    [ "logError"  , "console.error" ],
+];
+
 function isRecognizedConfigProperty(key) {
     return REPLACEMENT_KEYS.includes(key);
 }
@@ -88,10 +103,15 @@ function populate(source) {
     return replacementMappings.reduce((content, mapping) => content.replace(new RegExp(mapping.substring, "g"), mapping.replacement), source);
 }
 
+function logFunctionsToRemove(logLevel) {
+    return [].concat(...LOG_FUNCTIONS_BY_LEVEL.slice(0, logLevel));
+}
+
 module.exports = {
     REPLACEMENT_KEYS,
     REPLACEMENT_KEYS_REQUIRED,
     REPLACEMENT_KEYS_OPTIONAL,
+    LOG_LEVELS,
     readConfig,
     readMetadata,
     unrecognizedConfigProperties,
@@ -99,4 +119,5 @@ module.exports = {
     duplicateConfigPropertiesWithValues,
     logDefinePropertiesMessage,
     populate,
+    logFunctionsToRemove,
 };

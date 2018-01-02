@@ -12,6 +12,7 @@
     "strip-comments": "^0.4.4",
     "ts-type-guards": "^0.2.0",
     "typescript": "^2.4.1",
-    "webpack": "^3.0.0"
+    "webpack": "^3.0.0",
+    "webpack-strip": "^0.1.0"
   }
 }

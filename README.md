@@ -30,6 +30,11 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
   1. [Validation](#validation)
      1. [Configuration validation](#configuration-validation)
      1. [Metadata validation](#metadata-validation)
+  1. [Advanced](#advanced)
+     1. [Build options](#build-options)
+        1. [`--debug`](#--debug)
+        1. [`--log-level`](#--log-level)
+        1. [`--production`](#--production)
 
 
 
@@ -73,6 +78,8 @@ To build the userscript:
     ./build
 
 The resulting userscript is saved as `id.user.js`, where `id` is the slug described under [_Configuration_](#configuration) below. If you have not changed anything, this file will be named `example-userscript.user.js`.
+
+See also [_Build options_](#build-options).
 
 
 ### Install the userscript
@@ -302,6 +309,47 @@ The _generated_ metadata (after population of config constants) must match the u
 Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
 
     .userscripter/validation/metadata-required.json
+
+
+
+## Advanced
+
+### Build options
+
+The build script has some options that can be used to customize its output. They are listed here in alphabetical order.
+
+
+#### `--debug`
+
+Include source maps.
+
+    build --debug
+
+
+#### `--log-level`
+
+Specify a log level for the userscript. Can be useful e.g. for minimizing userscript size and/or when building for mobile browsers with no console.
+
+These levels are supported (from verbose to silent):
+
+* `ALL` (default)
+* `INFO`
+* `WARNING`
+* `ERROR`
+* `NONE`
+
+Logging of lower level than the specified one is removed.
+
+    build --log-level WARNING
+
+In this example, calls to `log`, `logInfo`, `console.log`, and `console.info` are removed; `logWarning`, `logError`, `console.warn`, and `console.error` are left untouched.
+
+
+#### `--production`
+
+Transpile and minify the userscript for better browser compatibility and smaller file size.
+
+    build --production
 
 
 

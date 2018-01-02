@@ -16,8 +16,22 @@ readonly FILE_WEBPACK_CONFIG="webpack.config.js"
 readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
-readonly FLAG_PRODUCTION="--production"
-readonly FLAG_DEBUG="--debug"
+
+readonly FLAG_PRODUCTION="production"
+readonly FLAG_DEBUG="debug"
+readonly FLAG_LOG_LEVEL="log-level"
+readonly LOG_LEVEL_ALL="ALL"
+readonly LOG_LEVEL_INFO="INFO"
+readonly LOG_LEVEL_WARNING="WARNING"
+readonly LOG_LEVEL_ERROR="ERROR"
+readonly LOG_LEVEL_NONE="NONE"
+readonly LOG_LEVELS=(
+    "$LOG_LEVEL_ALL"
+    "$LOG_LEVEL_INFO"
+    "$LOG_LEVEL_WARNING"
+    "$LOG_LEVEL_ERROR"
+    "$LOG_LEVEL_NONE"
+)
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
@@ -25,10 +39,42 @@ readonly CMD_INSTALL="npm install"
 readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 
+function join() {
+    # $1 is return variable name
+    # $2 is separator
+    # $3... are the elements to join
+    local retname=$1 sep=$2 ret=$3
+    shift 3 || shift $(($#))
+    printf -v "$retname" "%s" "$ret${@/#/$sep}"
+}
+
+function contains() {
+    local n=$#
+    local value=${!n}
+    for ((i=1;i < $#;i++)) {
+        if [ "${!i}" == "${value}" ]; then
+            echo "y"
+            return 0
+        fi
+    }
+    echo "n"
+    return 1
+}
+
 cd "$DIR_ROOT"
 
+function printHelpTip() {
+    echo "Try 'build --help' for more information."
+}
+
 function printHelp() {
-    echo "Usage: build [$FLAG_PRODUCTION] [$FLAG_DEBUG]"
+    echo "Usage: build [OPTION]..."
+    echo
+    echo "Options:"
+    echo "  -d, --debug                   include source maps"
+    echo "  -h, --help                    display this help and exit"
+    echo "  -l, --log-level=LEVEL         set userscript logging verbosity to LEVEL"
+    echo "  -p, --production              transpile and minify userscript"
     echo
     echo "Examples:"
     echo
@@ -38,35 +84,78 @@ function printHelp() {
     echo
     echo "With source maps:"
     echo
-    echo "${INDENTATION}build --debug"
+    echo "${INDENTATION}build --$FLAG_DEBUG"
     echo
-    echo "With transpilation and minification:"
+    echo "Transpiled, minified and no logging whatsoever:"
     echo
-    echo "${INDENTATION}build --production"
+    echo "${INDENTATION}build --$FLAG_PRODUCTION --$FLAG_LOG_LEVEL $LOG_LEVEL_NONE"
     echo
 }
 
-# Help message:
-for arg in "$@"; do
-    if [ "$arg" == "--help" -o "$arg" == "-h" ]; then
-        printHelp
-        exit 0
-    fi
-done
+function printLogHelp() {
+    join logLevelsStr ", " "${LOG_LEVELS[@]}"
+    echo "Invalid log level. These options are supported:"
+    echo
+    echo "${INDENTATION}$logLevelsStr"
+    echo
+    echo "Example:"
+    echo
+    echo "${INDENTATION}build $FLAG_PRODUCTION $FLAG_LOG_LEVEL $LOG_LEVEL_ERROR"
+    echo
+}
 
+
+### HANDLE ARGUMENTS
+
+source ./.userscripter/build/getopts_long.sh
+
+optval_production=false
+optval_debug=false
+optval_logLevel="$LOG_LEVEL_ALL"
 mode=""
-# Determine mode:
-for arg in "$@"; do
-    if [ "$arg" == "$FLAG_DEBUG" ]; then
-        mode="$FLAG_DEBUG"
-    fi
+
+OPTLIND=1
+while getopts_long :hpdl: opt \
+  "$FLAG_PRODUCTION" no_argument \
+  "$FLAG_DEBUG" no_argument \
+  "$FLAG_LOG_LEVEL" required_argument \
+  help no_argument "" "$@"
+do
+  case "$opt" in
+    h|help) printHelp; exit 0;;
+    p|"$FLAG_PRODUCTION") optval_production=true;;
+    d|"$FLAG_DEBUG") optval_debug=true;;
+    l|"$FLAG_LOG_LEVEL") optval_logLevel=$OPTLARG;;
+    :) printf >&2 '%s: %s\n' "${0##*/}" "$OPTLERR"
+       printHelpTip
+       exit 1;;
+  esac
 done
-# --production overrides --debug:
-for arg in "$@"; do
-    if [ "$arg" == "$FLAG_PRODUCTION" ]; then
-        mode="$FLAG_PRODUCTION"
-    fi
-done
+shift "$(($OPTLIND - 1))"
+
+# Check for simultaneous production and debug:
+if [ "$optval_production" == true -a "$optval_debug" == true ]; then
+    echo "--$FLAG_PRODUCTION and --$FLAG_DEBUG cannot be used at the same time."
+    printHelpTip
+    exit 1
+fi
+
+if [ "$optval_production" == true ]; then
+    mode="$FLAG_PRODUCTION"
+fi
+
+if [ "$optval_debug" == true ]; then
+    mode="$FLAG_DEBUG"
+fi
+
+# Check if log level is valid:
+if [ $(contains "${LOG_LEVELS[@]}" "$optval_logLevel") == "n" ]; then
+    printLogHelp
+    exit 1
+fi
+
+### ARGUMENTS HANDLED
+
 
 # Check if source code directory exists:
 if [ ! -d $DIR_SRC ]; then
@@ -185,13 +274,13 @@ echo
 # Run Webpack:
 if [ "$mode" == "$FLAG_PRODUCTION" ]; then
     echo "Building for production..."
-    $CMD_WEBPACK --env.production
+    $CMD_WEBPACK --env.production --env.logLevel="$optval_logLevel"
 elif [ "$mode" == "$FLAG_DEBUG" ]; then
     echo "Building with source maps..."
-    $CMD_WEBPACK --devtool inline-source-map
+    $CMD_WEBPACK --devtool inline-source-map --env.logLevel="$optval_logLevel"
 else
-    echo "Building for development... (use $FLAG_PRODUCTION to build with transpilation and minification)"
-    $CMD_WEBPACK
+    echo "Building for development... (use --$FLAG_PRODUCTION to build with transpilation and minification)"
+    $CMD_WEBPACK --env.logLevel="$optval_logLevel"
 fi
 
 # Exit if Webpack build failed:
