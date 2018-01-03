@@ -1,6 +1,7 @@
 // <<<<<<< EXAMPLE
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
+import { log, logInfo, logWarning, logError } from "userscripter/logging";
 
 export default
 

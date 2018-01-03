@@ -1,6 +1,7 @@
 import { ConditionalOperation, SUCCESS, FAILURE } from "lib/operation-manager";
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
+import { log, logInfo, logWarning, logError } from "userscripter/logging";
 // <<<<<<< EXAMPLE
 
 import ACTION_INSERT_FOOBARS from "operations/insert-foobars";
