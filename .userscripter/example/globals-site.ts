@@ -1,10 +1,10 @@
 import * as CONFIG from "globals-config";
 
-export const NAME = "%USERSCRIPT_CONFIG_sitename%";
-export const HOSTNAME = "%USERSCRIPT_CONFIG_hostname%";
+export const NAME: string = "%USERSCRIPT_CONFIG_sitename%";
+export const HOSTNAME: string = "%USERSCRIPT_CONFIG_hostname%";
 // <<<<<<< EXAMPLE
 
-export const SELECTOR_HEADING = "body h1";
-export const SELECTOR_MAIN = "body div";
+export const SELECTOR_HEADING: string = "body h1";
+export const SELECTOR_MAIN: string = "body div";
 // =======
 // >>>>>>> CLEAN
