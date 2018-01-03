@@ -18,7 +18,7 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
      1. [Build](#build)
      1. [Install the userscript](#install-the-userscript)
      1. [Verify your installation](#verify-your-installation)
-  1. [Code](#code)
+  1. [Code structure](#code-structure)
      1. [Configuration](#configuration)
      1. [Metadata](#metadata)
      1. [Script](#script)
@@ -100,7 +100,7 @@ Build the userscript, install it in your browser and go to [example.com](http://
 
 
 
-## Code
+## Code structure
 
 Changes to any of the files described below are applied when building the userscript (`./build`).
 
