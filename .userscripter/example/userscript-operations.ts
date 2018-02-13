@@ -2,6 +2,8 @@ import { ConditionalOperation, SUCCESS, FAILURE } from "lib/operation-manager";
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
 import { log, logInfo, logWarning, logError } from "userscripter/logging";
+import { Preferences } from "userscripter/preference-handling";
+import P from "userscript-preferences";
 // <<<<<<< EXAMPLE
 
 import ACTION_INSERT_FOOBARS from "operations/insert-foobars";
@@ -44,7 +46,7 @@ const OPERATIONS: ConditionalOperation[] = [
     // Insert foobars:
     {
         description: "insert foobars",
-        condition: ALWAYS,
+        condition: Preferences.get(P.insert_foobars), // Run this action only if the corresponding preference is set to true.
         selectors: [SITE.SELECTOR_MAIN], // Needs the main element in order to run.
         action: ACTION_INSERT_FOOBARS, // This action is imported from its own module.
     },

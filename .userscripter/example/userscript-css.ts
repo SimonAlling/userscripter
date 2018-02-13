@@ -1,6 +1,9 @@
 import { StylesheetModule } from "lib/stylesheet-manager";
 import CSS_MAIN_STYLESHEET from "css/stylesheet";
+import { Preferences } from "userscripter/preference-handling";
+import P from "userscript-preferences";
 // <<<<<<< EXAMPLE
+
 import CSS_FOOBARS from "css/foobars";
 // =======
 // >>>>>>> CLEAN
@@ -33,7 +36,7 @@ const STYLESHEET_MODULES: StylesheetModule[] = [
 
     // Foobars:
     {
-        condition: ALWAYS,
+        condition: Preferences.get(P.insert_foobars),
         css: CSS_FOOBARS,
     },
 // =======
