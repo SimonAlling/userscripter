@@ -15,7 +15,7 @@
         "target": "es6",
         "strictNullChecks": true,
         "noImplicitAny": true,
-        "module": "ES6",
+        "module": "CommonJS",
         "moduleResolution": "node",
         "preserveConstEnums": true
     }
