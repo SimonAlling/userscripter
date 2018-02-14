@@ -6,7 +6,7 @@ import { Preferences } from "userscripter/preference-handling";
 import P from "preferences";
 // <<<<<<< EXAMPLE
 
-import ACTION_INSERT_FOOBARS from "operations/foobars";
+import INSERT_FOOBARS from "operations/foobars";
 // =======
 // >>>>>>> CLEAN
 
@@ -48,7 +48,7 @@ const OPERATIONS: ConditionalOperation[] = [
         description: "insert foobars",
         condition: Preferences.get(P.insert_foobars), // Run this action only if the corresponding preference is set to true.
         selectors: [SITE.SELECTOR_MAIN], // Needs the main element in order to run.
-        action: ACTION_INSERT_FOOBARS, // This action is imported from its own module.
+        action: INSERT_FOOBARS, // This action is imported from its own module.
     },
 
     // Change title:
