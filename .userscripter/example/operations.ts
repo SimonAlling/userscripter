@@ -3,10 +3,10 @@ import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
 import { log, logInfo, logWarning, logError } from "userscripter/logging";
 import { Preferences } from "userscripter/preference-handling";
-import P from "userscript-preferences";
+import P from "preferences";
 // <<<<<<< EXAMPLE
 
-import ACTION_INSERT_FOOBARS from "operations/insert-foobars";
+import ACTION_INSERT_FOOBARS from "operations/foobars";
 // =======
 // >>>>>>> CLEAN
 

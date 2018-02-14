@@ -3,7 +3,7 @@ import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
 import { log, logInfo, logWarning, logError } from "userscripter/logging";
 import { Preferences } from "userscripter/preference-handling";
-import P from "userscript-preferences";
+import P from "preferences";
 
 function foobar(i: number): HTMLElement {
     const div = document.createElement("div");

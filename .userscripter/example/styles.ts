@@ -1,10 +1,10 @@
 import { StylesheetModule } from "lib/stylesheet-manager";
-import CSS_MAIN_STYLESHEET from "css/stylesheet";
+import CSS_MAIN_STYLESHEET from "styles/stylesheet";
 import { Preferences } from "userscripter/preference-handling";
-import P from "userscript-preferences";
+import P from "preferences";
 // <<<<<<< EXAMPLE
 
-import CSS_FOOBARS from "css/foobars";
+import CSS_FOOBARS from "styles/foobars";
 // =======
 // >>>>>>> CLEAN
 import * as SITE from "globals-site";

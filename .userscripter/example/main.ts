@@ -3,7 +3,7 @@ import { StylesheetManager } from "lib/stylesheet-manager";
 import { Version } from "lib/versioning";
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
-import STYLESHEET_MODULES from "userscript-css";
+import STYLESHEET_MODULES from "styles";
 import { log, logInfo, logWarning, logError } from "userscripter/logging";
 import { hasAlreadyRun } from "userscripter/misc";
 import { startOperations, stopOperations } from "userscripter/operation-handling";

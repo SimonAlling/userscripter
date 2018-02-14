@@ -2,7 +2,7 @@ import { log, logError, logWarning } from "userscripter/logging";
 import * as TSPreferences from "ts-preferences";
 import { Status, Response, RequestSummary, PreferencesInterface } from "ts-preferences";
 import * as CONFIG from "globals-config";
-import PREFERENCES from "userscript-preferences";
+import PREFERENCES from "preferences";
 
 export const Preferences = TSPreferences.init(PREFERENCES, CONFIG.USERSCRIPT_ID, TSPreferences.SIMPLE_RESPONSE_HANDLER);
 
