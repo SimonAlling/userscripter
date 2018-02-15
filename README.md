@@ -163,10 +163,10 @@ The following files in `src/` make up the core of the userscript:
     * **`afterLoad()`**\
     Code that requires that the DOM be accessible. Called when the `DOMContentLoaded` event is fired.
 
-* **`userscript-css.ts`**\
+* **`styles.ts`**\
 All CSS modules used by the userscript.
 
-* **`userscript-operations.ts`**\
+* **`operations.ts`**\
 All operations performed by the userscript.
 
 * **`globals-site.ts`**\
@@ -183,19 +183,19 @@ Constants that can be freely configured by the userscript author, such as text c
 
 These files and folders in `src/` are the most relevant ones for a userscript creator:
 
-* `css/`
+* `styles/`
 * `operations/`
-* `globals-config.ts`
+* `styles.ts`
+* `operations.ts`
 * `globals-site.ts`
-* `userscript-css.ts`
-* `userscript-operations.ts`
+* `globals-config.ts`
 
 A userscript typically consists primarily of **CSS to be inserted** and **operations to be performed**.
 
 
 ### Inserting CSS
 
-`userscript-css.ts` defines the CSS that should be inserted by the userscript. It contains a list where each item looks like this example snippet:
+`styles.ts` defines the CSS that should be inserted by the userscript. It contains a list where each item looks like this example snippet:
 
 ```typescript
 {
@@ -206,14 +206,14 @@ A userscript typically consists primarily of **CSS to be inserted** and **operat
 
 `condition` is a `boolean` which can be used to control when the particular CSS module should be inserted. `ALWAYS` means that the module is always inserted.
 
-You can put CSS modules in the `css/` folder and import them into `userscript-css.ts`. [The example code base](#initialize) shows an example of this.
+You can put CSS modules in the `styles/` folder and import them into `styles.ts`. [The example code base](#initialize) shows an example of this.
 
 
 ### Performing operations
 
 Operations are basically everything that involves modifying the host page (except inserting CSS), e.g. changing the content of elements.
 
-`userscript-operations.ts` defines the operations that the userscript should try to perform. It contains a list of items like this one:
+`operations.ts` defines the operations that the userscript should try to perform. It contains a list of items like this one:
 
 ```typescript
 {
