@@ -19,6 +19,12 @@ export type ConditionalOperation = Operation & {
 // errorCallback : Function to call with Operation as argument for each operation that has not succeeded before stop() is called.
 // successCallback : Function to call if all operations have succeeded when stop() is called.
 export function OperationManager(allOperations: Operation[], interval: number, errorCallback: (operation: Operation) => void, successCallback: () => void) {
+    allOperations.forEach(operation => {
+        if (operation.selectors.length < operation.action.length) {
+            throw new Error(`Operation "${operation.description}" depends on ${operation.action.length} element(s), but has only ${operation.selectors.length} dependency selector(s).`);
+        }
+    });
+
     let keepTrying: boolean = true;
 
     function handleError(operation: Operation): void {
