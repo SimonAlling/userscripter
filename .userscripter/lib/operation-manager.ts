@@ -7,7 +7,7 @@ export const FAILURE: boolean = false;
 export type Operation = {
     description: string;
     selectors: string[];
-    action: (...elements: Element[]) => boolean | void;
+    action: (...elements: HTMLElement[]) => boolean | void;
 }
 
 export type ConditionalOperation = Operation & {
@@ -36,7 +36,7 @@ export function OperationManager(allOperations: Operation[], interval: number, e
         if (selectorMatches.some(equals(null))) {
             return FAILURE;
         }
-        const result = operation.action(...only(Element)(selectorMatches));
+        const result = operation.action(...only(HTMLElement)(selectorMatches));
         return isBoolean(result) ? result : SUCCESS;
     }
 

@@ -1,4 +1,4 @@
-import { isElement, insertCSS } from "lib/html";
+import { insertCSS } from "lib/html";
 import { StylesheetManager } from "lib/stylesheet-manager";
 import { Version } from "lib/versioning";
 import * as SITE from "globals-site";
