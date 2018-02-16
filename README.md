@@ -4,7 +4,8 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
 
 * Global constants (userscript name, version etc)
 * Safe DOM operations
-* TypeScript support
+* Safe, straightforward preferences management
+* Static typing
 * Automatic Git repo setup
 
 
