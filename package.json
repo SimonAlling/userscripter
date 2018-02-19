@@ -10,7 +10,7 @@
     "extract-comments": "^0.10.1",
     "replace": "^0.3.0",
     "strip-comments": "^0.4.4",
-    "ts-preferences": "^0.2.0",
+    "ts-preferences": "^0.3.1",
     "ts-type-guards": "^0.2.0",
     "typescript": "^2.4.1",
     "webpack": "^3.0.0",

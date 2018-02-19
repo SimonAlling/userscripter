@@ -22,14 +22,14 @@ function responseHandler<T>(summary: RequestSummary<T>, preferences: Preferences
             }
             return response;
 
-        case Status.PARSE_FAILED:
+        case Status.JSON_ERROR:
             if (summary.action === "get") {
                 logWarning(`The value found in localStorage for preference '${summary.preference.key}' could not be parsed. Replacing it with ${JSON.stringify(response.value)}.`);
                 preferences.set(summary.preference, response.value);
             }
             return response;
 
-        case Status.LOCALSTORAGE_FAILURE:
+        case Status.LOCALSTORAGE_ERROR:
             switch (summary.action) {
                 case "get":
                     logError(`Could not read preference '${summary.preference.key}' because localStorage could not be accessed. Using value ${JSON.stringify(summary.preference.default)}.`);
