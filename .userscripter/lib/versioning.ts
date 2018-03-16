@@ -5,7 +5,6 @@
 
 import { isString } from "ts-type-guards";
 import { wholeStringRegex } from "./utilities";
-import { curry } from "./curry";
 
 /**
  * The prefix prepended to a version number to create a version string.
@@ -24,12 +23,14 @@ const REGEX_VERSION_NUMBER_ONLY: RegExp = wholeStringRegex(REGEX_VERSION_NUMBER)
 const REGEX_VERSION_STRING:      RegExp = new RegExp(PREFIX + REGEX_VERSION_NUMBER.source);
 const REGEX_VERSION_STRING_ONLY: RegExp = wholeStringRegex(REGEX_VERSION_STRING);
 
-const find = curry((requirePrefix: boolean, s: string) => {
-    const matches = s.match(requirePrefix ? REGEX_VERSION_STRING : REGEX_VERSION_NUMBER);
-    return matches
-         ? (requirePrefix ? Version.parse(matches[0]) : new Version(matches[0]))
-         : null;
-});
+function find(requirePrefix: boolean): (s: string) => Version | null {
+    return (s: string) => {
+        const matches = s.match(requirePrefix ? REGEX_VERSION_STRING : REGEX_VERSION_NUMBER);
+        return matches
+             ? (requirePrefix ? Version.parse(matches[0]) : new Version(matches[0]))
+             : null;
+    };
+}
 
 export class Version {
     number: string;

@@ -3,8 +3,6 @@
  * @module utilities
  */
 
-import { curry } from "./curry";
-
 import { isNumber, isString, isNull } from "ts-type-guards";
 
 const LIST_ITEM_PREFIX = "    ";
