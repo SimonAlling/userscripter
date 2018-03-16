@@ -21,8 +21,8 @@ export function not<T>(f: (x: T) => boolean): (x: T) => boolean {
     return x => !f(x);
 }
 
-export function equals<T>(a: (T | null)): ((b: (T | null)) => boolean) {
-    return (b: (T | null)) => a === b;
+export function equals(a: any): (b: any) => boolean {
+    return (b: any) => a === b;
 }
 
 export function compose<X, I, Y>(outer: (x: I) => Y, inner: (x: X) => I): (x: X) => Y {

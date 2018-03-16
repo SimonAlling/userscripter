@@ -13,8 +13,7 @@
             "dom"
         ],
         "target": "es6",
-        "strictNullChecks": true,
-        "noImplicitAny": true,
+        "strict": true,
         "module": "CommonJS",
         "moduleResolution": "node",
         "preserveConstEnums": true
