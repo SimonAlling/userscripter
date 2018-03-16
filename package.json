@@ -8,6 +8,7 @@
     "babel-preset-env": "^1.6.0",
     "crlf-helper": "^0.1.0",
     "extract-comments": "^0.10.1",
+    "preact": "^8.2.7",
     "replace": "^0.3.0",
     "strip-comments": "^0.4.4",
     "ts-preferences": "^0.3.1",

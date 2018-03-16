@@ -6,7 +6,7 @@ const Userscripter = require(DIR_BUILD + "userscripter");
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const WebpackStrip = require('webpack-strip');
 
-const EXTENSIONS = ["ts", "js"];
+const EXTENSIONS = ["ts", "js", "tsx"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const LOG_LEVELS = Userscripter.LOG_LEVELS;
 const LOG_LEVELS_ALL = LOG_LEVELS.ALL;

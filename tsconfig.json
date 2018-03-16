@@ -12,10 +12,16 @@
             "es6",
             "dom"
         ],
+        "jsx": "react",
+        "jsxFactory": "h",
         "target": "es6",
         "strict": true,
         "module": "CommonJS",
         "moduleResolution": "node",
         "preserveConstEnums": true
-    }
+    },
+    "include": [
+        "./src/**/*.tsx",
+        "./src/**/*.ts"
+    ]
 }
