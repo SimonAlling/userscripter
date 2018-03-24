@@ -26,5 +26,6 @@ export const ID_STYLE_ELEMENT: string = i("main-style-element");
 export const HEADING_PREFIX_AND_SUFFIX: string = "★";
 
 export const CLASS_FOOBAR: string = c("foobar");
+export const CLASS_PREFERENCE_DESCRIPTION: string = c("preference-description");
 // =======
 // >>>>>>> CLEAN

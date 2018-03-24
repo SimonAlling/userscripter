@@ -1,12 +1,12 @@
 import { log, logError, logWarning } from "userscripter/logging";
 import * as TSPreferences from "ts-preferences";
-import { Status, Response, RequestSummary, PreferencesInterface } from "ts-preferences";
+import { Status, Response, RequestSummary, PreferencesInterface, AllowedTypes } from "ts-preferences";
 import * as CONFIG from "globals-config";
 import PREFERENCES from "preferences";
 
-export const Preferences = TSPreferences.init(PREFERENCES, CONFIG.USERSCRIPT_ID, TSPreferences.SIMPLE_RESPONSE_HANDLER);
+export const Preferences = TSPreferences.init(PREFERENCES, CONFIG.USERSCRIPT_ID, responseHandler);
 
-function responseHandler<T>(summary: RequestSummary<T>, preferences: PreferencesInterface): Response<T> {
+function responseHandler<T extends AllowedTypes>(summary: RequestSummary<T>, preferences: PreferencesInterface): Response<T> {
     const response = summary.response;
     switch (response.status) {
         case Status.OK:

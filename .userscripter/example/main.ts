@@ -8,6 +8,12 @@ import { log, logInfo, logWarning, logError } from "userscripter/logging";
 import { hasAlreadyRun } from "userscripter/misc";
 import { startOperations, stopOperations } from "userscripter/operation-handling";
 
+// <<<<<<< EXAMPLE
+import P from "./preferences";
+import { Preferences } from "./userscripter/preference-handling";
+import { menuGenerator } from "./preferences-menu";
+// =======
+// >>>>>>> CLEAN
 
 // Actions that can and should be performed before the DOM is loaded, such as inserting CSS:
 function beforeLoad(): void {
@@ -26,7 +32,10 @@ function afterLoad(): void {
 // <<<<<<< EXAMPLE
 
     // EXAMPLE CODE:
+    log(`Hello, ${Preferences.get(P.username)}!`);
     log(`This page contains ${document.querySelectorAll("div").length} div(s).`);
+    const form = Preferences.htmlMenu(menuGenerator);
+    document.body.appendChild(form);
 // =======
 // >>>>>>> CLEAN
 }

@@ -46,7 +46,7 @@ const OPERATIONS: ConditionalOperation[] = [
     // Insert foobars:
     {
         description: "insert foobars",
-        condition: Preferences.get(P.insert_foobars), // Run this action only if the corresponding preference is set to true.
+        condition: Preferences.get(P.foobars._.insert), // Run this action only if the corresponding preference is set to true.
         selectors: [SITE.SELECTOR_MAIN], // Needs the main element in order to run.
         action: INSERT_FOOBARS, // This action is imported from its own module.
     },

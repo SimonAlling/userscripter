@@ -12,17 +12,15 @@ function foobar(i: number): HTMLElement {
     return div;
 }
 
-export default
-
-(mainDiv: HTMLElement) => {
-    const n = Preferences.get(P.number_of_foobars);
+export default (mainDiv: HTMLElement) => {
+    const n = Preferences.get(P.foobars._.number);
     const h2 = document.createElement("h2");
     const prefix = document.createTextNode(`Below are ${n} foobars. `);
     const link = document.createElement("a");
     link.textContent = "Moar!";
     link.href = "javascript:void(0)";
     link.addEventListener("click", () => {
-        Preferences.set(P.number_of_foobars, n + 1);
+        Preferences.set(P.foobars._.number, n + 1);
         location.reload();
     });
     h2.appendChild(prefix);

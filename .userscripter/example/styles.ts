@@ -36,7 +36,7 @@ const STYLESHEET_MODULES: StylesheetModule[] = [
 
     // Foobars:
     {
-        condition: Preferences.get(P.insert_foobars),
+        condition: Preferences.get(P.foobars._.insert),
         css: CSS_FOOBARS,
     },
 // =======
