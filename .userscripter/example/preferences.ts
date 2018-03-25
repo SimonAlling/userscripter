@@ -10,7 +10,7 @@ import {
 // >>>>>>> CLEAN
 } from "ts-preferences";
 
-export default Object.freeze({
+export default {
 // <<<<<<< EXAMPLE
     foobars: {
         label: "Foobars",
@@ -51,4 +51,4 @@ export default Object.freeze({
     }),
 // =======
 // >>>>>>> CLEAN
-});
+};
