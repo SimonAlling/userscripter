@@ -11,7 +11,7 @@
     "preact": "^8.2.7",
     "replace": "^0.3.0",
     "strip-comments": "^0.4.4",
-    "ts-preferences": "^0.4.0",
+    "ts-preferences": "^0.5.0",
     "ts-type-guards": "^0.2.2",
     "typescript": "^2.9.2",
     "webpack": "^3.0.0",
