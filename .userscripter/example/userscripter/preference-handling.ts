@@ -14,11 +14,19 @@ function responseHandler<T extends AllowedTypes>(summary: RequestSummary<T>, pre
 
         case Status.INVALID_VALUE:
             if (summary.action === "get") {
-                logWarning(`The value found in localStorage for preference '${summary.preference.key}' was invalid. Replacing it with ${JSON.stringify(response.value)}.`);
+                // response.saved is defined if and only if action is "get" and status is INVALID_VALUE:
+                logWarning(`The value found in localStorage for preference '${summary.preference.key}' (${JSON.stringify(response.saved)}) was invalid. Replacing it with ${JSON.stringify(response.value)}.`);
                 preferences.set(summary.preference, response.value);
             }
             if (summary.action === "set") {
                 logWarning(`Could not set value ${JSON.stringify(response.value)} for preference '${summary.preference.key}' because it was invalid.`);
+            }
+            return response;
+
+        case Status.TYPE_ERROR:
+            if (summary.action === "get") {
+                logWarning(`The value found in localStorage for preference '${summary.preference.key}' was not a ${typeof summary.preference.default}. Replacing it with ${JSON.stringify(response.value)}.`);
+                preferences.set(summary.preference, response.value);
             }
             return response;
 
