@@ -14,7 +14,8 @@
     "ts-preferences": "^0.7.0",
     "ts-type-guards": "^0.3.1",
     "typescript": "^2.9.2",
-    "webpack": "^3.0.0",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8",
     "webpack-strip": "^0.1.0"
   }
 }

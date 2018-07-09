@@ -21,6 +21,7 @@ module.exports = (env = {}) => {
     const PRODUCTION = Boolean(env.production);
 
     return {
+        mode: PRODUCTION ? "production" : "development",
         entry: {
             "userscript": IO.FILE_MAIN,
         },
