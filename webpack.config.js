@@ -34,24 +34,11 @@ module.exports = (env = {}) => {
                 {
                     // Loaders chained from the bottom up:
                     loaders: [
-                        // TypeScript with Babel:
                         {
                             loader: 'awesome-typescript-loader',
                             options: {
-                                useBabel: PRODUCTION,
-                                useCache: true,
                                 allowJs: true,
-                                babelOptions: {
-                                    presets: [
-                                        ["env", {
-                                            modules: false, // don't touch ES6 module syntax
-                                            targets: {
-                                                browsers: ["last 3 versions"]
-                                            },
-                                        }]
-                                    ],
-                                },
-                            }
+                            },
                         },
                     ],
                     // Only include source directory and libraries:
@@ -97,7 +84,6 @@ module.exports = (env = {}) => {
             },
         },
         plugins: onlyTruthy([
-            PRODUCTION && new webpack.optimize.ModuleConcatenationPlugin(),
             PRODUCTION && new MinifyPlugin(),
         ]),
     };

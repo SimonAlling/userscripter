@@ -16,7 +16,7 @@
         "jsxFactory": "h",
         "target": "es6",
         "strict": true,
-        "module": "CommonJS",
+        "module": "es2015",
         "moduleResolution": "node",
         "preserveConstEnums": true
     },
