@@ -1,5 +1,5 @@
 import { insertCSS } from "lib/html";
-import { StylesheetManager } from "lib/stylesheet-manager";
+import * as StylesheetManager from "lib/stylesheet-manager";
 import { Version } from "lib/versioning";
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
