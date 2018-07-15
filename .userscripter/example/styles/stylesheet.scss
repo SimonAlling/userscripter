@@ -1,0 +1,22 @@
+/*
+******** README ********
+
+This is the main stylesheet for the userscript.
+
+Logic such as conditions for certain CSS snippets should reside in `stylesheet-modules.ts`.
+*/
+
+// <<<<<<< EXAMPLE
+$SELECTOR_HEADING: getGlobal("SITE.SELECTOR_HEADING");
+$HEADING_PREFIX_AND_SUFFIX: getGlobal("CONFIG.HEADING_PREFIX_AND_SUFFIX");
+
+html body {
+    background-color: rgb(144, 238, 144);
+    color: green;
+}
+
+#{$SELECTOR_HEADING}::before, #{$SELECTOR_HEADING}::after {
+    content: "#{$HEADING_PREFIX_AND_SUFFIX}";
+}
+// =======
+// >>>>>>> CLEAN

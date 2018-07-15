@@ -1,7 +1,7 @@
-import * as CONFIG from "globals-config";
+import get from "../config/get";
 
-export const NAME: string = "%USERSCRIPT_CONFIG_sitename%";
-export const HOSTNAME: string = "%USERSCRIPT_CONFIG_hostname%";
+export const NAME: string = get("sitename");
+export const HOSTNAME: string = get("hostname");
 // <<<<<<< EXAMPLE
 
 export const SELECTOR_HEADING: string = "body h1";

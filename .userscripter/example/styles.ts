@@ -1,12 +1,6 @@
 import { StylesheetModule } from "lib/stylesheet-manager";
-import CSS_MAIN_STYLESHEET from "styles/stylesheet";
 import { Preferences } from "userscripter/preference-handling";
 import P from "preferences";
-// <<<<<<< EXAMPLE
-
-import CSS_FOOBARS from "styles/foobars";
-// =======
-// >>>>>>> CLEAN
 import * as SITE from "globals-site";
 import * as CONFIG from "globals-config";
 
@@ -30,14 +24,14 @@ const STYLESHEET_MODULES: StylesheetModule[] = [
     // Main stylesheet:
     {
         condition: ALWAYS,
-        css: CSS_MAIN_STYLESHEET,
+        css: require("styles/stylesheet"),
     },
 // <<<<<<< EXAMPLE
 
     // Foobars:
     {
         condition: Preferences.get(P.foobars._.insert),
-        css: CSS_FOOBARS,
+        css: require("styles/foobars"),
     },
 // =======
 // >>>>>>> CLEAN

@@ -21,11 +21,8 @@ try {
     const Userscripter = require("./userscripter.js");
     Userscripter.readConfig();
     log("Done!");
-    log("Checking metadata...");
-    Userscripter.readMetadata();
-    log("Done!");
     // Wipe .user.js file:
-    const outputFileName = Userscripter.readConfig().id + IO.EXTENSION_USERSCRIPT;
+    const outputFileName = IO.outputFileName(Userscripter.readConfig().id);
     Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
 } catch (err) {
     log("");

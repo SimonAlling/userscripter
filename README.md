@@ -119,7 +119,7 @@ Open `config.json` and edit its content to fit your needs:
 * `namespace` – your own website
 * `run-at` – [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
 
-In the source code, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is any of the properties described above (`id`, `name` etc), are automatically replaced by the build script. Example:
+Use this information in TypeScript files like so:
 
 `config.json`:
 
@@ -129,33 +129,33 @@ In the source code, *all* occurrences of `%USERSCRIPT_CONFIG_*%`, where `*` is a
 }
 ```
 
-Source code:
+Source code (e.g. `main.ts`):
 
 ```typescript
-const ID     = "%USERSCRIPT_CONFIG_id%"; // Typical usage.
-const ID_BAD =  %USERSCRIPT_CONFIG_id% ; // No quotation marks here.
+import get from "../config/get";
+
+const USERSCRIPT_ID = get("id");
 ```
 
 Generated code:
 
 ```typescript
-const ID     = "example-userscript"; // What we wanted.
-const ID_BAD =  example-userscript ; // Error or undesired behavior!
+const USERSCRIPT_ID = "example-userscript";
 ```
+
+It is probably a good idea to use the `get` function only in [`globals-config.ts` and `globals-site.ts`](#global-constants), since it does not provide any auto-completion for config keys and because it throws (at compile time) on unknown keys.
 
 
 ### Metadata
 
-The userscript metadata sits in `config/metadata.txt`. Feel free to edit its contents at any time.
+The userscript metadata sits in `config/metadata.ts`. Feel free to edit its contents at any time.
 
 The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `config.json` provides and since their syntax is not entirely obvious. More information can be found in [the Google Chrome developer documentation](match-patterns). In most cases, setting `hostname` properly in `config.json` will do.
 
 
 ### Script
 
-The actual userscript code resides in `.ts` files so that TypeScript can be used. Vanilla JavaScript works as well.
-
-The following files in `src/` make up the core of the userscript:
+The actual userscript code resides in `.ts` files. The following files in `src/` make up the core of the userscript:
 
 * **`main.ts`** contains the following important functions:
     * **`beforeLoad()`**\
@@ -206,7 +206,7 @@ A userscript typically consists primarily of **CSS to be inserted** and **operat
 
 `condition` is a `boolean` which can be used to control when the particular CSS module should be inserted. `ALWAYS` means that the module is always inserted.
 
-You can put CSS modules in the `styles/` folder and import them into `styles.ts`. [The example code base](#initialize) shows an example of this.
+You can put CSS/SASS modules in the `styles/` folder and import them into `styles.ts`. [The example code base](#initialize) shows an example of this.
 
 
 ### Performing operations
@@ -259,6 +259,19 @@ export const SELECTOR_HEADING = "body h1";
 export const SELECTOR_AUTHOR = ".author";
 ```
 
+Global constants can also be used in SASS modules, as demonstrated in `styles/stylesheet.scss` in the example code base:
+
+```sass
+$SELECTOR_HEADING: getGlobal("SITE.SELECTOR_HEADING");
+$HEADING_PREFIX_AND_SUFFIX: getGlobal("CONFIG.HEADING_PREFIX_AND_SUFFIX");
+
+#{$SELECTOR_HEADING}::before, #{$SELECTOR_HEADING}::after {
+    content: "#{$HEADING_PREFIX_AND_SUFFIX}";
+}
+```
+
+`getGlobal` throws at compile time if the global constant is not defined.
+
 
 ### Included libraries
 
@@ -298,17 +311,17 @@ If one or more required properties are missing in the config file, the build scr
 
 It is possible to tweak the required and optional properties by editing these files, respectively:
 
-    .userscripter/validation/config-required.json
-    .userscripter/validation/config-optional.json
+    config/validation/config-required.json
+    config/validation/config-optional.json
 
 
 ### Metadata validation
 
-The _generated_ metadata (after population of config constants) must match the userscript specification in terms of syntax.
+The metadata must match the userscript specification in terms of syntax.
 
 Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
 
-    .userscripter/validation/metadata-required.json
+    config/validation/metadata-required.json
 
 
 

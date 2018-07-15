@@ -3,4 +3,6 @@ node_modules
 *.user.js
 .babelrc
 .awcache
+.webpack-output.js
+.metadata-output.txt
 src

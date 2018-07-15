@@ -1,11 +1,13 @@
-import { prefixer } from "lib/utilities";
-import { Version } from "lib/versioning";
+import get from "../config/get";
 
-export const USERSCRIPT_ID: string = "%USERSCRIPT_CONFIG_id%";
-export const USERSCRIPT_NAME: string = "%USERSCRIPT_CONFIG_name%";
-export const USERSCRIPT_VERSION: Version = new Version("%USERSCRIPT_CONFIG_version%");
-export const USERSCRIPT_VERSION_STRING: string = Version.stringify(USERSCRIPT_VERSION);
-export const USERSCRIPT_AUTHOR: string = "%USERSCRIPT_CONFIG_author%";
+function prefixer(prefix: string): (x: string) => string {
+    return x => prefix + x;
+}
+
+export const USERSCRIPT_ID: string = get("id");
+export const USERSCRIPT_NAME: string = get("name");
+export const USERSCRIPT_VERSION_STRING: string = get("version");
+export const USERSCRIPT_AUTHOR: string = get("author");
 
 export const PREFIX_ID: string = USERSCRIPT_ID + "-";
 export const PREFIX_CLASS: string = USERSCRIPT_ID + "-";
@@ -23,7 +25,7 @@ export const ID_STYLE_ELEMENT: string = i("main-style-element");
 // <<<<<<< EXAMPLE
 
 // EXAMPLE CODE:
-export const HEADING_PREFIX_AND_SUFFIX: string = "★";
+export const HEADING_PREFIX_AND_SUFFIX: string = " ★ ";
 
 export const CLASS_FOOBAR: string = c("foobar");
 export const CLASS_PREFERENCE_DESCRIPTION: string = c("preference-description");

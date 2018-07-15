@@ -13,12 +13,11 @@ const stringifyNumber = Utils.stringifyNumber;
 try {
     log("");
     log("Assembling userscript...");
-    const metadata = Userscripter.populate(Userscripter.readMetadata());
+    const metadata = Userscripter.readMetadata();
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
-    Metadata.validate(metadata);
 
     // Final .user.js file:
-    const outputFileName = Userscripter.readConfig().id + IO.EXTENSION_USERSCRIPT;
+    const outputFileName = IO.outputFileName(Userscripter.readConfig().id);
     const outputFileContent = metadata + "\n" + script;
     Utils.writeFileContent(
         outputFileName,
@@ -27,6 +26,7 @@ try {
 
     // Delete Webpack output:
     Utils.deleteFile_async(IO.FILE_WEBPACK_OUTPUT);
+    Utils.deleteFile_async(IO.FILE_METADATA_OUTPUT);
     log("Done!");
 
     // Check for unrecognized config properties:
@@ -47,7 +47,7 @@ try {
         log("");
         log(`I skip properties that I don't recognize, so you may want to check your config file for typos and make sure you only use these keys:`);
         log("");
-        logList(Userscripter.REPLACEMENT_KEYS);
+        logList(Userscripter.CONFIG_KEYS);
         log("");
         Userscripter.logDefinePropertiesMessage();
         log("");

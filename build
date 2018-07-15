@@ -12,9 +12,10 @@ readonly DIR_NODE_MODULES="node_modules"
 readonly DIR_BUILD=".userscripter/build"
 readonly DIR_SRC="src"
 readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
-readonly FILE_WEBPACK_CONFIG="webpack.config.js"
+readonly FILE_WEBPACK_CONFIG="webpack.config.ts"
 readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
+readonly FILE_TS_CONFIG_WEBPACK="tsconfig.webpack.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
 
 readonly FLAG_PRODUCTION="production"
@@ -32,6 +33,7 @@ readonly LOG_LEVELS=(
     "$LOG_LEVEL_NONE"
 )
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
+readonly CMD_WEBPACK_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_WEBPACK\" $CMD_WEBPACK"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
 readonly CMD_INSTALL="npm install"
@@ -239,6 +241,15 @@ if [ ! -e $FILE_TS_CONFIG ]; then
     exit 14
 fi
 
+# Check if Webpack TypeScript config file exists:
+if [ ! -e $FILE_TS_CONFIG ]; then
+    echo "$ERROR_PREFIX""Webpack TypeScript config file not found."
+    echo
+    echo "I need the file $FILE_TS_CONFIG in order to build, but I couldn't find it in this directory."
+    echo
+    exit 15
+fi
+
 # Check config and metadata and exit if they are invalid:
 node $DIR_BUILD/prepare.js
 if [ $? -gt 0 ]; then
@@ -254,10 +265,10 @@ echo
 # Run Webpack:
 if [ "$mode" == "$FLAG_PRODUCTION" ]; then
     echo "Building for production..."
-    $CMD_WEBPACK --env.production --env.logLevel="$optval_logLevel"
+    $CMD_WEBPACK_TS_NODE --log-level "$optval_logLevel" --mode production
 else
     echo "Building for development... (use --$FLAG_PRODUCTION to build with transpilation and minification)"
-    $CMD_WEBPACK --env.logLevel="$optval_logLevel"
+    $CMD_WEBPACK_TS_NODE --log-level "$optval_logLevel" --mode development
 fi
 
 # Exit if Webpack build failed:

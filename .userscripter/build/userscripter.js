@@ -3,16 +3,14 @@ const IO = require("./io.js");
 const Metadata = require("./metadata.js");
 const not = Utils.not;
 const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
-const REPLACEMENT_PREFIX = "%USERSCRIPT_CONFIG_";
-const REPLACEMENT_SUFFIX = "%";
 const REGEX_JSON_KEY = /\s*"([^\r\n:"]+?)"\s*:/;
 
 // These keys must be present in the config file:
-const REPLACEMENT_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
+const CONFIG_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
 // These keys are recognized but not required:
-const REPLACEMENT_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_OPTIONAL);
+const CONFIG_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_OPTIONAL);
 // All recognized replacement keys:
-const REPLACEMENT_KEYS = REPLACEMENT_KEYS_REQUIRED.concat(REPLACEMENT_KEYS_OPTIONAL);
+const CONFIG_KEYS = CONFIG_KEYS_REQUIRED.concat(CONFIG_KEYS_OPTIONAL);
 
 const LOG_LEVELS = {
     ALL: 0,
@@ -30,16 +28,12 @@ const LOG_FUNCTIONS_BY_LEVEL = [
 ];
 
 function isRecognizedConfigProperty(key) {
-    return REPLACEMENT_KEYS.includes(key);
-}
-
-function replacementSubstring(key) {
-    return REPLACEMENT_PREFIX + key + REPLACEMENT_SUFFIX;
+    return CONFIG_KEYS.includes(key);
 }
 
 function readConfig() {
     const config = Utils.readJSONStringRecord(IO.FILE_CONFIG);
-    const missingKeys = REPLACEMENT_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
+    const missingKeys = CONFIG_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
     if (missingKeys.length > 0) {
         const plural = missingKeys.length > 1;
         throw new RequiredPropertyMissingException(
@@ -51,7 +45,7 @@ function readConfig() {
 }
 
 function readMetadata() {
-    const rawMetadata = Utils.readFileContent(IO.FILE_METADATA);
+    const rawMetadata = Utils.readFileContent(IO.FILE_METADATA_OUTPUT);
     Metadata.validate(rawMetadata);
     return rawMetadata;
 }
@@ -91,26 +85,14 @@ function duplicateConfigPropertiesWithValues() {
     return keys.map(key => key + ": " + JSON.stringify(config[key]));
 }
 
-function populate(source) {
-    const config = readConfig();
-    // Create replacement mappings (from substring to replacement):
-    const replacementMappings = REPLACEMENT_KEYS
-        .filter(key => config.hasOwnProperty(key))
-        .map(key => Object.freeze({
-            substring: replacementSubstring(key),
-            replacement: config[key],
-        }));
-    return replacementMappings.reduce((content, mapping) => content.replace(new RegExp(mapping.substring, "g"), mapping.replacement), source);
-}
-
 function logFunctionsToRemove(logLevel) {
     return [].concat(...LOG_FUNCTIONS_BY_LEVEL.slice(0, logLevel));
 }
 
 module.exports = {
-    REPLACEMENT_KEYS,
-    REPLACEMENT_KEYS_REQUIRED,
-    REPLACEMENT_KEYS_OPTIONAL,
+    CONFIG_KEYS,
+    CONFIG_KEYS_REQUIRED,
+    CONFIG_KEYS_OPTIONAL,
     LOG_LEVELS,
     readConfig,
     readMetadata,
@@ -118,6 +100,5 @@ module.exports = {
     duplicateConfigProperties,
     duplicateConfigPropertiesWithValues,
     logDefinePropertiesMessage,
-    populate,
     logFunctionsToRemove,
 };
