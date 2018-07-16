@@ -33,7 +33,6 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
      1. [Metadata validation](#metadata-validation)
   1. [Advanced](#advanced)
      1. [Build options](#build-options)
-        1. [`--debug`](#--debug)
         1. [`--log-level`](#--log-level)
         1. [`--production`](#--production)
 
@@ -318,13 +317,6 @@ Some properties are also required in the same sense as the required config prope
 ### Build options
 
 The build script has some options that can be used to customize its output. They are listed here in alphabetical order.
-
-
-#### `--debug`
-
-Include source maps.
-
-    build --debug
 
 
 #### `--log-level`
