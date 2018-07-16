@@ -73,7 +73,7 @@ function printHelp() {
     echo "Options:"
     echo "  -d, --debug                   include source maps"
     echo "  -h, --help                    display this help and exit"
-    echo "  -l, --log-level=LEVEL         set userscript logging verbosity to LEVEL"
+    echo "  -l, --log-level LEVEL         set userscript logging verbosity to LEVEL"
     echo "  -p, --production              transpile and minify userscript"
     echo
     echo "Examples:"
@@ -100,7 +100,7 @@ function printLogHelp() {
     echo
     echo "Example:"
     echo
-    echo "${INDENTATION}build $FLAG_PRODUCTION $FLAG_LOG_LEVEL $LOG_LEVEL_ERROR"
+    echo "${INDENTATION}build --$FLAG_PRODUCTION --$FLAG_LOG_LEVEL $LOG_LEVEL_ERROR"
     echo
 }
 
