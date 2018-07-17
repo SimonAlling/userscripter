@@ -20,6 +20,7 @@ readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
+readonly FILE_README="README.md"
 readonly COMMAND_EXAMPLE="example"
 readonly COMMAND_CLEAN="clean"
 readonly URL_REPO="https://github.com/SimonAlling/userscripter"
@@ -37,6 +38,7 @@ function abort() {
 }
 
 function echoFilesToOverwrite() {
+    echo "$INDENTATION$FILE_README"
     for f in "$DIR_EXAMPLE"/**; do
         filename="${f//$DIR_EXAMPLE\//}"
         if [ -f "$DIR_SRC/$filename" ]; then
@@ -292,6 +294,21 @@ if [ $? -eq 0 ]; then
         echo "$ERROR_PREFIX""Failed to update $FILE_GITIGNORE."
         echo
         exit 40
+    else
+        echo "Done."
+        echo
+    fi
+fi
+
+# Create empty readme:
+if [ $? -eq 0 ]; then
+    echo "Creating empty $FILE_README ..."
+    echo "# example-userscript" > "$FILE_README"
+    if [ $? -gt 0 ]; then
+        echo
+        echo "$ERROR_PREFIX""Failed to create empty $FILE_README."
+        echo
+        exit 41
     else
         echo "Done."
         echo
