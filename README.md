@@ -27,6 +27,7 @@ A template/framework for quickly creating complex [userscripts](https://wiki.gre
      1. [Inserting CSS](#inserting-css)
      1. [Performing operations](#performing-operations)
      1. [Global constants](#global-constants)
+     1. [Preferences](#preferences)
      1. [Included libraries](#included-libraries)
   1. [Validation](#validation)
      1. [Configuration validation](#configuration-validation)
@@ -271,6 +272,17 @@ $HEADING_PREFIX_AND_SUFFIX: getGlobal("CONFIG.HEADING_PREFIX_AND_SUFFIX");
 ```
 
 `getGlobal` throws at compile time if the global constant is not defined.
+
+
+### Preferences
+
+Userscripter provides run-time preferences through the [`ts-preferences`](https://www.npmjs.com/package/ts-preferences) API. How preferences can be defined and used is demonstrated in these files in the example code base:
+
+* `preferences.ts`
+* `main.ts`
+* `operations.ts`
+* `styles.ts`
+* `preferences-menu.tsx`
 
 
 ### Included libraries
