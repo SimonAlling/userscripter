@@ -108,7 +108,7 @@ Changes to any of the files described below are applied when building the usersc
 
 ### Configuration
 
-Open `config.json` and edit its content to fit your needs:
+Open `config/userscript.json` and edit its content to fit your needs:
 
 * `id` – a slug for use in filenames, URLs etc
 * `name` – your userscript's name
@@ -122,7 +122,7 @@ Open `config.json` and edit its content to fit your needs:
 
 Use this information in TypeScript files like so:
 
-`config.json`:
+`userscript.json`:
 
 ```json
 {
@@ -151,7 +151,7 @@ It is probably a good idea to use the `get` function only in [`globals-config.ts
 
 The userscript metadata sits in `config/metadata.ts`. Feel free to edit its contents at any time.
 
-The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `config.json` provides and since their syntax is not entirely obvious. More information can be found in [the Google Chrome developer documentation](match-patterns). In most cases, setting `hostname` properly in `config.json` will do.
+The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `userscript.json` provides and since their syntax is not entirely obvious. More information can be found in [the Google Chrome developer documentation](match-patterns). In most cases, setting `hostname` properly in `userscript.json` will do.
 
 
 ### Script
@@ -317,14 +317,14 @@ The build script is intended to protect against typos and facilitate well-writte
 
 ### Configuration validation
 
-Some properties are required in the config file (`config/config.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
+Some properties are required in the config file (`config/userscript.json`), and some are optional. The union of these sets is referred to as _recognized_ properties.
 
 If one or more required properties are missing in the config file, the build script will refuse to build. Unrecognized properties will just yield a warning.
 
 It is possible to tweak the required and optional properties by editing these files, respectively:
 
-    config/validation/config-required.json
-    config/validation/config-optional.json
+    config/validation/userscript-required.json
+    config/validation/userscript-optional.json
 
 
 ### Metadata validation

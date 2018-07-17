@@ -8,9 +8,9 @@ const ARGUMENT_EXAMPLE = "example";
 const FILE_METADATA               = DIR_CONFIG + "metadata.ts";
 const FILE_METADATA_REQUIRED_TAGS = DIR_VALIDATION + "metadata-required.json";
 
-const FILE_CONFIG                     = DIR_CONFIG + "config.json";
-const FILE_CONFIG_PROPERTIES_REQUIRED = DIR_VALIDATION + "config-required.json";
-const FILE_CONFIG_PROPERTIES_OPTIONAL = DIR_VALIDATION + "config-optional.json";
+const FILE_CONFIG                     = DIR_CONFIG + "userscript.json";
+const FILE_CONFIG_PROPERTIES_REQUIRED = DIR_VALIDATION + "userscript-required.json";
+const FILE_CONFIG_PROPERTIES_OPTIONAL = DIR_VALIDATION + "userscript-optional.json";
 
 const FILE_MAIN            = DIR_SOURCE + "main.ts";
 const FILE_WEBPACK_OUTPUT  = ".webpack-output.js";
