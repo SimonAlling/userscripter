@@ -344,8 +344,8 @@ Unrecognized properties will just yield a warning.
 
 It is possible to tweak the required and optional properties by editing these files, respectively:
 
-    config/validation/userscript-required.json
-    config/validation/userscript-optional.json
+* `config/validation/userscript-required.json`
+* `config/validation/userscript-optional.json`
 
 
 ### Metadata validation
@@ -354,7 +354,7 @@ The metadata must match the userscript specification in terms of syntax.
 
 Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
 
-    config/validation/metadata-required.json
+* `config/validation/metadata-required.json`
 
 
 
