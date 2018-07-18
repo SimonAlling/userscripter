@@ -27,7 +27,7 @@ function onlyTruthy<T>(array: T[]): T[] {
 }
 
 // Function declaration notation does not work because SassUtils is undefined then.
-const toSassDimension = (s: string) => {
+const toSassDimension = (s: string): any => {
     const cssUnits = ["rem","em","vh","vw","vmin","vmax","ex","%","px","cm","mm","in","pt","pc","ch"];
     const parts = s.match(/^([\.0-9]+)([a-zA-Z]+)$/);
     if (parts === null) {
@@ -40,11 +40,11 @@ const toSassDimension = (s: string) => {
     return s;
 }
 
-const toSassDimension_recursively = (x: any) => {
+const toSassDimension_recursively = (x: any): any => {
     if (typeof x === "string") {
         return toSassDimension(x);
     } else if (typeof x === "object") {
-        const result = {};
+        const result: any = {};
         Object.keys(x).forEach(key => {
             result[key] = toSassDimension_recursively(x[key]);
         });
@@ -94,7 +94,7 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                             loader: "sass-loader",
                             options: {
                                 functions: {
-                                    getGlobal: keyString => {
+                                    getGlobal: (keyString: any) => {
                                         const keyParts = keyString.getValue().split(".");
                                         function dig(obj: any, keys: string[]): any {
                                             if (keys.length === 0) {
