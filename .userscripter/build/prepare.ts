@@ -3,6 +3,7 @@ import * as IO from "./io";
 import * as Userscripter from "./userscripter";
 import * as Metadata from "./metadata";
 const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
+const JSONTypeError = Utils.JSONTypeError;
 const IOException = Utils.IOException;
 
 const log = Utils.log;
@@ -22,10 +23,9 @@ try {
     Userscripter.readConfig();
     log("Done!");
     log("Checking metadata...");
-    // Must be required here to produce pretty error messages:
-    const processedMetadata = require("../../" + IO.FILE_METADATA).default.trim();
-    Metadata.validate(processedMetadata);
-    Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, processedMetadata);
+    // Must be required here (rather than imported above) to produce pretty error messages:
+    const unvalidatedMetadata = require("../../" + IO.FILE_METADATA).default.trim();
+    Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, Metadata.validate(unvalidatedMetadata));
     log("Done!");
     // Wipe .user.js file:
     const outputFileName = IO.outputFileName(Userscripter.readConfig().id);
@@ -46,6 +46,12 @@ try {
         logList(missingKeys);
         log("");
         logDefineRequiredPropertiesMessage();
+    } else if (err instanceof JSONTypeError) {
+        logError(`Invalid property in this file:`);
+        log("");
+        logList([IO.format(IO.FILE_CONFIG)]);
+        log("");
+        log(err.message);
     } else {
         logError(err.message);
     }

@@ -5,6 +5,8 @@ const not = Utils.not;
 const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
 const REGEX_JSON_KEY = /\s*"([^\r\n:"]+?)"\s*:/;
 
+type Config = { [key: string]: string };
+
 // These keys must be present in the config file:
 export const CONFIG_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
 // These keys are recognized but not required:
@@ -43,8 +45,22 @@ export function isRecognizedConfigProperty(key: string): boolean {
     return CONFIG_KEYS.includes(key);
 }
 
-export function readConfig(): { [k: string]: string } {
-    const config = Utils.readJSONStringRecord(IO.FILE_CONFIG);
+export function readConfig(): Config {
+    try {
+        return parseConfig(Utils.readJSON(IO.FILE_CONFIG).raw);
+    } catch (err) {
+        if (err instanceof Utils.JSONException) {
+            throw new TypeError(Utils.errorMessage_expectedContent({
+                filename: IO.FILE_CONFIG,
+                expected: err.expected,
+                actual: err.actual,
+            }));
+        } else throw err;
+    }
+}
+
+export function parseConfig(configFileContent: string): Config {
+    const config = Utils.parseJSONStringRecord(configFileContent);
     const missingKeys = CONFIG_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
     if (missingKeys.length > 0) {
         const plural = missingKeys.length > 1;
@@ -65,8 +81,7 @@ export function logDefinePropertiesMessage(): void {
     ].map(IO.format));
 }
 
-export function unrecognizedConfigProperties(): string[] {
-    const config = readConfig();
+export function unrecognizedConfigProperties(config: Config): string[] {
     return Object.keys(config).filter(not(isRecognizedConfigProperty));
 }
 
@@ -74,9 +89,8 @@ export function isDuplicate_filter<T>(item: T, index: number, array: T[]): boole
     return Utils.isDuplicateIn(array)(item);
 }
 
-export function duplicateConfigProperties(): string[] {
-    const fileContent = Utils.readFileContent(IO.FILE_CONFIG);
-    const matches_keyWithJunk = fileContent.match(new RegExp(REGEX_JSON_KEY.source, "g")) || [];
+export function duplicateConfigProperties(configFileContent: string): string[] {
+    const matches_keyWithJunk = configFileContent.match(new RegExp(REGEX_JSON_KEY.source, "g")) || [];
     const duplicates_recognized = matches_keyWithJunk
         .map(match => (match.match(REGEX_JSON_KEY) || [])[1]) // keys without junk
         .filter(isDuplicate_filter) // only duplicates
@@ -85,9 +99,9 @@ export function duplicateConfigProperties(): string[] {
     return duplicates_recognized;
 }
 
-export function duplicateConfigPropertiesWithValues(): string[] {
-    const keys = duplicateConfigProperties();
-    const config = readConfig();
+export function duplicateConfigPropertiesWithValues(configFileContent: string): string[] {
+    const keys = duplicateConfigProperties(configFileContent);
+    const config = parseConfig(configFileContent);
     return keys.map(key => key + ": " + JSON.stringify(config[key]));
 }
 

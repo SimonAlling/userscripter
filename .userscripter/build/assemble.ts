@@ -14,6 +14,7 @@ const stringifyNumber = Utils.stringifyNumber;
 try {
     log("");
     log("Assembling userscript...");
+    const configFileContent = Utils.readJSON(IO.FILE_CONFIG).raw;
     const metadata = Metadata.validate(unvalidatedMetadata);
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
@@ -31,7 +32,8 @@ try {
     log("Done!");
 
     // Check for unrecognized config properties:
-    const unrecognizedKeys = Userscripter.unrecognizedConfigProperties();
+    const config = Userscripter.parseConfig(configFileContent);
+    const unrecognizedKeys = Userscripter.unrecognizedConfigProperties(config);
     const numberOfUnrecognizedKeys = unrecognizedKeys.length;
     if (numberOfUnrecognizedKeys > 0) {
         const plural = numberOfUnrecognizedKeys > 1;
@@ -55,7 +57,7 @@ try {
     }
 
     // Check for duplicate config keys:
-    const duplicateProperties = Userscripter.duplicateConfigPropertiesWithValues();
+    const duplicateProperties = Userscripter.duplicateConfigPropertiesWithValues(configFileContent);
     const numberOfDuplicateProperties = duplicateProperties.length;
     if (numberOfDuplicateProperties > 0) {
         const plural = numberOfDuplicateProperties > 1;

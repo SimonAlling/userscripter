@@ -10,10 +10,21 @@ export class RequiredPropertyMissingException extends Error {
     }
 }
 
+export class JSONException extends Error {
+    constructor(public readonly expected: string, public readonly actual: string) {
+        super();
+    }
+}
+
 export class IOException extends Error {}
 
-export function formatIO(path: string): string {
-    return path.replace(/^\.\//, "");
+export class JSONTypeError extends TypeError {}
+
+type StringRecord = { [key: string]: string };
+
+interface Expectation {
+    requirement: (x: any) => boolean
+    description: string
 }
 
 interface FileContentError {
@@ -22,8 +33,12 @@ interface FileContentError {
     actual: string
 }
 
+export function formatIO(path: string): string {
+    return path.replace(/^\.\//, "");
+}
+
 export function errorMessage_expectedContent(file: FileContentError) {
-    return `I ran into an error while parsing this file:
+    return `Invalid content in this file:
 
 ${formattedList([formatIO(file.filename)])}
 
@@ -123,10 +138,17 @@ export function deleteFile_async(filename: string): void {
     });
 }
 
-export function readJSON(filename: string): any {
+export function parseJSON(json: string, expect: Expectation): any {
+    const parsedJSON = JSON.parse(json); // throws
+    if (expect.requirement(parsedJSON)) {
+        return parsedJSON;
+    } else throw new JSONException(expect.description, parsedJSON);
+}
+
+export function readJSON(filename: string): { raw: string, parsed: any } {
     try {
         const fileContent = readFileContent(filename); // throws
-        return JSON.parse(fileContent); // throws
+        return { raw: fileContent, parsed: JSON.parse(fileContent) }; // throws
     } catch (err) {
         if (err instanceof SyntaxError) {
             err.message += `\n\nThis file is causing the problem:\n\n${formattedList([formatIO(filename)])}`;
@@ -135,48 +157,69 @@ export function readJSON(filename: string): any {
     }
 }
 
-export function readJSONObject(filename: string): object {
-    const parsedJSON = readJSON(filename);
-    if (!Array.isArray(parsedJSON) && typeof parsedJSON === "object" && parsedJSON !== null) {
-        return parsedJSON;
-    } else {
-        throw new TypeError(errorMessage_expectedContent({
-            filename: filename,
-            expected: "a JSON-encoded object",
-            actual: parsedJSON,
-        }));
+export function readJSONWithParser<T>(filename: string, parser: (json: string) => T): T {
+    try {
+        return <T> parser(readJSON(filename).raw);
+    } catch (err) {
+        if (err instanceof JSONException) {
+            throw new TypeError(errorMessage_expectedContent({
+                filename: filename,
+                expected: err.expected,
+                actual: err.actual,
+            }));
+        } else throw err;
     }
+}
+
+export function parseJSONObject(json: string): object {
+    return parseJSON(json, {
+        requirement: x => !Array.isArray(x) && typeof x === "object" && x !== null,
+        description: "a JSON-encoded object",
+    });
+}
+
+export function readJSONObject(filename: string): object {
+    return readJSONWithParser(filename, parseJSONObject);
+}
+
+export function parseJSONArray(json: string): any[] {
+    return parseJSON(json, {
+        requirement: Array.isArray,
+        description: "a JSON-encoded array",
+    });
 }
 
 export function readJSONArray(filename: string): any[] {
-    const parsedJSON = readJSON(filename);
-    if (Array.isArray(parsedJSON)) {
-        return parsedJSON;
-    } else {
-        throw new TypeError(errorMessage_expectedContent({
-            filename: filename,
-            expected: "a JSON-encoded array",
-            actual: parsedJSON,
-        }));
-    }
+    return readJSONWithParser(filename, parseJSONArray);
 }
 
-export function readJSONStringRecord(filename: string): { [k: string]: string } {
-    const record = <{ [k: string]: any }> readJSONObject(filename); // throws
-    Object.keys(record).forEach(key => {
-        if (record.hasOwnProperty(key) && !isString(record[key])) {
-            throw new TypeError(`Invalid property "${key}" in ${filename}. Only strings allowed (found ${JSON.stringify(record[key])}).`);
+export function parseJSONStringRecord(json: string): StringRecord {
+    const parsed: any = parseJSONObject(json);
+    Object.keys(parsed).forEach(key => {
+        if (!isString(parsed[key])) {
+            throw new JSONTypeError(`I expected string values only, but I found ${JSON.stringify(parsed[key])} for key ${quote(key)}.`);
         }
     });
-    return <{ [k: string]: string }> record;
+    return <StringRecord> parsed;
+}
+
+export function readJSONStringRecord(filename: string): StringRecord {
+    return readJSONWithParser(filename, parseJSONStringRecord);
+}
+
+export function parseJSONStringArray(json: string): string[] {
+    const parsed = parseJSONArray(json);
+    parsed.forEach(item => {
+        if (!isString(item)) {
+            throw new JSONException(
+                "string values only",
+                JSON.stringify(item),
+            );
+        }
+    });
+    return <string[]> parsed;
 }
 
 export function readJSONStringArray(filename: string): string[] {
-    const array = readJSONArray(filename); // throws
-    array.forEach(item => {
-        if (!isString(item)) {
-            throw new TypeError(`Invalid item in ${filename}. Only strings allowed (found ${JSON.stringify(item)}).`);
-        }
-    });
-    return <string[]> array;
+    return readJSONWithParser(filename, parseJSONStringArray);
 }
