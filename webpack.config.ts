@@ -1,26 +1,19 @@
+import * as IO from "./.userscripter/build/io";
+import * as Userscripter from "./.userscripter/build/userscripter";
+import * as Utils from "./.userscripter/build/utils";
+import * as CONFIG from "./src/globals-config";
+import * as SITE from "./src/globals-site";
 const webpack = require("webpack");
 const path = require("path");
-const DIR_BUILD = "./.userscripter/build/";
-const IO = require(DIR_BUILD + "io.js");
-const Userscripter = require(DIR_BUILD + "userscripter");
 const MinifyPlugin = require("babel-minify-webpack-plugin");
 const WebpackStrip = require('webpack-strip');
 const SassUtils = require("node-sass-utils")(require("node-sass"));
-const Utils = require(DIR_BUILD + "utils");
-
-// Process and write metadata:
-console.log("Checking metadata ...");
-const Metadata = require(DIR_BUILD + "metadata.js");
-const processedMetadata = require(IO.FILE_METADATA).default.trim();
-Metadata.validate(processedMetadata);
-Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, processedMetadata);
 
 const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
 const EXTENSIONS_TS = ["ts", "tsx"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
-const LOG_LEVELS = Userscripter.LOG_LEVELS;
-const LOG_LEVELS_ALL = LOG_LEVELS.ALL;
+const LOG_LEVELS_ALL = Userscripter.LOG_LEVEL.ALL;
 
 function onlyTruthy<T>(array: T[]): T[] {
     return array.filter(Boolean);
@@ -34,7 +27,7 @@ const toSassDimension = (s: string): any => {
         return s;
     }
     const number = parts[1], unit = parts[2];
-    if (cssUnits.indexOf(unit) > -1) {
+    if (cssUnits.includes(unit)) {
         return new SassUtils.SassDimension(parseInt(number, 10), unit);
     }
     return s;
@@ -55,12 +48,12 @@ const toSassDimension_recursively = (x: any): any => {
 }
 
 const SASS_VARS = toSassDimension_recursively({
-    CONFIG: require("./src/globals-config.ts"),
-    SITE: require("./src/globals-site.ts"),
+    CONFIG,
+    SITE,
 });
 
 module.exports = (env: object, argv: { [k: string]: string }) => {
-    const logLevel = LOG_LEVELS[argv["log-level"]] || LOG_LEVELS_ALL;
+    const logLevel = Userscripter.toLogLevel(argv["log-level"]);
     const PRODUCTION = argv.mode === "production";
 
     return {
@@ -128,6 +121,7 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                         path.resolve(__dirname, IO.DIR_SOURCE),
                         path.resolve(__dirname, IO.DIR_LIBRARY),
                         path.resolve(__dirname, IO.DIR_CONFIG),
+                        path.resolve(__dirname, IO.DIR_BUILD),
                         PRODUCTION && path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
                     ]),
                     // Only run source code files through the loaders:
@@ -148,6 +142,9 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                     test: REGEX_SOURCE_CODE_TS,
                 },
             ],
+        },
+        node: {
+            fs: "empty", // so that fs is found
         },
         resolve: {
             modules: ["node_modules", path.resolve(__dirname, IO.DIR_SOURCE), path.resolve(__dirname, IO.DIR_LIBRARY)],

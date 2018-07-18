@@ -1,7 +1,8 @@
-const Utils = require("./utils");
-const IO = require("./io");
-const Userscripter = require("./userscripter");
-const Metadata = require("./metadata");
+import * as Utils from "./utils";
+import * as IO from "./io";
+import * as Userscripter from "./userscripter";
+import * as Metadata from "./metadata";
+import unvalidatedMetadata from "../../config/metadata";
 
 const log = Utils.log;
 const logWarning = Utils.logWarning;
@@ -13,7 +14,7 @@ const stringifyNumber = Utils.stringifyNumber;
 try {
     log("");
     log("Assembling userscript...");
-    const metadata = Userscripter.readMetadata();
+    const metadata = Metadata.validate(unvalidatedMetadata);
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
     // Final .user.js file:

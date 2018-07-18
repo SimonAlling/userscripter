@@ -13,7 +13,7 @@ const ANY_TAG = /[^\n]+/.source;
  *
  * @return {RegExp} The constructed regex object.
  */
-function regex(firstTag, secondTag, flags) {
+function regex(firstTag: string, secondTag: string, flags?: string): RegExp {
     return new RegExp(
           PREFIX_COMMENT+" "+MARKER_START+" "            // start marker
         + "(" + firstTag  + ")" + /\n/.source            // first tag
@@ -26,6 +26,16 @@ function regex(firstTag, secondTag, flags) {
     );
 }
 
+interface ConflictPart {
+    tag: string
+    content: string
+}
+
+interface Conflict {
+    first: ConflictPart
+    second: ConflictPart
+}
+
 /**
  * Finds all conflicts in a text where at least one of the options has a certain tag.
  *
@@ -34,22 +44,20 @@ function regex(firstTag, secondTag, flags) {
  *
  * @return {RegExp} A list of objects, each with the properties {@code first} and {@code second}, both of which with the string properties {@code tag} and {@code content}.
  */
-function conflicts(tagToKeep, text) {
+function conflicts(tagToKeep: string, text: string): Conflict[] {
     const REGEX_FIRST = regex(tagToKeep, ANY_TAG, "g");
     const REGEX_SECOND = regex(ANY_TAG, tagToKeep, "g");
     const match = text.match(new RegExp(REGEX_FIRST.source + "|" + REGEX_SECOND.source, "g"));
-    return match === null ? [] : match.map(substring => {
-        let conflict = {};
-        conflict.first = {
+    return match === null ? [] : match.map(substring => ({
+        first: {
             tag: substring.replace(REGEX_FIRST, "$1"),
             content: substring.replace(REGEX_FIRST, "$2"),
-        };
-        conflict.second = {
+        },
+        second: {
             tag: substring.replace(REGEX_SECOND, "$4"),
             content: substring.replace(REGEX_SECOND, "$3"),
-        };
-        return conflict;
-    });
+        },
+    }));
 }
 
 /**
@@ -59,8 +67,8 @@ function conflicts(tagToKeep, text) {
  *
  * @return {Function} A function from string to string that returns its argument with matching conflicts solved (keeping the option specified by {@code tagToKeep}).
  */
-function conflictResolver(tagToKeep) {
-    return function(content) {
+export function conflictResolver(tagToKeep: string): (content: string) => string {
+    return function(content: string): string {
         return conflicts(tagToKeep, content).reduce((text, conflict) => {
             if (conflict.first.tag === tagToKeep) {
                 // The first conflict marker matches what we want to keep.
@@ -75,7 +83,3 @@ function conflictResolver(tagToKeep) {
         }, content);
     };
 }
-
-module.exports = {
-    conflictResolver,
-};

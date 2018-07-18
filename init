@@ -18,6 +18,8 @@ readonly CMD_REBUILD="npm rebuild"
 readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
+readonly FILE_TS_CONFIG_TS_NODE="tsconfig.webpack.json"
+readonly CMD_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $DIR_NODE_MODULES/.bin/ts-node"
 readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
 readonly FILE_README="README.md"
@@ -250,7 +252,7 @@ cp -r --force "$DIR_EXAMPLE"/* "$DIR_SRC"
 for f in "$DIR_EXAMPLE"/**; do
     if [ ! -d "$f" ]; then
         file_dest="${f/$DIR_EXAMPLE/$DIR_SRC}"
-        cat "$f" | node "$DIR_BUILD/init.js" "$argumentToInit" > "$file_dest"
+        cat "$f" | $CMD_TS_NODE "$DIR_BUILD/init.ts" "$argumentToInit" > "$file_dest"
         if [ $? -gt 0 ]; then
             echo
             echo "$ERROR_PREFIX""Failed to create $file_dest."

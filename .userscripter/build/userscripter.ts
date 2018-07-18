@@ -1,24 +1,36 @@
-const Utils = require("./utils.js");
-const IO = require("./io.js");
-const Metadata = require("./metadata.js");
+import * as Utils from "./utils";
+import * as IO from "./io";
+import * as Metadata from "./metadata";
 const not = Utils.not;
 const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
 const REGEX_JSON_KEY = /\s*"([^\r\n:"]+?)"\s*:/;
 
 // These keys must be present in the config file:
-const CONFIG_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
+export const CONFIG_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
 // These keys are recognized but not required:
-const CONFIG_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_OPTIONAL);
+export const CONFIG_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_OPTIONAL);
 // All recognized replacement keys:
-const CONFIG_KEYS = CONFIG_KEYS_REQUIRED.concat(CONFIG_KEYS_OPTIONAL);
+export const CONFIG_KEYS = CONFIG_KEYS_REQUIRED.concat(CONFIG_KEYS_OPTIONAL);
 
-const LOG_LEVELS = {
-    ALL: 0,
-    INFO: 1,
-    WARNING: 2,
-    ERROR: 3,
-    NONE: 4,
-};
+export const enum LOG_LEVEL {
+    ALL,
+    INFO,
+    WARNING,
+    ERROR,
+    NONE,
+}
+
+export function toLogLevel(s: string): LOG_LEVEL {
+    switch (s) {
+        case "ALL":     return LOG_LEVEL.ALL;
+        case "INFO":    return LOG_LEVEL.INFO;
+        case "WARNING": return LOG_LEVEL.WARNING;
+        case "ERROR":   return LOG_LEVEL.ERROR;
+        case "NONE":    return LOG_LEVEL.NONE;
+        default: throw new Error(`toLogLevel could not convert ${JSON.stringify(s)} to a LOG_LEVEL.`);
+    }
+}
+
 // Index is level; higher level is less verbose:
 const LOG_FUNCTIONS_BY_LEVEL = [
     [ "log"       , "console.log"   ],
@@ -27,11 +39,11 @@ const LOG_FUNCTIONS_BY_LEVEL = [
     [ "logError"  , "console.error" ],
 ];
 
-function isRecognizedConfigProperty(key) {
+export function isRecognizedConfigProperty(key: string): boolean {
     return CONFIG_KEYS.includes(key);
 }
 
-function readConfig() {
+export function readConfig(): { [k: string]: string } {
     const config = Utils.readJSONStringRecord(IO.FILE_CONFIG);
     const missingKeys = CONFIG_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
     if (missingKeys.length > 0) {
@@ -44,13 +56,7 @@ function readConfig() {
     return config;
 }
 
-function readMetadata() {
-    const rawMetadata = Utils.readFileContent(IO.FILE_METADATA_OUTPUT);
-    Metadata.validate(rawMetadata);
-    return rawMetadata;
-}
-
-function logDefinePropertiesMessage() {
+export function logDefinePropertiesMessage(): void {
     console.log(`If you want to tweak which properties I should understand, you can do so by editing these files:`);
     console.log("");
     Utils.logList([
@@ -59,46 +65,32 @@ function logDefinePropertiesMessage() {
     ].map(IO.format));
 }
 
-function unrecognizedConfigProperties() {
+export function unrecognizedConfigProperties(): string[] {
     const config = readConfig();
     return Object.keys(config).filter(not(isRecognizedConfigProperty));
 }
 
-function isDuplicate_filter(item, index, array) {
+export function isDuplicate_filter<T>(item: T, index: number, array: T[]): boolean {
     return Utils.isDuplicateIn(array)(item);
 }
 
-function duplicateConfigProperties() {
+export function duplicateConfigProperties(): string[] {
     const fileContent = Utils.readFileContent(IO.FILE_CONFIG);
-    const matches_keyWithJunk = fileContent.match(new RegExp(REGEX_JSON_KEY.source, "g"));
+    const matches_keyWithJunk = fileContent.match(new RegExp(REGEX_JSON_KEY.source, "g")) || [];
     const duplicates_recognized = matches_keyWithJunk
-        .map(match => match.match(REGEX_JSON_KEY)[1]) // keys without junk
+        .map(match => (match.match(REGEX_JSON_KEY) || [])[1]) // keys without junk
         .filter(isDuplicate_filter) // only duplicates
-        .reduce((acc, key) => acc.includes(key) ? acc : acc.concat(key), []) // duplicates merged
+        .reduce((acc: string[], key: string) => acc.includes(key) ? acc : acc.concat(key), []) // duplicates merged
         .filter(isRecognizedConfigProperty); // only recognized keys
     return duplicates_recognized;
 }
 
-function duplicateConfigPropertiesWithValues() {
+export function duplicateConfigPropertiesWithValues(): string[] {
     const keys = duplicateConfigProperties();
     const config = readConfig();
     return keys.map(key => key + ": " + JSON.stringify(config[key]));
 }
 
-function logFunctionsToRemove(logLevel) {
-    return [].concat(...LOG_FUNCTIONS_BY_LEVEL.slice(0, logLevel));
+export function logFunctionsToRemove(logLevel: LOG_LEVEL): string[] {
+    return (<string[]> []).concat(...LOG_FUNCTIONS_BY_LEVEL.slice(0, logLevel));
 }
-
-module.exports = {
-    CONFIG_KEYS,
-    CONFIG_KEYS_REQUIRED,
-    CONFIG_KEYS_OPTIONAL,
-    LOG_LEVELS,
-    readConfig,
-    readMetadata,
-    unrecognizedConfigProperties,
-    duplicateConfigProperties,
-    duplicateConfigPropertiesWithValues,
-    logDefinePropertiesMessage,
-    logFunctionsToRemove,
-};

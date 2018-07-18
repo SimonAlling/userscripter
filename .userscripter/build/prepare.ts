@@ -1,6 +1,7 @@
-const Utils = require("./utils");
-const IO = require("./io");
-// ./userscripter required further down
+import * as Utils from "./utils";
+import * as IO from "./io";
+import * as Userscripter from "./userscripter";
+import * as Metadata from "./metadata";
 const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
 const IOException = Utils.IOException;
 
@@ -18,8 +19,13 @@ function logDefineRequiredPropertiesMessage() {
 
 try {
     log("Checking config...");
-    const Userscripter = require("./userscripter.js");
     Userscripter.readConfig();
+    log("Done!");
+    log("Checking metadata...");
+    // Must be required here to produce pretty error messages:
+    const processedMetadata = require("../../" + IO.FILE_METADATA).default.trim();
+    Metadata.validate(processedMetadata);
+    Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, processedMetadata);
     log("Done!");
     // Wipe .user.js file:
     const outputFileName = IO.outputFileName(Userscripter.readConfig().id);

@@ -1,6 +1,6 @@
-const Utils = require("./utils");
-const IO = require("./io");
-const conflicts = require("./conflicts");
+import * as Utils from "./utils";
+import * as IO from "./io";
+import * as Conflicts from "./conflicts";
 
 const crlf = require('crlf-helper');
 
@@ -13,7 +13,7 @@ try {
     });
     process.stdin.on("end", function() {
         process.stdout.write(
-            conflicts.conflictResolver(example ? "EXAMPLE" : "CLEAN")(
+            Conflicts.conflictResolver(example ? "EXAMPLE" : "CLEAN")(
                 crlf.setLineEnding(content, "LF")
             )
         );

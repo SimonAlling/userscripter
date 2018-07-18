@@ -1,7 +1,7 @@
 const stripComments = require('strip-comments');
 const extractComments = require('extract-comments');
-const Utils = require("./utils.js");
-const IO = require("./io.js");
+import * as Utils from "./utils";
+import * as IO from "./io";
 
 const PREFIX_METADATA_TAG = "@";
 const REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE = /\s+[^(\/\/)\s]+/; // any positive amount of whitespace, then any positive number of something that is not (whitespace or "//")
@@ -10,7 +10,7 @@ const METADATA_USERSCRIPT_END_TAG = "==/UserScript==";
 const REGEX_METADATA_USERSCRIPT_START_TAG = new RegExp(METADATA_USERSCRIPT_START_TAG);
 const REGEX_METADATA_USERSCRIPT_END_TAG = new RegExp(METADATA_USERSCRIPT_END_TAG);
 
-const METADATA_REQUIRED_PROPERTIES = Utils.readJSONStringArray(IO.FILE_METADATA_REQUIRED_TAGS);
+export const METADATA_REQUIRED_PROPERTIES = Utils.readJSONStringArray(IO.FILE_METADATA_REQUIRED_TAGS);
 const FORMATTED_LIST_METADATA_FILE = Utils.formattedList([IO.format(IO.FILE_METADATA)]);
 
 const PROPERTY_MATCH = "match";
@@ -20,7 +20,7 @@ const TAG_INCLUDE = PREFIX_METADATA_TAG + PROPERTY_INCLUDE;
 
 // MESSAGES:
 
-const MSG_COMMENT_CHECK_PROBLEMATIC_LINES = lines => lines.length === 0 ? "" : (`
+const MSG_COMMENT_CHECK_PROBLEMATIC_LINES = (lines: string[]) => lines.length === 0 ? "" : (`
 
 I think ${lines.length > 1 ? "these lines" : "this line"} could be causing the problem:
 
@@ -64,7 +64,7 @@ const MSG_NO_INCLUDE_OR_MATCH = `No ${TAG_MATCH} or ${TAG_INCLUDE} directive.
 ${TAG_MATCH} and/or ${TAG_INCLUDE} directives are used to indicate on which URLs the userscript should run. If you don't provide any of those, the userscript may run on ALL or NO URLs, depending on the userscript client.`;
 
 
-const MSG_MATCH_INSTEAD_OF_INCLUDE = lines => `${TAG_INCLUDE} directive used.
+const MSG_MATCH_INSTEAD_OF_INCLUDE = (lines: string[]) => `${TAG_INCLUDE} directive used.
 
 The ${TAG_INCLUDE} directive is generally not recommended, since its asterisk (*) has a less safe meaning than in the ${TAG_MATCH} directive.
 
@@ -77,7 +77,7 @@ Consider using ${TAG_MATCH} instead for these rules:
 ${Utils.formattedList(lines)}`;
 
 
-const MSG_MISSING_OR_INVALID_TAGS = properties => {
+const MSG_MISSING_OR_INVALID_TAGS = (properties: string[], generatedMetadata: string) => {
     const plural = properties.length > 1;
     return `Missing required propert${plural ? "ies" : "y"}.
 
@@ -89,6 +89,10 @@ It seems that ${plural ? "these properties are" : "this property is"} missing or
 
 ${Utils.formattedList(properties.map(metadataTag))}
 
+This was the generated metadata:
+
+${Utils.formattedList(Utils.lines(generatedMetadata))}
+
 If you want to tweak which properties should be required, you can do so by editing this file:
 
 ${Utils.formattedList([IO.format(IO.FILE_METADATA_REQUIRED_TAGS)])}`;
@@ -96,33 +100,33 @@ ${Utils.formattedList([IO.format(IO.FILE_METADATA_REQUIRED_TAGS)])}`;
 
 
 
-function MetadataException(message) {
-    const PREFIX = "Invalid metadata:";
-    this.name = "MetadataException";
-    this.message = PREFIX + " " + message;
+export class MetadataException extends Error {
+    private static PREFIX: string = "Invalid metadata:";
+    constructor(message: string) {
+        super();
+        this.message = MetadataException.PREFIX + " " + message;
+    }
 }
-MetadataException.prototype = Object.create(Error.prototype);
-MetadataException.prototype.constructor = MetadataException;
 
-function contentBetweenMetadataUserscriptTags(metadata) {
-    const contentOfComments = extractComments(metadata).reduce((acc, current) => acc + current.value, "");
+function contentBetweenMetadataUserscriptTags(metadata: string): string {
+    const contentOfComments = extractComments(metadata).reduce((acc: string, current: { value: string }) => acc + current.value, "");
     return contentOfComments
         .replace(new RegExp("^.*?" + REGEX_METADATA_USERSCRIPT_START_TAG.source), "") // NB: lazy star since any occurrence of ==UserScript== after the first one should just be ignored as a comment
         .replace(new RegExp(REGEX_METADATA_USERSCRIPT_END_TAG.source + ".*$"), "");
 }
 
-function metadataTag(property) {
+function metadataTag(property: string): string {
     return PREFIX_METADATA_TAG + property;
 }
 
-function metadataHasTagWithValue(property, metadata) {
+function metadataHasTagWithValue(property: string, metadata: string): boolean {
     // Assumes that start and end tags are present.
     const metadataContent = contentBetweenMetadataUserscriptTags(metadata);
     return new RegExp(metadataTag(property) + REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE.source).test(metadataContent);
 }
 
 // Check that ...
-function validate(metadata) {
+export function validate(metadata: string): string {
     // ... only comments:
     try {
         // This try ... catch clause is necessary to handle errors thrown by the strip-comments package.
@@ -130,7 +134,7 @@ function validate(metadata) {
             throw null;
         }
     } catch (err) {
-        const problematicLines = Utils.lines(metadata).filter(line => {
+        const problematicLines = Utils.lines(metadata).filter((line: string) => {
             try {
                 return /\S/.test(stripComments(line));
             } catch (e) {
@@ -152,14 +156,9 @@ function validate(metadata) {
         throw new MetadataException(MSG_END_TAG_BEFORE_START_TAG);
     }
     // ... all required properties are present:
-    const missingRequiredProperties = METADATA_REQUIRED_PROPERTIES.filter(p => !metadataHasTagWithValue(p, metadata));
+    const missingRequiredProperties = METADATA_REQUIRED_PROPERTIES.filter((p: string) => !metadataHasTagWithValue(p, metadata));
     if (missingRequiredProperties.length > 0) {
-        throw new MetadataException(MSG_MISSING_OR_INVALID_TAGS(missingRequiredProperties));
+        throw new MetadataException(MSG_MISSING_OR_INVALID_TAGS(missingRequiredProperties, metadata));
     }
+    return metadata;
 }
-
-module.exports = {
-    METADATA_REQUIRED_PROPERTIES,
-    MetadataException,
-    validate,
-};

@@ -15,7 +15,7 @@ readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
 readonly FILE_WEBPACK_CONFIG="webpack.config.ts"
 readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
-readonly FILE_TS_CONFIG_WEBPACK="tsconfig.webpack.json"
+readonly FILE_TS_CONFIG_TS_NODE="tsconfig.webpack.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
 
 readonly FLAG_PRODUCTION="production"
@@ -33,7 +33,8 @@ readonly LOG_LEVELS=(
     "$LOG_LEVEL_NONE"
 )
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
-readonly CMD_WEBPACK_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_WEBPACK\" $CMD_WEBPACK"
+readonly CMD_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $DIR_NODE_MODULES/.bin/ts-node"
+readonly CMD_WEBPACK_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $CMD_WEBPACK"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
 readonly CMD_INSTALL="npm install"
@@ -251,7 +252,7 @@ if [ ! -e $FILE_TS_CONFIG ]; then
 fi
 
 # Check config and metadata and exit if they are invalid:
-node $DIR_BUILD/prepare.js
+$CMD_TS_NODE $DIR_BUILD/prepare.ts
 if [ $? -gt 0 ]; then
     echo
     echo
@@ -280,7 +281,7 @@ if [ $? -gt 0 ]; then
 fi
 
 # Assemble userscript:
-node $DIR_BUILD/assemble.js
+$CMD_TS_NODE $DIR_BUILD/assemble.ts
 
 # Exit if assembly failed:
 if [ $? -gt 0 ]; then

@@ -1,29 +1,28 @@
-const fs = require("fs");
+import * as fs from "fs";
 
 const LIST_ITEM_PREFIX = "    ";
 const WARNING_PREFIX = "---- WARNING ---------------------------------------------------\n\n";
 const ERROR_PREFIX   = "---- ERROR -----------------------------------------------------\n\n";
 
-function RequiredPropertyMissingException(message, missingKeys) {
-    this.name = "RequiredPropertyMissingException";
-    this.message = message;
-    this.missingKeys = missingKeys;
+export class RequiredPropertyMissingException extends Error {
+    constructor(public message: string, public missingKeys: string[]) {
+        super();
+    }
 }
-RequiredPropertyMissingException.prototype = Object.create(Error.prototype);
-RequiredPropertyMissingException.prototype.constructor = RequiredPropertyMissingException;
 
-function IOException(message) {
-    this.name = "IOException";
-    this.message = message;
-}
-IOException.prototype = Object.create(Error.prototype);
-IOException.prototype.constructor = IOException;
+export class IOException extends Error {}
 
-function formatIO(path) {
+export function formatIO(path: string): string {
     return path.replace(/^\.\//, "");
 }
 
-function errorMessage_expectedContent(file) {
+interface FileContentError {
+    filename: string
+    expected: string
+    actual: string
+}
+
+export function errorMessage_expectedContent(file: FileContentError) {
     return `I ran into an error while parsing this file:
 
 ${formattedList([formatIO(file.filename)])}
@@ -34,59 +33,58 @@ I expected to find ${file.expected}, but I found this:
 }
 
 
-function not(f) {
-    // Returns a function!
+export function not<T>(f: (x: T) => boolean): (x: T) => boolean {
     return x => !f(x);
 }
 
-function isString(x) {
+export function isString(x: any): x is string {
     return typeof x === "string";
 }
 
-function log(str) {
+export function log(str: string): void {
     console.log(str);
 }
 
-function logWarning(str) {
+export function logWarning(str: string): void {
     console.warn(WARNING_PREFIX+str);
 }
 
-function logError(str) {
+export function logError(str: string): void {
     console.error(ERROR_PREFIX+str);
 }
 
-function logList(items) {
+export function logList(items: string[]): void {
     console.log(formattedList(items));
 }
 
-function formattedList(items) {
+export function formattedList(items: string[]): string {
     return items.map(item => LIST_ITEM_PREFIX + item).join("\n");
 }
 
-function lines(str) {
+export function lines(str: string): string[] {
     return str.split("\n");
 }
 
-function unlines(strings) {
+export function unlines(strings: string[]): string {
     return strings.join("\n");
 }
 
-function quote(str) {
+export function quote(str: string): string {
     return `"` + str + `"`;
 }
 
-function formattedItems(items) {
-    return items.map(JSON.stringify).join(", ");
+export function formattedItems(items: string[]): string {
+    return items.map(x => JSON.stringify(x)).join(", ");
 }
 
-function stringifyNumber(n) {
+export function stringifyNumber(n: number): string {
     const NUMBERS = [
         "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
     ];
-    return n < NUMBERS.length && n >= 0 ? NUMBERS[n] : n;
+    return n < NUMBERS.length && n >= 0 ? NUMBERS[n] : ""+n;
 }
 
-function isDuplicateIn(array) {
+export function isDuplicateIn<T>(array: T[]): (x: T) => boolean {
     return value => {
         let hasSeenIt = false;
         for (let i = 0; i < array.length; i++) {
@@ -101,7 +99,7 @@ function isDuplicateIn(array) {
     };
 }
 
-function readFileContent(filename) {
+export function readFileContent(filename: string): string {
     try {
         return fs.readFileSync(filename, "utf8");
     } catch (err) {
@@ -109,7 +107,7 @@ function readFileContent(filename) {
     }
 }
 
-function writeFileContent(filename, content) {
+export function writeFileContent(filename: string, content: string): void {
     try {
         fs.writeFileSync(filename, content, { "encoding": "utf8" });
     } catch (err) {
@@ -117,15 +115,15 @@ function writeFileContent(filename, content) {
     }
 }
 
-function deleteFile_async(filename) {
-    fs.unlink(filename, err => {
+export function deleteFile_async(filename: string): void {
+    fs.unlink(filename, (err?: Error) => {
         if (err) {
             logError(`I could not delete the file ${filename} because I ran into this error:\n\n` + err.message);
         }
     });
 }
 
-function readJSON(filename) {
+export function readJSON(filename: string): any {
     try {
         const fileContent = readFileContent(filename); // throws
         return JSON.parse(fileContent); // throws
@@ -137,7 +135,7 @@ function readJSON(filename) {
     }
 }
 
-function readJSONObject(filename) {
+export function readJSONObject(filename: string): object {
     const parsedJSON = readJSON(filename);
     if (!Array.isArray(parsedJSON) && typeof parsedJSON === "object" && parsedJSON !== null) {
         return parsedJSON;
@@ -150,7 +148,7 @@ function readJSONObject(filename) {
     }
 }
 
-function readJSONArray(filename) {
+export function readJSONArray(filename: string): any[] {
     const parsedJSON = readJSON(filename);
     if (Array.isArray(parsedJSON)) {
         return parsedJSON;
@@ -163,47 +161,22 @@ function readJSONArray(filename) {
     }
 }
 
-function readJSONStringRecord(filename) {
-    const record = readJSONObject(filename); // throws
+export function readJSONStringRecord(filename: string): { [k: string]: string } {
+    const record = <{ [k: string]: any }> readJSONObject(filename); // throws
     Object.keys(record).forEach(key => {
         if (record.hasOwnProperty(key) && !isString(record[key])) {
             throw new TypeError(`Invalid property "${key}" in ${filename}. Only strings allowed (found ${JSON.stringify(record[key])}).`);
         }
     });
-    return record;
+    return <{ [k: string]: string }> record;
 }
 
-function readJSONStringArray(filename) {
+export function readJSONStringArray(filename: string): string[] {
     const array = readJSONArray(filename); // throws
     array.forEach(item => {
         if (!isString(item)) {
             throw new TypeError(`Invalid item in ${filename}. Only strings allowed (found ${JSON.stringify(item)}).`);
         }
     });
-    return array;
-}
-
-module.exports = {
-    RequiredPropertyMissingException,
-    not,
-    isString,
-    log,
-    logWarning,
-    logError,
-    logList,
-    lines,
-    unlines,
-    quote,
-    formattedList,
-    formattedItems,
-    stringifyNumber,
-    isDuplicateIn,
-    readFileContent,
-    writeFileContent,
-    deleteFile_async,
-    readJSON,
-    readJSONObject,
-    readJSONArray,
-    readJSONStringRecord,
-    readJSONStringArray,
+    return <string[]> array;
 }
