@@ -1,7 +1,7 @@
-import get from "../config/get";
+import USERSCRIPT_CONFIG from "../config/userscript";
 
-export const NAME: string = get("sitename");
-export const HOSTNAME: string = get("hostname");
+export const NAME: string = USERSCRIPT_CONFIG.sitename;
+export const HOSTNAME: string = USERSCRIPT_CONFIG.hostname;
 // <<<<<<< EXAMPLE
 
 export const SELECTOR_HEADING: string = "body h1";

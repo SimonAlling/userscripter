@@ -1,5 +1,5 @@
 import * as IO from "./.userscripter/build/io";
-import * as Userscripter from "./.userscripter/build/userscripter";
+import { LOG_LEVEL, toLogLevel, logFunctionsToRemove } from "./.userscripter/build/log-levels";
 import * as Utils from "./.userscripter/build/utils";
 import * as CONFIG from "./src/globals-config";
 import * as SITE from "./src/globals-site";
@@ -13,7 +13,6 @@ const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
 const EXTENSIONS_TS = ["ts", "tsx"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
-const LOG_LEVELS_ALL = Userscripter.LOG_LEVEL.ALL;
 
 function onlyTruthy<T>(array: T[]): T[] {
     return array.filter(Boolean);
@@ -53,7 +52,7 @@ const SASS_VARS = toSassDimension_recursively({
 });
 
 module.exports = (env: object, argv: { [k: string]: string }) => {
-    const logLevel = Userscripter.toLogLevel(argv["log-level"]);
+    const logLevel = toLogLevel(argv["log-level"]);
     const PRODUCTION = argv.mode === "production";
 
     return {
@@ -131,8 +130,8 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                 {
                     loaders: onlyTruthy([
                         // Strip logging:
-                        (logLevel !== LOG_LEVELS_ALL) && {
-                            loader: WebpackStrip.loader(...Userscripter.logFunctionsToRemove(logLevel)),
+                        (logLevel !== LOG_LEVEL.ALL) && {
+                            loader: WebpackStrip.loader(...logFunctionsToRemove(logLevel)),
                         },
                     ]),
                     include: [

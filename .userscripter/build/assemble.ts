@@ -1,9 +1,9 @@
 import * as Utils from "./utils";
 import * as IO from "./io";
-import * as Userscripter from "./userscripter";
 import * as Config from "./config";
 import * as Metadata from "./metadata";
 import unvalidatedMetadata from "../../config/metadata";
+import USERSCRIPT_CONFIG from "../../config/userscript";
 
 const log = Utils.log;
 const logWarning = Utils.logWarning;
@@ -15,12 +15,11 @@ const stringifyNumber = Utils.stringifyNumber;
 try {
     log("");
     log("Assembling userscript...");
-    const configFileContent = Utils.readJSON(IO.FILE_CONFIG).raw;
-    const metadata = Metadata.validate(unvalidatedMetadata);
+    const metadata = Metadata.validate(unvalidatedMetadata).trim();
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
     // Final .user.js file:
-    const outputFileName = IO.outputFileName(Config.readConfig().id);
+    const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
     const outputFileContent = metadata + "\n" + script;
     Utils.writeFileContent(
         outputFileName,
@@ -33,8 +32,7 @@ try {
     log("Done!");
 
     // Check for unrecognized config properties:
-    const config = Config.parseConfig(configFileContent);
-    const unrecognizedKeys = Userscripter.unrecognizedConfigProperties(config);
+    const unrecognizedKeys = Config.unrecognizedProperties(USERSCRIPT_CONFIG);
     const numberOfUnrecognizedKeys = unrecognizedKeys.length;
     if (numberOfUnrecognizedKeys > 0) {
         const plural = numberOfUnrecognizedKeys > 1;
@@ -53,27 +51,7 @@ try {
         log("");
         logList(Config.CONFIG_KEYS);
         log("");
-        Userscripter.logDefinePropertiesMessage();
-        log("");
-    }
-
-    // Check for duplicate config keys:
-    const duplicateProperties = Userscripter.duplicateConfigPropertiesWithValues(configFileContent);
-    const numberOfDuplicateProperties = duplicateProperties.length;
-    if (numberOfDuplicateProperties > 0) {
-        const plural = numberOfDuplicateProperties > 1;
-        log("");
-        logWarning(`Duplicate key${plural ? "s" : ""} in config file.`);
-        log("");
-        log(`It seems that ${stringifyNumber(numberOfDuplicateProperties)} key${plural ? "s" : ""} occur${plural ? "" : "s"} more than once in this file:`);
-        log("");
-        logList([IO.format(IO.FILE_CONFIG)]);
-        log("");
-        log(`${plural ? "These are" : "This is"} the key${plural ? "s" : ""} I found duplicates of and the value${plural ? "s" : ""} I used:`);
-        log("");
-        logList(duplicateProperties);
-        log("");
-        log(`You may want to check your config file, and I'd recommend using unique keys only.`);
+        Config.logDefinePropertiesMessage();
         log("");
     }
 

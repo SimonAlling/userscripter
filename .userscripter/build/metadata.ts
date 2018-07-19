@@ -2,6 +2,7 @@ const stripComments = require('strip-comments');
 const extractComments = require('extract-comments');
 import * as Utils from "./utils";
 import * as IO from "./io";
+import METADATA_REQUIRED_PROPERTIES from "../../config/validation/metadata-required";
 
 const PREFIX_METADATA_TAG = "@";
 const REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE = /\s+[^(\/\/)\s]+/; // any positive amount of whitespace, then any positive number of something that is not (whitespace or "//")
@@ -10,7 +11,6 @@ const METADATA_USERSCRIPT_END_TAG = "==/UserScript==";
 const REGEX_METADATA_USERSCRIPT_START_TAG = new RegExp(METADATA_USERSCRIPT_START_TAG);
 const REGEX_METADATA_USERSCRIPT_END_TAG = new RegExp(METADATA_USERSCRIPT_END_TAG);
 
-export const METADATA_REQUIRED_PROPERTIES = Utils.readJSONStringArray(IO.FILE_METADATA_REQUIRED_TAGS);
 const FORMATTED_LIST_METADATA_FILE = Utils.formattedList([IO.format(IO.FILE_METADATA)]);
 
 const PROPERTY_MATCH = "match";

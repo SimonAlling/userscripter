@@ -1,13 +1,13 @@
-import get from "../config/get";
+import USERSCRIPT_CONFIG from "../config/userscript";
 
 function prefixer(prefix: string): (x: string) => string {
     return x => prefix + x;
 }
 
-export const USERSCRIPT_ID: string = get("id");
-export const USERSCRIPT_NAME: string = get("name");
-export const USERSCRIPT_VERSION_STRING: string = get("version");
-export const USERSCRIPT_AUTHOR: string = get("author");
+export const USERSCRIPT_ID: string = USERSCRIPT_CONFIG.id;
+export const USERSCRIPT_NAME: string = USERSCRIPT_CONFIG.name;
+export const USERSCRIPT_VERSION_STRING: string = USERSCRIPT_CONFIG.version;
+export const USERSCRIPT_AUTHOR: string = USERSCRIPT_CONFIG.author;
 
 export const PREFIX_ID: string = USERSCRIPT_ID + "-";
 export const PREFIX_CLASS: string = USERSCRIPT_ID + "-";

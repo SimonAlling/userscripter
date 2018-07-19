@@ -112,7 +112,7 @@ Changes to any of the files described below are applied when building the usersc
 
 ### Configuration
 
-Open `config/userscript.json` and edit its content to fit your needs:
+Open `config/userscript.ts` and edit its content to fit your needs:
 
 * `id` – a slug for use in filenames, URLs etc
 * `name` – your userscript's name
@@ -122,33 +122,25 @@ Open `config/userscript.json` and edit its content to fit your needs:
 * `hostname` – the hostname of the website on which the userscript should run
 * `sitename` – the name of the host site (or e.g. `"the host site"`)
 * `namespace` – your own website
-* `run-at` – [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
+* `runAt` – [when the script should run](https://wiki.greasespot.net/Metadata_Block#.40run-at)
 
 Use this information in TypeScript files like so:
 
-`userscript.json`:
+`config/userscript.ts`:
 
-```json
+```typescript
 {
     "id": "example-userscript"
 }
 ```
 
-Source code (e.g. `main.ts`):
+Source code (e.g. `src/main.ts`):
 
 ```typescript
-import get from "../config/get";
+import USERSCRIPT_CONFIG from "../config/userscript";
 
-const USERSCRIPT_ID = get("id");
+const USERSCRIPT_ID = USERSCRIPT_CONFIG.id;
 ```
-
-Generated code:
-
-```typescript
-const USERSCRIPT_ID = "example-userscript";
-```
-
-It is probably a good idea to use the `get` function only in [`globals-config.ts` and `globals-site.ts`](#global-constants), since it does not provide any auto-completion for config keys and because it throws (at compile time) on unknown keys.
 
 
 ### Metadata
@@ -156,9 +148,9 @@ It is probably a good idea to use the `get` function only in [`globals-config.ts
 The userscript metadata sits in `config/metadata.ts`.
 Feel free to edit its contents at any time.
 
-The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `userscript.json` provides and since their syntax is not entirely obvious.
+The `@match`, `@include` and `@exclude` directives are a bit special since their functionality extends beyond what `userscript.ts` provides and since their syntax is not entirely obvious.
 More information can be found in [the Google Chrome developer documentation](match-patterns).
-In most cases, setting `hostname` properly in `userscript.json` will do.
+In most cases, setting `hostname` properly in `userscript.ts` will do.
 
 
 ### Script
@@ -336,7 +328,7 @@ Therefore, it checks the config and metadata and refuses to build if something i
 
 ### Configuration validation
 
-Some properties are required in the config file (`config/userscript.json`), and some are optional.
+Some properties are required in the config file (`config/userscript.ts`), and some are optional.
 The union of these sets is referred to as _recognized_ properties.
 
 If one or more required properties are missing in the config file, the build script will refuse to build.
@@ -344,8 +336,8 @@ Unrecognized properties will just yield a warning.
 
 It is possible to tweak the required and optional properties by editing these files, respectively:
 
-* `config/validation/userscript-required.json`
-* `config/validation/userscript-optional.json`
+* `config/validation/userscript-required.ts`
+* `config/validation/userscript-optional.ts`
 
 
 ### Metadata validation
@@ -354,7 +346,7 @@ The metadata must match the userscript specification in terms of syntax.
 
 Some properties are also required in the same sense as the required config properties above, i.e. if you know what you're doing, you can tweak them as you see fit by editing this file:
 
-* `config/validation/metadata-required.json`
+* `config/validation/metadata-required.ts`
 
 
 

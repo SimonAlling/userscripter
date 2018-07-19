@@ -1,10 +1,9 @@
 import * as Utils from "./utils";
 import * as IO from "./io";
-import * as Userscripter from "./userscripter";
 import * as Config from "./config";
 import * as Metadata from "./metadata";
+import USERSCRIPT_CONFIG from "../../config/userscript";
 const RequiredPropertyMissingException = Config.RequiredPropertyMissingException;
-const JSONTypeError = Utils.JSONTypeError;
 const IOException = Utils.IOException;
 
 const log = Utils.log;
@@ -21,7 +20,7 @@ function logDefineRequiredPropertiesMessage() {
 
 try {
     log("Checking config...");
-    Config.readConfig();
+    Config.validate(USERSCRIPT_CONFIG);
     log("Done!");
     log("Checking metadata...");
     // Must be required here (rather than imported above) to produce pretty error messages:
@@ -29,7 +28,7 @@ try {
     Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, Metadata.validate(unvalidatedMetadata));
     log("Done!");
     // Wipe .user.js file:
-    const outputFileName = IO.outputFileName(Config.readConfig().id);
+    const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
     Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
 } catch (err) {
     log("");
@@ -47,12 +46,6 @@ try {
         logList(missingKeys);
         log("");
         logDefineRequiredPropertiesMessage();
-    } else if (err instanceof JSONTypeError) {
-        logError(`Invalid property in this file:`);
-        log("");
-        logList([IO.format(IO.FILE_CONFIG)]);
-        log("");
-        log(err.message);
     } else {
         logError(err.message);
     }
