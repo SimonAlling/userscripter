@@ -39,16 +39,6 @@ function abort() {
     exit 0
 }
 
-function echoFilesToOverwrite() {
-    echo "$INDENTATION$FILE_README"
-    for f in "$DIR_EXAMPLE"/**; do
-        filename="${f//$DIR_EXAMPLE\//}"
-        if [ -f "$DIR_SRC/$filename" ]; then
-            echo "$INDENTATION$filename"
-        fi
-    done
-}
-
 function printHelp() {
     echo "Usage: init [--help] MODE"
     echo
@@ -207,29 +197,27 @@ fi
 if [ -e "$DIR_SRC" ] && [ ! -z "$(ls -A $DIR_SRC)" ]; then
     # Source directory exists and has some content.
     echo
-    echo "WARNING! These files in $DIR_SRC/ will be overwritten:"
-    echo
-    echoFilesToOverwrite
+    echo "WARNING! Everything in $DIR_SRC/ will be deleted!"
     echo
     while true; do
         read -p "Are you sure you want to do this (y/N)? " choice
-        case "$choice" in 
+        case "$choice" in
           y|Y ) break;;
           n|N ) abort;;
           "" ) abort;;
           * ) echo "$CONFIRMATION_ANSWER";;
         esac
     done
-
     while true; do
         read -p "I will ask again, since this cannot be undone. Are you sure (y/N)? " choice
-        case "$choice" in 
+        case "$choice" in
           y|Y ) break;;
           n|N ) abort;;
           "" ) abort;;
           * ) echo "$CONFIRMATION_ANSWER";;
         esac
     done
+    rm -rf "$DIR_SRC"/*
 fi
 
 if [ ! -e "$DIR_SRC" ]; then
