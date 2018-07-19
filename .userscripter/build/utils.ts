@@ -4,12 +4,6 @@ const LIST_ITEM_PREFIX = "    ";
 const WARNING_PREFIX = "---- WARNING ---------------------------------------------------\n\n";
 const ERROR_PREFIX   = "---- ERROR -----------------------------------------------------\n\n";
 
-export class RequiredPropertyMissingException extends Error {
-    constructor(public message: string, public missingKeys: string[]) {
-        super();
-    }
-}
-
 export class JSONException extends Error {
     constructor(public readonly expected: string, public readonly actual: string) {
         super();

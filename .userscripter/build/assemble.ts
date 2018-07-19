@@ -1,6 +1,7 @@
 import * as Utils from "./utils";
 import * as IO from "./io";
 import * as Userscripter from "./userscripter";
+import * as Config from "./config";
 import * as Metadata from "./metadata";
 import unvalidatedMetadata from "../../config/metadata";
 
@@ -19,7 +20,7 @@ try {
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
     // Final .user.js file:
-    const outputFileName = IO.outputFileName(Userscripter.readConfig().id);
+    const outputFileName = IO.outputFileName(Config.readConfig().id);
     const outputFileContent = metadata + "\n" + script;
     Utils.writeFileContent(
         outputFileName,
@@ -32,7 +33,7 @@ try {
     log("Done!");
 
     // Check for unrecognized config properties:
-    const config = Userscripter.parseConfig(configFileContent);
+    const config = Config.parseConfig(configFileContent);
     const unrecognizedKeys = Userscripter.unrecognizedConfigProperties(config);
     const numberOfUnrecognizedKeys = unrecognizedKeys.length;
     if (numberOfUnrecognizedKeys > 0) {
@@ -50,7 +51,7 @@ try {
         log("");
         log(`I skip properties that I don't recognize, so you may want to check your config file for typos and make sure you only use these keys:`);
         log("");
-        logList(Userscripter.CONFIG_KEYS);
+        logList(Config.CONFIG_KEYS);
         log("");
         Userscripter.logDefinePropertiesMessage();
         log("");

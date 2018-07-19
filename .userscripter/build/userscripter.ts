@@ -1,18 +1,13 @@
 import * as Utils from "./utils";
 import * as IO from "./io";
 import * as Metadata from "./metadata";
+import {
+    Config,
+    isRecognizedConfigProperty,
+    parseConfig,
+} from "./config";
 const not = Utils.not;
-const RequiredPropertyMissingException = Utils.RequiredPropertyMissingException;
 const REGEX_JSON_KEY = /\s*"([^\r\n:"]+?)"\s*:/;
-
-type Config = { [key: string]: string };
-
-// These keys must be present in the config file:
-export const CONFIG_KEYS_REQUIRED = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_REQUIRED);
-// These keys are recognized but not required:
-export const CONFIG_KEYS_OPTIONAL = Utils.readJSONStringArray(IO.FILE_CONFIG_PROPERTIES_OPTIONAL);
-// All recognized replacement keys:
-export const CONFIG_KEYS = CONFIG_KEYS_REQUIRED.concat(CONFIG_KEYS_OPTIONAL);
 
 export const enum LOG_LEVEL {
     ALL,
@@ -40,37 +35,6 @@ const LOG_FUNCTIONS_BY_LEVEL = [
     [ "logWarning", "console.warn"  ],
     [ "logError"  , "console.error" ],
 ];
-
-export function isRecognizedConfigProperty(key: string): boolean {
-    return CONFIG_KEYS.includes(key);
-}
-
-export function readConfig(): Config {
-    try {
-        return parseConfig(Utils.readJSON(IO.FILE_CONFIG).raw);
-    } catch (err) {
-        if (err instanceof Utils.JSONException) {
-            throw new TypeError(Utils.errorMessage_expectedContent({
-                filename: IO.FILE_CONFIG,
-                expected: err.expected,
-                actual: err.actual,
-            }));
-        } else throw err;
-    }
-}
-
-export function parseConfig(configFileContent: string): Config {
-    const config = Utils.parseJSONStringRecord(configFileContent);
-    const missingKeys = CONFIG_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
-    if (missingKeys.length > 0) {
-        const plural = missingKeys.length > 1;
-        throw new RequiredPropertyMissingException(
-            `Required propert${plural ? "ies" : "y"} ${Utils.formattedItems(missingKeys)} not found in ${IO.format(IO.FILE_CONFIG)}.`,
-            missingKeys
-        );
-    }
-    return config;
-}
 
 export function logDefinePropertiesMessage(): void {
     console.log(`If you want to tweak which properties I should understand, you can do so by editing these files:`);
