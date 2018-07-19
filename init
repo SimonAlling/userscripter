@@ -1,26 +1,15 @@
 #!/usr/bin/env bash
 
-readonly ERROR_PREFIX=$'---- ERROR -----------------------------------------------------\n\n'
-readonly INDENTATION="    "
-readonly NODE="Node.js"
-readonly NPM="npm"
-readonly URL_NODE="https://nodejs.org"
-readonly DIR_NODE_MODULES="node_modules"
+# Must be calculated like this to work if run from a subdir, i.e. ../init:
 readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-readonly DIR_SRC="src"
+cd "$DIR_ROOT"
+source ./.userscripter/build/definitions.sh
+
 readonly DIR_USERSCRIPTER=".userscripter"
-readonly DIR_BUILD="$DIR_USERSCRIPTER/build"
 readonly DIR_EXAMPLE="$DIR_USERSCRIPTER/example"
 readonly DIR_GIT=".git"
-readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
-readonly CMD_INSTALL="npm install"
-readonly CMD_REBUILD="npm rebuild"
-readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 readonly CMD_BUILD="./build"
 readonly CMD_REPLACE="$DIR_NODE_MODULES/.bin/replace"
-readonly FILE_TS_CONFIG_TS_NODE="tsconfig.webpack.json"
-readonly CMD_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $DIR_NODE_MODULES/.bin/ts-node"
-readonly CONFIRMATION_ANSWER="Please answer 'y' or 'n'."
 readonly FILE_GITIGNORE=".gitignore"
 readonly FILE_README="README.md"
 readonly COMMAND_EXAMPLE="example"
@@ -28,8 +17,6 @@ readonly COMMAND_CLEAN="clean"
 readonly URL_REPO="https://github.com/SimonAlling/userscripter"
 readonly REMOTE_USERSCRIPTER="userscripter"
 readonly REGEX_GIT_URL='^(git|ssh|https?|git@.+):'
-
-cd "$DIR_ROOT"
 
 shopt -s globstar
 

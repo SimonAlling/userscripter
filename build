@@ -1,23 +1,16 @@
 #!/usr/bin/env bash
 
-readonly ERROR_PREFIX=$'---- ERROR -----------------------------------------------------\n\n'
-readonly INDENTATION="    "
-readonly NODE="Node.js"
-readonly NPM="npm"
-readonly URL_NODE="https://nodejs.org"
-readonly MSG_NOT_WRITTEN="Userscript file could not be assembled."
-readonly MSG_TRY_THIS=$'You can try this to fix this problem:\n'
+# Must be calculated like this to work if run from a subdir, i.e. ../build:
 readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-readonly DIR_NODE_MODULES="node_modules"
-readonly DIR_BUILD=".userscripter/build"
-readonly DIR_SRC="src"
+cd "$DIR_ROOT"
+source ./.userscripter/build/definitions.sh
+
+readonly MSG_NOT_WRITTEN="Userscript file could not be assembled."
 readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
 readonly FILE_WEBPACK_CONFIG="webpack.config.ts"
 readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
 readonly FILE_TS_CONFIG="tsconfig.json"
-readonly FILE_TS_CONFIG_TS_NODE="tsconfig.webpack.json"
 readonly FILE_ENTRY="$DIR_SRC/main.ts"
-
 readonly FLAG_PRODUCTION="production"
 readonly FLAG_LOG_LEVEL="log-level"
 readonly LOG_LEVEL_ALL="ALL"
@@ -33,13 +26,9 @@ readonly LOG_LEVELS=(
     "$LOG_LEVEL_NONE"
 )
 readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
-readonly CMD_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $DIR_NODE_MODULES/.bin/ts-node"
 readonly CMD_WEBPACK_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $CMD_WEBPACK"
 readonly CMD_INIT="./init"
 readonly CMD_BUILD="./build"
-readonly CMD_INSTALL="npm install"
-readonly CMD_REBUILD="npm rebuild"
-readonly CMD_DELETE_NODE_MODULES="rm -rf node_modules"
 
 function join() {
     # $1 is return variable name
@@ -62,8 +51,6 @@ function contains() {
     echo "n"
     return 1
 }
-
-cd "$DIR_ROOT"
 
 function printHelpTip() {
     echo "Try 'build --help' for more information."
