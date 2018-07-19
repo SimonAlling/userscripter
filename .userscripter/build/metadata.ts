@@ -5,7 +5,7 @@ import * as IO from "./io";
 import METADATA_REQUIRED_PROPERTIES from "../../config/validation/metadata-required";
 
 const PREFIX_METADATA_TAG = "@";
-const REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE = /\s+[^(\/\/)\s]+/; // any positive amount of whitespace, then any positive number of something that is not (whitespace or "//")
+const REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE = /\s+([^(\/\/)\s]+)/; // any positive amount of whitespace, then any positive number of something that is not (whitespace or "//")
 const METADATA_USERSCRIPT_START_TAG = "==UserScript==";
 const METADATA_USERSCRIPT_END_TAG = "==/UserScript==";
 const REGEX_METADATA_USERSCRIPT_START_TAG = new RegExp(METADATA_USERSCRIPT_START_TAG);
@@ -15,6 +15,8 @@ const FORMATTED_LIST_METADATA_FILE = Utils.formattedList([IO.format(IO.FILE_META
 
 const PROPERTY_MATCH = "match";
 const PROPERTY_INCLUDE = "include";
+const PROPERTY_RUN_AT = "run-at";
+const VALID_RUN_AT_VALUES = [ "start", "end", "idle" ].map(x => "document-"+x);
 const TAG_MATCH = PREFIX_METADATA_TAG + PROPERTY_MATCH;
 const TAG_INCLUDE = PREFIX_METADATA_TAG + PROPERTY_INCLUDE;
 
@@ -99,6 +101,21 @@ ${Utils.formattedList([IO.format(IO.FILE_METADATA_REQUIRED_TAGS)])}`;
 };
 
 
+const MSG_UNRECOGNIZED_RUN_AT_VALUE = (value: string, generatedMetadata: string) => `Unrecognized ${PREFIX_METADATA_TAG+PROPERTY_RUN_AT} value.
+
+I expected one of these values:
+
+${Utils.formattedList(VALID_RUN_AT_VALUES)}
+
+But I saw this:
+
+${Utils.formattedList([value])}
+
+This was the generated metadata:
+
+${Utils.formattedList(Utils.lines(generatedMetadata))}`;
+
+
 
 export class MetadataException extends Error {
     private static PREFIX: string = "Invalid metadata:";
@@ -121,8 +138,14 @@ function metadataTag(property: string): string {
 
 function metadataHasTagWithValue(property: string, metadata: string): boolean {
     // Assumes that start and end tags are present.
+    return getValue(property, metadata) !== null;
+}
+
+function getValue(property: string, metadata: string): string | null {
+    // Assumes that start and end tags are present.
     const metadataContent = contentBetweenMetadataUserscriptTags(metadata);
-    return new RegExp(metadataTag(property) + REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE.source).test(metadataContent);
+    const match = metadata.match(new RegExp(metadataTag(property) + REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE.source));
+    return match === null ? null : match[1];
 }
 
 // Check that ...
@@ -159,6 +182,11 @@ export function validate(metadata: string): string {
     const missingRequiredProperties = METADATA_REQUIRED_PROPERTIES.filter((p: string) => !metadataHasTagWithValue(p, metadata));
     if (missingRequiredProperties.length > 0) {
         throw new MetadataException(MSG_MISSING_OR_INVALID_TAGS(missingRequiredProperties, metadata));
+    }
+    // ... run-at has a valid value:
+    const runAt = getValue(PROPERTY_RUN_AT, metadata);
+    if (runAt !== null && !VALID_RUN_AT_VALUES.includes(runAt)) {
+        throw new MetadataException(MSG_UNRECOGNIZED_RUN_AT_VALUE(runAt, metadata));
     }
     return metadata;
 }
