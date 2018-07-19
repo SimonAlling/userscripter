@@ -87,18 +87,24 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                             options: {
                                 functions: {
                                     getGlobal: (keyString: any) => {
-                                        const keyParts = keyString.getValue().split(".");
+                                        function fail(input: any) {
+                                            throw new TypeError(`Expected a string, but saw ${input}`);
+                                        }
+                                        if (keyString.getValue === undefined) { fail("nothing"); }
+                                        const value = keyString.getValue();
+                                        if (typeof value !== "string") { fail(value); }
                                         function dig(obj: any, keys: string[]): any {
                                             if (keys.length === 0) {
-                                                if (obj === undefined) {
-                                                    throw new Error("Unknown global: " + keyString.getValue());
-                                                }
                                                 return obj;
                                             } else {
-                                                return dig(obj[keys[0]], keys.slice(1))
+                                                const deeper = obj[keys[0]];
+                                                if (deeper === undefined) {
+                                                    throw new Error(`Unknown global: '${value}' (failed on '${keys[0]}')`);
+                                                }
+                                                return dig(deeper, keys.slice(1))
                                             }
                                         }
-                                        return SassUtils.castToSass(dig(SASS_VARS, keyParts));
+                                        return SassUtils.castToSass(dig(SASS_VARS, value.split(".")));
                                     },
                                 },
                             },
