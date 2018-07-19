@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 readonly ERROR_PREFIX=$'---- ERROR -----------------------------------------------------\n\n'
 readonly INDENTATION="    "
