@@ -1,14 +1,12 @@
-const stripComments = require('strip-comments');
-const extractComments = require('extract-comments');
 import * as Utils from "./utils";
 import * as IO from "./io";
 import METADATA_REQUIRED_PROPERTIES from "../../config/validation/metadata-required";
 
+const PREFIX_COMMENT = "// ";
 const PREFIX_METADATA_TAG = "@";
 const REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE = /\s+([^(\/\/)\s]+)/; // any positive amount of whitespace, then any positive number of something that is not (whitespace or "//")
 const METADATA_USERSCRIPT_START_TAG = "==UserScript==";
 const METADATA_USERSCRIPT_END_TAG = "==/UserScript==";
-const REGEX_METADATA_USERSCRIPT_START_TAG = new RegExp(METADATA_USERSCRIPT_START_TAG);
 const REGEX_METADATA_USERSCRIPT_END_TAG = new RegExp(METADATA_USERSCRIPT_END_TAG);
 
 const FORMATTED_LIST_METADATA_FILE = Utils.formattedList([IO.format(IO.FILE_METADATA)]);
@@ -22,41 +20,9 @@ const TAG_INCLUDE = PREFIX_METADATA_TAG + PROPERTY_INCLUDE;
 
 // MESSAGES:
 
-const MSG_COMMENT_CHECK_PROBLEMATIC_LINES = (lines: string[]) => lines.length === 0 ? "" : (`
+const MSG_END_TAG = `End tag present.
 
-I think ${lines.length > 1 ? "these lines" : "this line"} could be causing the problem:
-
-` + Utils.formattedList(lines));
-
-
-const MSG_COMMENT_CHECK_FAILED = `Not only comments.
-
-This file may only contain JavaScript comments and whitespace:
-
-${FORMATTED_LIST_METADATA_FILE}
-
-But there is something else in it as well.`;
-
-
-const MSG_END_TAG_BEFORE_START_TAG = `End tag before start tag.
-
-The ${METADATA_USERSCRIPT_START_TAG} start tag must precede the ${METADATA_USERSCRIPT_END_TAG} end tag in this file:
-
-${FORMATTED_LIST_METADATA_FILE}
-
-But I found no end tag after the start tag, only before it.`;
-
-
-const MSG_NO_START_TAG = `Missing start tag.
-
-I could not find the required ${METADATA_USERSCRIPT_START_TAG} start tag in this file:
-
-${FORMATTED_LIST_METADATA_FILE}`;
-
-
-const MSG_NO_END_TAG = `Missing end tag.
-
-I could not find the required ${METADATA_USERSCRIPT_END_TAG} end tag in this file:
+I insert the ${METADATA_USERSCRIPT_END_TAG} end tag automatically, so you should not include it in this file:
 
 ${FORMATTED_LIST_METADATA_FILE}`;
 
@@ -125,68 +91,46 @@ export class MetadataException extends Error {
     }
 }
 
-function contentBetweenMetadataUserscriptTags(metadata: string): string {
-    const contentOfComments = extractComments(metadata).reduce((acc: string, current: { value: string }) => acc + current.value, "");
-    return contentOfComments
-        .replace(new RegExp("^.*?" + REGEX_METADATA_USERSCRIPT_START_TAG.source), "") // NB: lazy star since any occurrence of ==UserScript== after the first one should just be ignored as a comment
-        .replace(new RegExp(REGEX_METADATA_USERSCRIPT_END_TAG.source + ".*$"), "");
-}
-
 function metadataTag(property: string): string {
     return PREFIX_METADATA_TAG + property;
 }
 
 function metadataHasTagWithValue(property: string, metadata: string): boolean {
-    // Assumes that start and end tags are present.
     return getValue(property, metadata) !== null;
 }
 
 function getValue(property: string, metadata: string): string | null {
-    // Assumes that start and end tags are present.
-    const metadataContent = contentBetweenMetadataUserscriptTags(metadata);
     const match = metadata.match(new RegExp(metadataTag(property) + REGEX_METADATA_TAG_VALUE_INCLUDING_WHITESPACE.source));
     return match === null ? null : match[1];
 }
 
+function wrap(metadata: string): string {
+    return Utils.unlines(Utils.lines([
+        METADATA_USERSCRIPT_START_TAG,
+        metadata,
+        METADATA_USERSCRIPT_END_TAG,
+    ].join("\n")).map(line => PREFIX_COMMENT+line));
+}
+
+export function process(metadata: string): string {
+    return wrap(validate(metadata.trim()));
+}
+
 // Check that ...
 export function validate(metadata: string): string {
-    // ... only comments:
-    try {
-        // This try ... catch clause is necessary to handle errors thrown by the strip-comments package.
-        if (/\S/.test(stripComments(metadata))) {
-            throw null;
-        }
-    } catch (err) {
-        const problematicLines = Utils.lines(metadata).filter((line: string) => {
-            try {
-                return /\S/.test(stripComments(line));
-            } catch (e) {
-                return true;
-            }
-        });
-        throw new MetadataException(MSG_COMMENT_CHECK_FAILED + MSG_COMMENT_CHECK_PROBLEMATIC_LINES(problematicLines));
-    }
-    // ... start tag is present:
-    if (!REGEX_METADATA_USERSCRIPT_START_TAG.test(metadata)) {
-        throw new MetadataException(MSG_NO_START_TAG);
-    }
-    // ... end tag is present:
-    if (!REGEX_METADATA_USERSCRIPT_END_TAG.test(metadata)) {
-        throw new MetadataException(MSG_NO_END_TAG);
-    }
-    // ... start tag is before end tag:
-    if (metadata.lastIndexOf(METADATA_USERSCRIPT_END_TAG) < metadata.indexOf(METADATA_USERSCRIPT_START_TAG)) {
-        throw new MetadataException(MSG_END_TAG_BEFORE_START_TAG);
+    // ... end tag is not present:
+    if (REGEX_METADATA_USERSCRIPT_END_TAG.test(metadata)) {
+        throw new MetadataException(MSG_END_TAG);
     }
     // ... all required properties are present:
     const missingRequiredProperties = METADATA_REQUIRED_PROPERTIES.filter((p: string) => !metadataHasTagWithValue(p, metadata));
     if (missingRequiredProperties.length > 0) {
-        throw new MetadataException(MSG_MISSING_OR_INVALID_TAGS(missingRequiredProperties, metadata));
+        throw new MetadataException(MSG_MISSING_OR_INVALID_TAGS(missingRequiredProperties, wrap(metadata)));
     }
     // ... run-at has a valid value:
     const runAt = getValue(PROPERTY_RUN_AT, metadata);
     if (runAt !== null && !VALID_RUN_AT_VALUES.includes(runAt)) {
-        throw new MetadataException(MSG_UNRECOGNIZED_RUN_AT_VALUE(runAt, metadata));
+        throw new MetadataException(MSG_UNRECOGNIZED_RUN_AT_VALUE(runAt, wrap(metadata)));
     }
     return metadata;
 }

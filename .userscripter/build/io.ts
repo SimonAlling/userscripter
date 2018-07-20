@@ -15,7 +15,6 @@ export const FILE_CONFIG_PROPERTIES_OPTIONAL = DIR_VALIDATION + "userscript-opti
 
 export const FILE_MAIN            = DIR_SOURCE + "main.ts";
 export const FILE_WEBPACK_OUTPUT  = ".webpack-output.js";
-export const FILE_METADATA_OUTPUT = ".metadata-output.txt";
 export const EXTENSION_USERSCRIPT = ".user.js";
 
 export const USERSCRIPT_CONTENT_BUILD_FAILED = "console.error('*** Userscripter build failed! ***');\n";

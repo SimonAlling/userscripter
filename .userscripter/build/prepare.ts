@@ -2,6 +2,7 @@ import * as Utils from "./utils";
 import * as IO from "./io";
 import * as Config from "./config";
 import * as Metadata from "./metadata";
+import RAW_METADATA from "../../config/metadata";
 import USERSCRIPT_CONFIG from "../../config/userscript";
 const RequiredPropertyMissingException = Config.RequiredPropertyMissingException;
 const IOException = Utils.IOException;
@@ -23,9 +24,7 @@ try {
     Config.validate(USERSCRIPT_CONFIG);
     log("Done!");
     log("Checking metadata...");
-    // Must be required here (rather than imported above) to produce pretty error messages:
-    const unvalidatedMetadata = require("../../" + IO.FILE_METADATA).default.trim();
-    Utils.writeFileContent(IO.FILE_METADATA_OUTPUT, Metadata.validate(unvalidatedMetadata));
+    Metadata.process(RAW_METADATA);
     log("Done!");
     // Wipe .user.js file:
     const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);

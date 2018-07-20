@@ -2,7 +2,7 @@ import * as Utils from "./utils";
 import * as IO from "./io";
 import * as Config from "./config";
 import * as Metadata from "./metadata";
-import unvalidatedMetadata from "../../config/metadata";
+import rawMetadata from "../../config/metadata";
 import USERSCRIPT_CONFIG from "../../config/userscript";
 
 const log = Utils.log;
@@ -15,7 +15,7 @@ const stringifyNumber = Utils.stringifyNumber;
 try {
     log("");
     log("Assembling userscript...");
-    const metadata = Metadata.validate(unvalidatedMetadata).trim();
+    const metadata = Metadata.process(rawMetadata);
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
     // Final .user.js file:
@@ -28,7 +28,6 @@ try {
 
     // Delete Webpack output:
     Utils.deleteFile_async(IO.FILE_WEBPACK_OUTPUT);
-    Utils.deleteFile_async(IO.FILE_METADATA_OUTPUT);
     log("Done!");
 
     // Check for unrecognized config properties:
