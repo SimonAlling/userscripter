@@ -3,10 +3,10 @@ import { LOG_LEVEL, toLogLevel, logFunctionsToRemove } from "./.userscripter/bui
 import * as Utils from "./.userscripter/build/utils";
 import * as CONFIG from "./src/globals-config";
 import * as SITE from "./src/globals-site";
-const webpack = require("webpack");
-const path = require("path");
+import * as webpack from "webpack";
+import * as path from "path";
 const MinifyPlugin = require("babel-minify-webpack-plugin");
-const WebpackStrip = require('webpack-strip');
+const WebpackStrip = require("webpack-strip");
 const SassUtils = require("node-sass-utils")(require("node-sass"));
 
 const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
@@ -14,9 +14,9 @@ const EXTENSIONS_TS = ["ts", "tsx"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
 
-function onlyTruthy<T>(array: T[]): T[] {
-    return array.filter(Boolean);
-}
+const NODE: { fs: "empty" | "mock" } = {
+    fs: "empty", // so that fs is found
+};
 
 // Function declaration notation does not work because SassUtils is undefined then.
 const toSassDimension = (s: string): any => {
@@ -51,8 +51,9 @@ const SASS_VARS = toSassDimension_recursively({
     SITE,
 });
 
-module.exports = (env: object, argv: { [k: string]: string }) => {
-    const logLevel = toLogLevel(argv["log-level"]);
+export default (env: object, argv: { [k: string]: string }): webpack.Configuration => {
+    const l = argv["log-level"];
+    const logLevel = l === undefined ? LOG_LEVEL.ALL : toLogLevel(l);
     const PRODUCTION = argv.mode === "production";
 
     return {
@@ -122,24 +123,25 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                         },
                     ],
                     // Only include source directory and libraries:
-                    include: onlyTruthy([
+                    include: [
                         path.resolve(__dirname, IO.DIR_SOURCE),
                         path.resolve(__dirname, IO.DIR_LIBRARY),
                         path.resolve(__dirname, IO.DIR_CONFIG),
                         path.resolve(__dirname, IO.DIR_BUILD),
-                        PRODUCTION && path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
-                    ]),
+                    ].concat(PRODUCTION ? [
+                        path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
+                    ] : []),
                     // Only run source code files through the loaders:
                     test: REGEX_SOURCE_CODE_TS,
                 },
                 // Preprocessing:
                 {
-                    loaders: onlyTruthy([
+                    loaders: logLevel !== LOG_LEVEL.ALL ? [
                         // Strip logging:
-                        (logLevel !== LOG_LEVEL.ALL) && {
+                        {
                             loader: WebpackStrip.loader(...logFunctionsToRemove(logLevel)),
                         },
-                    ]),
+                    ] : [],
                     include: [
                         path.resolve(__dirname, IO.DIR_SOURCE),
                         path.resolve(__dirname, IO.DIR_LIBRARY),
@@ -148,9 +150,7 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
                 },
             ],
         },
-        node: {
-            fs: "empty", // so that fs is found
-        },
+        node: NODE,
         resolve: {
             modules: ["node_modules", path.resolve(__dirname, IO.DIR_SOURCE), path.resolve(__dirname, IO.DIR_LIBRARY)],
             alias: {
@@ -159,9 +159,9 @@ module.exports = (env: object, argv: { [k: string]: string }) => {
             },
             extensions: EXTENSIONS.map(e => "."+e).concat(["*"]),
         },
-        plugins: onlyTruthy([
-            PRODUCTION && new MinifyPlugin(),
-        ]),
+        plugins: PRODUCTION ? [
+            new MinifyPlugin(),
+        ] : [],
     };
 
 };

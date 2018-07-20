@@ -8,17 +8,17 @@
                 "src/*"
             ]
         },
+        "target": "es6",
+        "strict": true,
+        "module": "es2015",
+        "moduleResolution": "node",
+        "preserveConstEnums": true,
         "lib": [
             "es2018",
             "dom"
         ],
         "jsx": "react",
-        "jsxFactory": "h",
-        "target": "es6",
-        "strict": true,
-        "module": "es2015",
-        "moduleResolution": "node",
-        "preserveConstEnums": true
+        "jsxFactory": "h"
     },
     "include": [
         "./src/**/*.tsx",
