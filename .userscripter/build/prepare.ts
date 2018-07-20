@@ -19,6 +19,7 @@ function logDefineRequiredPropertiesMessage() {
     Utils.logList([IO.format(IO.FILE_CONFIG_PROPERTIES_REQUIRED)]);
 }
 
+const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
 try {
     log("Checking config...");
     Config.validate(USERSCRIPT_CONFIG);
@@ -27,8 +28,7 @@ try {
     Metadata.process(RAW_METADATA);
     log("Done!");
     // Wipe .user.js file:
-    const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
-    Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
+    Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILDING);
 } catch (err) {
     log("");
     if (err instanceof RequiredPropertyMissingException) {
@@ -48,5 +48,6 @@ try {
     } else {
         logError(err.message);
     }
+    Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
     process.exitCode = 1;
 }

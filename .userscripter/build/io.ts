@@ -17,7 +17,8 @@ export const FILE_MAIN            = DIR_SOURCE + "main.ts";
 export const FILE_WEBPACK_OUTPUT  = ".webpack-output.js";
 export const EXTENSION_USERSCRIPT = ".user.js";
 
-export const USERSCRIPT_CONTENT_BUILD_FAILED = "console.error('*** Userscripter build failed! ***');\n";
+export const USERSCRIPT_CONTENT_BUILDING = "Building...\n";
+export const USERSCRIPT_CONTENT_BUILD_FAILED = "*** Build failed! ***\n";
 
 export function outputFileName(id: string): string {
     return id + EXTENSION_USERSCRIPT;

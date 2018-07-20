@@ -12,6 +12,7 @@ const stringifyNumber = Utils.stringifyNumber;
 
 // This script assumes that all relevant files exist and contain valid content. This can be ensured by running init.js first.
 
+const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
 try {
     log("");
     log("Assembling userscript...");
@@ -19,7 +20,6 @@ try {
     const script = Utils.readFileContent(IO.FILE_WEBPACK_OUTPUT);
 
     // Final .user.js file:
-    const outputFileName = IO.outputFileName(USERSCRIPT_CONFIG.id);
     const outputFileContent = metadata + "\n" + script;
     Utils.writeFileContent(
         outputFileName,
@@ -60,5 +60,6 @@ try {
     log("");
     Utils.logError(err.message);
     log("");
+    Utils.writeFileContent(outputFileName, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
     process.exitCode = 1;
 }

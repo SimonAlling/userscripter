@@ -264,6 +264,7 @@ if [ $? -gt 0 ]; then
     echo
     echo "Webpack build failed. $MSG_NOT_WRITTEN"
     echo
+    $CMD_TS_NODE $DIR_BUILD/post-fail.ts
     exit 30
 fi
 
