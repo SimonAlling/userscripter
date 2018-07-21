@@ -1,8 +1,4 @@
-import {
-    formattedItems,
-    not,
-    logList,
-} from "./utils";
+import { not } from "./utils";
 import {
     FILE_CONFIG,
     FILE_CONFIG_PROPERTIES_OPTIONAL,
@@ -14,8 +10,10 @@ import CONFIG_KEYS_REQUIRED from "../../config/validation/userscript-required";
 // These keys are recognized but not required:
 import CONFIG_KEYS_OPTIONAL from "../../config/validation/userscript-optional";
 
-export class RequiredPropertyMissingException extends Error {
-    constructor(public message: string, public missingKeys: string[]) {
+export class UserscriptConfigError extends Error {}
+
+export class MissingPropertiesException extends UserscriptConfigError {
+    constructor(public keys: string[]) {
         super();
     }
 }
@@ -36,20 +34,7 @@ export function unrecognizedProperties(config: Config): string[] {
 export function validate(config: Config): Config {
     const missingKeys = CONFIG_KEYS_REQUIRED.filter(key => !config.hasOwnProperty(key));
     if (missingKeys.length > 0) {
-        const plural = missingKeys.length > 1;
-        throw new RequiredPropertyMissingException(
-            `Required propert${plural ? "ies" : "y"} ${formattedItems(missingKeys)} not found in ${format(FILE_CONFIG)}.`,
-            missingKeys
-        );
+        throw new MissingPropertiesException(missingKeys);
     }
     return config;
-}
-
-export function logDefinePropertiesMessage(): void {
-    console.log(`If you want to tweak which properties I should understand, you can do so by editing these files:`);
-    console.log("");
-    logList([
-        FILE_CONFIG_PROPERTIES_REQUIRED,
-        FILE_CONFIG_PROPERTIES_OPTIONAL,
-    ].map(format));
 }

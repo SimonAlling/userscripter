@@ -1,6 +1,7 @@
 import * as IO from "./.userscripter/build/io";
-import { LOG_LEVEL, toLogLevel, logFunctionsToRemove } from "./.userscripter/build/log-levels";
+import { LogLevel, fromString as logLevelFromString, functionsToRemove } from "./.userscripter/build/log-levels";
 import * as Utils from "./.userscripter/build/utils";
+import { Mode } from "./.userscripter/build/mode";
 import * as CONFIG from "./src/globals-config";
 import * as SITE from "./src/globals-site";
 import * as webpack from "webpack";
@@ -13,6 +14,13 @@ const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
 const EXTENSIONS_TS = ["ts", "tsx"];
 const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
+
+const LOG_FUNCTIONS_BY_LEVEL = [
+    { level: LogLevel.ALL,     functions: [ "log"       , "console.log"   ] },
+    { level: LogLevel.INFO,    functions: [ "logInfo"   , "console.info"  ] },
+    { level: LogLevel.WARNING, functions: [ "logWarning", "console.warn"  ] },
+    { level: LogLevel.ERROR,   functions: [ "logError"  , "console.error" ] },
+];
 
 const NODE: { fs: "empty" | "mock" } = {
     fs: "empty", // so that fs is found
@@ -51,12 +59,15 @@ const SASS_VARS = toSassDimension_recursively({
     SITE,
 });
 
-export default (env: object, argv: { [k: string]: string }): webpack.Configuration => {
-    const l = argv["log-level"];
-    const logLevel = l === undefined ? LOG_LEVEL.ALL : toLogLevel(l);
-    const PRODUCTION = argv.mode === "production";
+export default (env: object, argv: {
+    mode: Mode,
+    logLevel: LogLevel,
+}): webpack.Configuration => {
+    const PRODUCTION = argv.mode === Mode.PRODUCTION;
+    const logLevel = argv.logLevel;
 
     return {
+        mode: PRODUCTION ? Mode.PRODUCTION : Mode.DEVELOPMENT,
         entry: {
             "userscript": IO.FILE_MAIN,
         },
@@ -136,10 +147,10 @@ export default (env: object, argv: { [k: string]: string }): webpack.Configurati
                 },
                 // Preprocessing:
                 {
-                    loaders: logLevel !== LOG_LEVEL.ALL ? [
+                    loaders: logLevel !== LogLevel.ALL ? [
                         // Strip logging:
                         {
-                            loader: WebpackStrip.loader(...logFunctionsToRemove(logLevel)),
+                            loader: WebpackStrip.loader(...functionsToRemove(logLevel, LOG_FUNCTIONS_BY_LEVEL)),
                         },
                     ] : [],
                     include: [

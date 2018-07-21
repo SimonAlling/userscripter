@@ -1,10 +1,14 @@
 {
   "private": true,
   "devDependencies": {
+    "@types/colors": "^1.2.1",
+    "@types/command-line-args": "^5.0.0",
     "@types/node": "^10.5.2",
     "@types/webpack": "^4.4.7",
     "awesome-typescript-loader": "^3.2.1",
     "babel-minify-webpack-plugin": "^0.3.1",
+    "colors": "Marak/colors.js#develop",
+    "command-line-args": "^5.0.2",
     "crlf-helper": "^0.1.0",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",

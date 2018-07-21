@@ -5,153 +5,8 @@ readonly DIR_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR_ROOT"
 source ./.userscripter/build/definitions.sh
 
-readonly MSG_NOT_WRITTEN="Userscript file could not be assembled."
-readonly DIR_WEBPACK="$DIR_NODE_MODULES/webpack"
-readonly FILE_WEBPACK_CONFIG="webpack.config.ts"
-readonly FILE_WEBPACK_OUTPUT=".webpack-output.js"
-readonly FILE_TS_CONFIG="tsconfig.json"
-readonly FILE_ENTRY="$DIR_SRC/main.ts"
-readonly FLAG_PRODUCTION="production"
-readonly FLAG_LOG_LEVEL="log-level"
-readonly LOG_LEVEL_ALL="ALL"
-readonly LOG_LEVEL_INFO="INFO"
-readonly LOG_LEVEL_WARNING="WARNING"
-readonly LOG_LEVEL_ERROR="ERROR"
-readonly LOG_LEVEL_NONE="NONE"
-readonly LOG_LEVELS=(
-    "$LOG_LEVEL_ALL"
-    "$LOG_LEVEL_INFO"
-    "$LOG_LEVEL_WARNING"
-    "$LOG_LEVEL_ERROR"
-    "$LOG_LEVEL_NONE"
-)
-readonly CMD_WEBPACK="$DIR_NODE_MODULES/.bin/webpack"
-readonly CMD_WEBPACK_TS_NODE="$DIR_NODE_MODULES/.bin/cross-env TS_NODE_PROJECT=\"$FILE_TS_CONFIG_TS_NODE\" $CMD_WEBPACK"
-readonly CMD_INIT="./init"
-readonly CMD_BUILD="./build"
-
-function join() {
-    # $1 is return variable name
-    # $2 is separator
-    # $3... are the elements to join
-    local retname=$1 sep=$2 ret=$3
-    shift 3 || shift $(($#))
-    printf -v "$retname" "%s" "$ret${@/#/$sep}"
-}
-
-function contains() {
-    local n=$#
-    local value=${!n}
-    for ((i=1;i < $#;i++)) {
-        if [ "${!i}" == "${value}" ]; then
-            echo "y"
-            return 0
-        fi
-    }
-    echo "n"
-    return 1
-}
-
-function printHelpTip() {
-    echo "Try 'build --help' for more information."
-}
-
-function printHelp() {
-    echo "Usage: build [OPTION]..."
-    echo
-    echo "Options:"
-    echo "  -h, --help                    display this help and exit"
-    echo "  -l, --log-level LEVEL         set userscript logging verbosity to LEVEL"
-    echo "  -p, --production              transpile and minify userscript"
-    echo
-    echo "Examples:"
-    echo
-    echo "General development:"
-    echo
-    echo "${INDENTATION}build"
-    echo
-    echo "Transpiled, minified and no logging whatsoever:"
-    echo
-    echo "${INDENTATION}build --$FLAG_PRODUCTION --$FLAG_LOG_LEVEL $LOG_LEVEL_NONE"
-    echo
-}
-
-function printLogHelp() {
-    join logLevelsStr ", " "${LOG_LEVELS[@]}"
-    echo "Invalid log level. These options are supported:"
-    echo
-    echo "${INDENTATION}$logLevelsStr"
-    echo
-    echo "Example:"
-    echo
-    echo "${INDENTATION}build --$FLAG_PRODUCTION --$FLAG_LOG_LEVEL $LOG_LEVEL_ERROR"
-    echo
-}
-
-
-### HANDLE ARGUMENTS
-
-source ./.userscripter/build/getopts_long.sh
-
-optval_production=false
-optval_logLevel="$LOG_LEVEL_ALL"
-mode=""
-
-OPTLIND=1
-while getopts_long :hpdl: opt \
-  "$FLAG_PRODUCTION" no_argument \
-  "$FLAG_LOG_LEVEL" required_argument \
-  help no_argument "" "$@"
-do
-  case "$opt" in
-    h|help) printHelp; exit 0;;
-    p|"$FLAG_PRODUCTION") optval_production=true;;
-    l|"$FLAG_LOG_LEVEL") optval_logLevel=$OPTLARG;;
-    :) printf >&2 '%s: %s\n' "${0##*/}" "$OPTLERR"
-       printHelpTip
-       exit 1;;
-  esac
-done
-shift "$(($OPTLIND - 1))"
-
-if [ "$optval_production" == true ]; then
-    mode="$FLAG_PRODUCTION"
-fi
-
-# Check if log level is valid:
-if [ $(contains "${LOG_LEVELS[@]}" "$optval_logLevel") == "n" ]; then
-    printLogHelp
-    exit 1
-fi
-
-### ARGUMENTS HANDLED
-
-
-# Check if source code directory exists:
-if [ ! -d $DIR_SRC ]; then
-    echo
-    echo "$ERROR_PREFIX""Source code directory not found."
-    echo
-    echo "I couldn't find $DIR_SRC/ in this directory."
-    echo
-    echo "$MSG_TRY_THIS"
-    echo "$INDENTATION$CMD_INIT"
-    echo
-    exit 1
-fi
-
-# Check if entry file exists:
-if [ ! -f $FILE_ENTRY ]; then
-    echo
-    echo "$ERROR_PREFIX""Entry file not found."
-    echo
-    echo "I couldn't find $FILE_ENTRY in this directory."
-    echo
-    echo "$MSG_TRY_THIS"
-    echo "$INDENTATION$CMD_INIT"
-    echo
-    exit 2
-fi
+readonly FILE_BUILD_PREPARE="$DIR_BUILD/prepare.ts"
+readonly FILE_BUILD_MAIN="$DIR_BUILD/build.ts"
 
 # Check if Node.js exists:
 if [ "$(type node)" == "" ]; then
@@ -162,7 +17,7 @@ if [ "$(type node)" == "" ]; then
     echo
     echo "$INDENTATION$URL_NODE"
     echo
-    exit 10
+    exit 1
 fi
 
 # Check if npm exists:
@@ -174,7 +29,7 @@ if [ "$(type npm)" == "" ]; then
     echo
     echo "$INDENTATION$URL_NODE"
     echo
-    exit 10
+    exit 1
 fi
 
 # Check if node_modules exists:
@@ -187,94 +42,7 @@ if [ ! -e $DIR_NODE_MODULES ]; then
     echo "$MSG_TRY_THIS"
     echo "$INDENTATION$CMD_INSTALL"
     echo
-    exit 11
+    exit 1
 fi
 
-# Check if Webpack exists:
-if [ ! -e $CMD_WEBPACK ] || [ ! -e $DIR_WEBPACK ]; then
-    echo "$ERROR_PREFIX""Webpack not found."
-    echo
-    echo "I need Webpack to be installed locally, i.e. in $DIR_NODE_MODULES/ in this directory, but I couldn't find it there."
-    echo
-    echo "$MSG_TRY_THIS"
-    echo "$INDENTATION$CMD_INSTALL"
-    echo
-    echo "If that doesn't work, you can try this:"
-    echo
-    echo "$INDENTATION$CMD_REBUILD"
-    echo
-    echo "And if that doesn't work, you can try this:"
-    echo
-    echo "$INDENTATION$CMD_DELETE_NODE_MODULES"
-    echo "$INDENTATION$CMD_INSTALL"
-    echo
-    exit 12
-fi
-
-# Check if Webpack config file exists:
-if [ ! -e $FILE_WEBPACK_CONFIG ]; then
-    echo "$ERROR_PREFIX""Webpack config file not found."
-    echo
-    echo "I need the file $FILE_WEBPACK_CONFIG in order to build, but I couldn't find it in this directory."
-    echo
-    exit 13
-fi
-
-# Check if TypeScript config file exists:
-if [ ! -e $FILE_TS_CONFIG ]; then
-    echo "$ERROR_PREFIX""TypeScript config file not found."
-    echo
-    echo "I need the file $FILE_TS_CONFIG in order to build, but I couldn't find it in this directory."
-    echo
-    exit 14
-fi
-
-# Check if Webpack TypeScript config file exists:
-if [ ! -e $FILE_TS_CONFIG ]; then
-    echo "$ERROR_PREFIX""Webpack TypeScript config file not found."
-    echo
-    echo "I need the file $FILE_TS_CONFIG in order to build, but I couldn't find it in this directory."
-    echo
-    exit 15
-fi
-
-# Check config and metadata and exit if they are invalid:
-$CMD_TS_NODE $DIR_BUILD/prepare.ts
-if [ $? -gt 0 ]; then
-    echo
-    echo
-    echo "Config/metadata validation failed. $MSG_NOT_WRITTEN"
-    echo
-    exit 20
-fi
-
-echo
-
-# Run Webpack:
-if [ "$mode" == "$FLAG_PRODUCTION" ]; then
-    echo "Building for production..."
-    $CMD_WEBPACK_TS_NODE --log-level "$optval_logLevel" --mode production
-else
-    echo "Building for development... (use --$FLAG_PRODUCTION to build with transpilation and minification)"
-    $CMD_WEBPACK_TS_NODE --log-level "$optval_logLevel" --mode development
-fi
-
-# Exit if Webpack build failed:
-if [ $? -gt 0 ]; then
-    echo
-    echo "Webpack build failed. $MSG_NOT_WRITTEN"
-    echo
-    $CMD_TS_NODE $DIR_BUILD/post-fail.ts
-    exit 30
-fi
-
-# Assemble userscript:
-$CMD_TS_NODE $DIR_BUILD/assemble.ts
-
-# Exit if assembly failed:
-if [ $? -gt 0 ]; then
-    echo
-    echo "Userscript assembly failed. $MSG_NOT_WRITTEN"
-    echo
-    exit 40
-fi
+$CMD_TS_NODE "$FILE_BUILD_PREPARE" && $CMD_TS_NODE "$FILE_BUILD_MAIN" "$@"
