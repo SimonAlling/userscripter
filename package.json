@@ -3,6 +3,7 @@
   "devDependencies": {
     "@types/colors": "^1.2.1",
     "@types/command-line-args": "^5.0.0",
+    "@types/memory-fs": "^0.3.1",
     "@types/node": "^10.5.2",
     "@types/webpack": "^4.4.7",
     "awesome-typescript-loader": "^3.2.1",

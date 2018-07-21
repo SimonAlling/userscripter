@@ -12,6 +12,7 @@ import { Mode } from "./mode";
 import * as webpack from "webpack";
 import * as commandLineArgs from "command-line-args";
 import webpackConfiguration from "../../webpack.config";
+const MemoryFS = require("memory-fs");
 
 import USERSCRIPT_CONFIG from "../../config/userscript";
 import RAW_METADATA from "../../config/metadata";
@@ -20,6 +21,10 @@ const FILE_FINAL_OUTPUT = IO.outputFileName(USERSCRIPT_CONFIG.id);
 
 const DEFAULT_LOG_LEVEL = LogLevel.ALL;
 const DEFAULT_MODE = Mode.DEVELOPMENT;
+
+interface MemoryFS extends webpack.OutputFileSystem {
+    readFileSync: (filename: string) => string
+}
 
 const WEBPACK_STATS_TO_STRING_OPTIONS = {
     depth: false,
@@ -60,11 +65,13 @@ try {
 
     // Compile with Webpack:
     log(Messages.compiling);
-    const webpackConfig: webpack.Configuration = webpackConfiguration({}, {
+    const compiler: webpack.Compiler = webpack(webpackConfiguration({}, {
         mode,
         logLevel,
-    });
-    webpack([ webpackConfig ], (err: Error | null, stats?: webpack.Stats) => {
+    }));
+    const ramdisk: MemoryFS = new MemoryFS();
+    compiler.outputFileSystem = ramdisk;
+    compiler.run((err: Error | null, stats?: webpack.Stats) => {
         // Check if Webpack failed:
         if (err instanceof Error) {
             failWithError(Messages.webpackError(err));
@@ -82,7 +89,7 @@ try {
         // Assemble:
         log(Messages.assembling);
         const metadata = Metadata.process(RAW_METADATA);
-        const script = FileSystem.readFile(IO.FILE_WEBPACK_OUTPUT);
+        const script = ramdisk.readFileSync(IO.DIR_WEBPACK_OUTPUT + IO.FILE_WEBPACK_OUTPUT);
 
         // Final .user.js file:
         const outputFileContent = metadata + "\n" + script;
@@ -90,9 +97,6 @@ try {
             FILE_FINAL_OUTPUT,
             outputFileContent,
         );
-
-        // Delete Webpack output:
-        FileSystem.deleteFile(IO.FILE_WEBPACK_OUTPUT);
 
         // Check for unrecognized config properties:
         const unrecognizedKeys = Config.unrecognizedProperties(USERSCRIPT_CONFIG);

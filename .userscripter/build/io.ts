@@ -22,6 +22,7 @@ export const FILE_GLOBALS_CONFIG = DIR_SOURCE + "globals-config.ts";
 export const FILE_GLOBALS_SITE = DIR_SOURCE + "globals-site.ts";
 
 export const FILE_MAIN            = DIR_SOURCE + "main.ts";
+export const DIR_WEBPACK_OUTPUT   = "/";
 export const FILE_WEBPACK_OUTPUT  = ".webpack-output.js";
 export const EXTENSION_USERSCRIPT = ".user.js";
 

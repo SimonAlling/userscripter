@@ -72,7 +72,7 @@ export default (env: object, argv: {
             "userscript": IO.FILE_MAIN,
         },
         output: {
-            path: path.resolve(__dirname, "."),
+            path: IO.DIR_WEBPACK_OUTPUT,
             filename: IO.FILE_WEBPACK_OUTPUT,
         },
         module: {
