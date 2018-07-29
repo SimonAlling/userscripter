@@ -11,7 +11,6 @@ import * as Config from "./config";
 export const checkingConfig = `Checking config...`;
 export const checkingMetadata = `Checking metadata...`;
 export const compiling = `Compiling userscript...`;
-export const assembling = `Assembling userscript...`;
 export const failed = `Build failed. Userscript file could not be assembled.`;
 
 

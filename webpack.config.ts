@@ -6,7 +6,7 @@ import * as CONFIG from "./src/globals-config";
 import * as SITE from "./src/globals-site";
 import * as webpack from "webpack";
 import * as path from "path";
-const MinifyPlugin = require("babel-minify-webpack-plugin");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const WebpackStrip = require("webpack-strip");
 const SassUtils = require("node-sass-utils")(require("node-sass"));
 
@@ -62,6 +62,8 @@ const SASS_VARS = toSassDimension_recursively({
 export default (env: object, argv: {
     mode: Mode,
     logLevel: LogLevel,
+    id: string,
+    metadata: string,
 }): webpack.Configuration => {
     const PRODUCTION = argv.mode === Mode.PRODUCTION;
     const logLevel = argv.logLevel;
@@ -72,8 +74,8 @@ export default (env: object, argv: {
             "userscript": IO.FILE_MAIN,
         },
         output: {
-            path: IO.DIR_WEBPACK_OUTPUT,
-            filename: IO.FILE_WEBPACK_OUTPUT,
+            path: path.resolve(__dirname, "."),
+            filename: argv.id + IO.EXTENSION_USERSCRIPT,
         },
         module: {
             rules: [
@@ -170,9 +172,25 @@ export default (env: object, argv: {
             },
             extensions: EXTENSIONS.map(e => "."+e).concat(["*"]),
         },
-        plugins: PRODUCTION ? [
-            new MinifyPlugin(),
-        ] : [],
+        optimization: {
+            minimizer: [
+                new UglifyJsPlugin({
+                    uglifyOptions: {
+                        output: {
+                            beautify: false,
+                            preamble: argv.metadata,
+                        },
+                    },
+                }),
+            ],
+        },
+        plugins: [
+            new webpack.BannerPlugin({
+                banner: argv.metadata,
+                raw: true,
+                entryOnly: true,
+            }),
+        ],
     };
 
 };

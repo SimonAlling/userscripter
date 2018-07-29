@@ -1,5 +1,3 @@
-import * as color from "colors/safe";
-import * as Utils from "./utils";
 import * as FileSystem from "./file-system";
 import { log, logSuccessLine, logWarning, logError, logErrorLine } from "./logging";
 import * as Messages from "./messages";
@@ -12,7 +10,6 @@ import { Mode } from "./mode";
 import * as webpack from "webpack";
 import * as commandLineArgs from "command-line-args";
 import webpackConfiguration from "../../webpack.config";
-const MemoryFS = require("memory-fs");
 
 import USERSCRIPT_CONFIG from "../../config/userscript";
 import RAW_METADATA from "../../config/metadata";
@@ -21,10 +18,6 @@ const FILE_FINAL_OUTPUT = IO.outputFileName(USERSCRIPT_CONFIG.id);
 
 const DEFAULT_LOG_LEVEL = LogLevel.ALL;
 const DEFAULT_MODE = Mode.DEVELOPMENT;
-
-interface MemoryFS extends webpack.OutputFileSystem {
-    readFileSync: (filename: string) => string
-}
 
 const WEBPACK_STATS_TO_STRING_OPTIONS = {
     depth: false,
@@ -61,16 +54,16 @@ try {
     log(Messages.checkingConfig);
     Config.validate(USERSCRIPT_CONFIG);
     log(Messages.checkingMetadata);
-    Metadata.process(RAW_METADATA);
+    const metadata = Metadata.process(RAW_METADATA);
 
     // Compile with Webpack:
     log(Messages.compiling);
     const compiler: webpack.Compiler = webpack(webpackConfiguration({}, {
         mode,
         logLevel,
+        metadata,
+        id: USERSCRIPT_CONFIG.id,
     }));
-    const ramdisk: MemoryFS = new MemoryFS();
-    compiler.outputFileSystem = ramdisk;
     compiler.run((err: Error | null, stats?: webpack.Stats) => {
         // Check if Webpack failed:
         if (err instanceof Error) {
@@ -85,18 +78,6 @@ try {
                 fail();
             }
         }
-
-        // Assemble:
-        log(Messages.assembling);
-        const metadata = Metadata.process(RAW_METADATA);
-        const script = ramdisk.readFileSync(IO.DIR_WEBPACK_OUTPUT + IO.FILE_WEBPACK_OUTPUT);
-
-        // Final .user.js file:
-        const outputFileContent = metadata + "\n" + script;
-        FileSystem.writeFile(
-            FILE_FINAL_OUTPUT,
-            outputFileContent,
-        );
 
         // Check for unrecognized config properties:
         const unrecognizedKeys = Config.unrecognizedProperties(USERSCRIPT_CONFIG);
