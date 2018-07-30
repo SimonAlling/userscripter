@@ -84,7 +84,7 @@ export const unrecognizedConfigProperties = (keys: ReadonlyArray<string>) => {
     return `
 Unrecognized config propert${p("y", "ies")}.
 
-${IO.format(IO.FILE_CONFIG)} contained ${numberOfUnrecognizedKeys} propert${p("y", "ies")} that I didn't consider because I didn't recognize ${plural ? "them" : "it"}:
+${IO.format(IO.FILE_CONFIG)} contained ${numberOfUnrecognizedKeys} propert${p("y", "ies")} that I didn't consider because I didn't recognize ${p("it", "them")}:
 
 ${p("This is", "These are")} the key${p("", "s")} I'm having trouble with:
 
