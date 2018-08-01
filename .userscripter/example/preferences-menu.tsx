@@ -92,7 +92,7 @@ function Entry<T extends AllowedTypes>(generators: Generators, p: Preference<T> 
             </div>
         ) : (
             <fieldset>
-                <label>{p.label}</label>
+                <legend>{p.label}</legend>
                 {Entries(generators, p._)}
             </fieldset>
         );
