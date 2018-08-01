@@ -1,42 +1,90 @@
-import { not, equals, compose } from "./utilities";
-import { is, isBoolean, only } from "ts-type-guards";
+import { equals, compose } from "./utilities";
+import { is, isBoolean } from "ts-type-guards";
 
 export const SUCCESS: boolean = true;
 export const FAILURE: boolean = false;
 
-export type Operation = {
+export interface OperationDefinition {
+    condition: boolean;
     description: string;
-    selectors: string[];
-    action: (...elements: HTMLElement[]) => boolean | void;
 }
 
-export type ConditionalOperation = Operation & {
-    condition: boolean;
+export interface IndependentOperationDefinition extends OperationDefinition {
+    action: () => boolean | void;
+}
+
+export interface DependentOperationDefinition<K extends string> extends OperationDefinition {
+    selectors: { [k in K]: string };
+    action: (e: { [k in K]: HTMLElement }) => boolean | void;
+}
+
+export abstract class Operation {
+    public readonly condition: boolean;
+    public readonly description: string;
+    constructor(definition: OperationDefinition) {
+        this.condition = definition.condition;
+        this.description = definition.description;
+    }
+}
+
+export class IndependentOperation extends Operation {
+    public readonly action: () => boolean | void;
+    constructor(definition: IndependentOperationDefinition) {
+        super(definition);
+        this.action = definition.action;
+    }
+}
+
+export class DependentOperation<K extends string> extends Operation {
+    public readonly selectors: { [k in K]: string };
+    public readonly action: (e: { [k in K]: HTMLElement }) => boolean | void;
+    constructor(definition: DependentOperationDefinition<K>) {
+        super(definition);
+        this.selectors = definition.selectors;
+        this.action = definition.action;
+    }
 }
 
 // allOperations : List of Operations to perform.
 // interval : Time between each try in milliseconds.
 // errorCallback : Function to call with Operation as argument for each operation that has not succeeded before stop() is called.
 // successCallback : Function to call if all operations have succeeded when stop() is called.
-export function OperationManager(allOperations: Operation[], interval: number, errorCallback: (operation: Operation) => void, successCallback: () => void) {
-    allOperations.forEach(operation => {
-        if (operation.selectors.length < operation.action.length) {
-            throw new Error(`Operation "${operation.description}" depends on ${operation.action.length} element(s), but has only ${operation.selectors.length} dependency selector(s).`);
-        }
-    });
-
+export function OperationManager(
+    allOperations: Operation[],
+    interval: number,
+    errorCallback: <K extends string>(operation: DependentOperation<K>) => void,
+    successCallback: () => void,
+) {
     let keepTrying: boolean = true;
 
     function handleError(operation: Operation): void {
-        errorCallback(operation);
+        if (is(DependentOperation)(operation)) {
+            errorCallback(operation);
+        }
     }
 
     function perform(operation: Operation): boolean {
-        const selectorMatches = operation.selectors.map(s => document.querySelector(s));
-        if (selectorMatches.some(equals(null))) {
-            return FAILURE;
-        }
-        const result = operation.action(...only(HTMLElement)(selectorMatches));
+        const result = (<K extends string>() => {
+            if (is(IndependentOperation)(operation)) {
+                return operation.action();
+            } else if (is(DependentOperation)(operation)) {
+                const selectors = operation.selectors;
+                const selectorMatches = Object.keys(selectors).map(k => ({
+                    key: k,
+                    element: document.querySelector(selectors[k as K]),
+                }));
+                if (selectorMatches.map(m => m.element).some(equals(null))) {
+                    return FAILURE;
+                }
+                const e: { [k in K]: HTMLElement } = selectorMatches.reduce(
+                    (acc, match) => Object.defineProperty(acc, match.key, { value: match.element }),
+                    {},
+                );
+                return operation.action(e);
+            } else {
+                throw new TypeError("Unknown operation type.");
+            }
+        })();
         return isBoolean(result) ? result : SUCCESS;
     }
 

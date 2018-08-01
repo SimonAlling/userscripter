@@ -12,7 +12,7 @@ function foobar(i: number): HTMLElement {
     return div;
 }
 
-export default (mainDiv: HTMLElement) => {
+export default (e: { mainDiv: HTMLElement }) => {
     const n = Preferences.get(P.foobars._.number);
     const h2 = document.createElement("h2");
     const prefix = document.createTextNode(`Below are ${n} foobars. `);
@@ -25,7 +25,7 @@ export default (mainDiv: HTMLElement) => {
     });
     h2.appendChild(prefix);
     h2.appendChild(link);
-    mainDiv.appendChild(h2);
+    e.mainDiv.appendChild(h2);
 
     for (let i = 1; i <= n; i++) {
         document.body.appendChild(foobar(i));
