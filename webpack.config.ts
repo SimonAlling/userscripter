@@ -1,6 +1,5 @@
 import * as IO from "./.userscripter/build/io";
-import { LogLevel, fromString as logLevelFromString, functionsToRemove } from "./.userscripter/build/log-levels";
-import * as Utils from "./.userscripter/build/utils";
+import { LogLevel, functionsToRemove } from "./.userscripter/build/log-levels";
 import { Mode } from "./.userscripter/build/mode";
 import * as CONFIG from "./src/globals-config";
 import * as SITE from "./src/globals-site";
@@ -12,7 +11,6 @@ const SassUtils = require("node-sass-utils")(require("node-sass"));
 
 const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
 const EXTENSIONS_TS = ["ts", "tsx"];
-const REGEX_SOURCE_CODE = new RegExp("\\.(" + EXTENSIONS.join("|") + ")$");
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
 
 const LOG_FUNCTIONS_BY_LEVEL = [
@@ -21,10 +19,6 @@ const LOG_FUNCTIONS_BY_LEVEL = [
     { level: LogLevel.WARNING, functions: [ "logWarning", "console.warn"  ] },
     { level: LogLevel.ERROR,   functions: [ "logError"  , "console.error" ] },
 ];
-
-const NODE: { fs: "empty" | "mock" } = {
-    fs: "empty", // so that fs is found
-};
 
 // Function declaration notation does not work because SassUtils is undefined then.
 const toSassDimension = (s: string): any => {
@@ -126,7 +120,6 @@ export default (env: object, argv: {
                     ],
                 },
                 {
-                    // Loaders chained from the bottom up:
                     loaders: [
                         {
                             loader: 'awesome-typescript-loader',
@@ -135,7 +128,6 @@ export default (env: object, argv: {
                             },
                         },
                     ],
-                    // Only include source directory and libraries:
                     include: [
                         path.resolve(__dirname, IO.DIR_SOURCE),
                         path.resolve(__dirname, IO.DIR_LIBRARY),
@@ -144,7 +136,6 @@ export default (env: object, argv: {
                     ].concat(PRODUCTION ? [
                         path.resolve(__dirname, "node_modules"), // may take a long time; useful only for production builds
                     ] : []),
-                    // Only run source code files through the loaders:
                     test: REGEX_SOURCE_CODE_TS,
                 },
                 // Preprocessing:
@@ -163,7 +154,6 @@ export default (env: object, argv: {
                 },
             ],
         },
-        node: NODE,
         resolve: {
             modules: ["node_modules", path.resolve(__dirname, IO.DIR_SOURCE), path.resolve(__dirname, IO.DIR_LIBRARY)],
             alias: {
@@ -192,5 +182,4 @@ export default (env: object, argv: {
             }),
         ],
     };
-
 };
