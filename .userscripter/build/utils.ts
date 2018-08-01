@@ -1,5 +1,5 @@
 const INDENTATION = "    ";
-const LIST_ITEM_PREFIX = "    ";
+const LIST_ITEM_PREFIX = INDENTATION + "• ";
 
 export class EnumFromStringError extends Error {
     constructor(public string: string, enumName?: string) {

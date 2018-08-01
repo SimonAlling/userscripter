@@ -9,7 +9,8 @@ const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const WebpackStrip = require("webpack-strip");
 const SassUtils = require("node-sass-utils")(require("node-sass"));
 
-const EXTENSIONS = ["ts", "tsx", "js", "jsx", "scss"];
+// Order is important: mjs must come before js to enable tree-shaking for dual-mode ESM/CJS packages.
+const EXTENSIONS = ["ts", "tsx", "mjs", "js", "jsx", "scss"];
 const EXTENSIONS_TS = ["ts", "tsx"];
 const REGEX_SOURCE_CODE_TS = new RegExp("\\.(" + EXTENSIONS_TS.join("|") + ")$");
 

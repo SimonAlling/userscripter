@@ -1,12 +1,14 @@
+import { Metadata } from "userscript-metadata";
 import U from "./userscript";
 
-export default `
-@name         ${U.name}
-@version      ${U.version}
-@description  ${U.description}
-@author       ${U.author}
-@match        *://${U.hostname}/*
-@match        *://www.${U.hostname}/*
-@namespace    ${U.namespace}
-@run-at       ${U.runAt}
-`;
+const metadata: Metadata = {
+    name: U.name,
+    version: U.version,
+    match: [
+        `*://${U.hostname}/*`,
+        `*://www.${U.hostname}/*`,
+    ],
+    run_at: U.runAt,
+};
+
+export default metadata;

@@ -1,3 +1,4 @@
+import { Kind, ValidationError, Warning, tag } from "userscript-metadata";
 import { indent, formattedList, plural } from "./utils";
 import { FileException } from "./file-system";
 import { LOG_LEVELS, LOG_LEVEL_NONE } from "./log-levels";
@@ -103,6 +104,32 @@ ${formattedList([
 
 `;
 };
+
+
+export const metadataValidationHint = `
+You can customize the rules used for metadata validation by editing this file:
+
+${indent(IO.format(IO.FILE_METADATA_VALIDATION))}
+`;
+
+
+export const metadataWarning = (warning: Warning) => `
+Metadata warning: ${warning.summary}
+
+${warning.description}
+`;
+
+
+export const metadataError = (error: ValidationError) => {
+    switch (error.kind) {
+        case Kind.INVALID_KEY: return `Invalid key: "${error.entry.key}". ${error.reason}`;
+        case Kind.INVALID_VALUE: return `Invalid ${tag(error.entry.key)} value: ${JSON.stringify(error.entry.value)}. ${error.reason}`;
+        case Kind.MULTIPLE_UNIQUE: return `Multiple ${tag(error.item.key)} values. Only one value is allowed.`;
+        case Kind.REQUIRED_MISSING: return `A ${tag(error.item.key)} entry is required, but none was found.`;
+        case Kind.UNRECOGNIZED_KEY: return `Unrecognized key: "${error.entry.key}".`;
+        default: throw new Error("Unknown metadata error.");
+    }
+}
 
 
 export const webpackError = (err: Error) => `

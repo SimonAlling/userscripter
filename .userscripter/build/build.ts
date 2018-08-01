@@ -54,7 +54,9 @@ try {
     log(Messages.checkingConfig);
     Config.validate(USERSCRIPT_CONFIG);
     log(Messages.checkingMetadata);
-    const metadata = Metadata.process(RAW_METADATA);
+    const processedMetadata = Metadata.process(RAW_METADATA);
+    const metadata = processedMetadata.stringified;
+    const metadataWarnings = processedMetadata.warnings;
 
     // Compile with Webpack:
     log(Messages.compiling);
@@ -79,11 +81,14 @@ try {
             }
         }
 
-        // Check for unrecognized config properties:
+        // Warnings:
+        const warnings: string[] = [];
         const unrecognizedKeys = Config.unrecognizedProperties(USERSCRIPT_CONFIG);
         if (unrecognizedKeys.length > 0) {
-            logWarning(Messages.unrecognizedConfigProperties(unrecognizedKeys));
+            warnings.push(Messages.unrecognizedConfigProperties(unrecognizedKeys));
         }
+        metadataWarnings.forEach(w => warnings.push(Messages.metadataWarning(w)));
+        warnings.map(x => x.trim()+"\n\n").forEach(logWarning);
 
         log("");
         logSuccessLine(Messages.success(FILE_FINAL_OUTPUT));
