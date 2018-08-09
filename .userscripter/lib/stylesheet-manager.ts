@@ -12,9 +12,9 @@ function compose(modules: StylesheetModule[]): string {
 }
 
 export function insert(modules: StylesheetModule[], id?: string): void {
-    insertCSS(compose(modules), id);
+    insertCSS(compose(modules.filter(m => m.condition)), id);
 }
 
 export function append(modules: StylesheetModule[], id: string): void {
-    appendCSS(compose(modules), id);
+    appendCSS(compose(modules.filter(m => m.condition)), id);
 }
