@@ -49,6 +49,11 @@ try {
     // Arguments are valid.
     log(Messages.building(mode, logLevel));
 
+    // Make sure dist directory exists:
+    if (!FileSystem.directoryExists(IO.DIR_DIST)) {
+        FileSystem.createDirectory(IO.DIR_DIST);
+    }
+
     // Wipe output files:
     FileSystem.writeFile(FILE_OUTPUT_USERSCRIPT, IO.USERSCRIPT_CONTENT_BUILDING);
     FileSystem.writeFile(FILE_OUTPUT_METADATA, IO.USERSCRIPT_CONTENT_BUILDING);

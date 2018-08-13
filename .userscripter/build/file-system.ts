@@ -41,3 +41,11 @@ export function directoryExists(name: string): boolean {
         return false;
     }
 }
+
+export function createDirectory(name: string): void {
+    try {
+        fs.mkdirSync(name);
+    } catch (err) {
+        throw new DirectoryException(err.message);
+    }
+}
