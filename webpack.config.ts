@@ -70,7 +70,7 @@ export default (env: object, argv: {
         },
         output: {
             path: path.resolve(__dirname, "."),
-            filename: argv.id + IO.EXTENSION_USERSCRIPT,
+            filename: IO.outputFile_userscript(argv.id),
         },
         module: {
             rules: [

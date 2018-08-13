@@ -14,7 +14,8 @@ import webpackConfiguration from "../../webpack.config";
 import USERSCRIPT_CONFIG from "../../config/userscript";
 import RAW_METADATA from "../../config/metadata";
 
-const FILE_FINAL_OUTPUT = IO.outputFileName(USERSCRIPT_CONFIG.id);
+const FILE_OUTPUT_USERSCRIPT = IO.outputFile_userscript(USERSCRIPT_CONFIG.id);
+const FILE_OUTPUT_METADATA = IO.outputFile_metadata(USERSCRIPT_CONFIG.id);
 
 const DEFAULT_LOG_LEVEL = LogLevel.ALL;
 const DEFAULT_MODE = Mode.DEVELOPMENT;
@@ -34,7 +35,8 @@ function failWithError(reason: string): void {
 
 function fail(): void {
     logErrorLine(Messages.failed);
-    FileSystem.writeFile(FILE_FINAL_OUTPUT, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
+    FileSystem.writeFile(FILE_OUTPUT_USERSCRIPT, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
+    FileSystem.writeFile(FILE_OUTPUT_METADATA, IO.USERSCRIPT_CONTENT_BUILD_FAILED);
     process.exit(1);
 }
 
@@ -47,8 +49,9 @@ try {
     // Arguments are valid.
     log(Messages.building(mode, logLevel));
 
-    // Wipe .user.js file:
-    FileSystem.writeFile(FILE_FINAL_OUTPUT, IO.USERSCRIPT_CONTENT_BUILDING);
+    // Wipe output files:
+    FileSystem.writeFile(FILE_OUTPUT_USERSCRIPT, IO.USERSCRIPT_CONTENT_BUILDING);
+    FileSystem.writeFile(FILE_OUTPUT_METADATA, IO.USERSCRIPT_CONTENT_BUILDING);
 
     // Validate config and metadata:
     log(Messages.checkingConfig);
@@ -81,6 +84,9 @@ try {
             }
         }
 
+        // Write .meta.js file:
+        FileSystem.writeFile(FILE_OUTPUT_METADATA, metadata);
+
         // Warnings:
         const warnings: string[] = [];
         const unrecognizedKeys = Config.unrecognizedProperties(USERSCRIPT_CONFIG);
@@ -91,7 +97,7 @@ try {
         warnings.map(x => x.trim()+"\n\n").forEach(logWarning);
 
         log("");
-        logSuccessLine(Messages.success(FILE_FINAL_OUTPUT));
+        logSuccessLine(Messages.success(FILE_OUTPUT_USERSCRIPT));
     });
 } catch (err) {
     if (err instanceof LogLevelFromStringError) {

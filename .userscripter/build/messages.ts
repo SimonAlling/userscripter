@@ -23,7 +23,7 @@ Building for ${mode} with log level ${logLevelToString(level)}...
 
 
 export const success = (outputFileName: string) => `
-Userscript saved as ${outputFileName}.
+Userscript saved as ${IO.format(outputFileName)}.
 `;
 
 

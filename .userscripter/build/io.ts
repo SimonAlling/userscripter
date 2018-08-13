@@ -3,6 +3,7 @@ export const DIR_SOURCE     = "./src/";
 export const DIR_LIBRARY    = "./.userscripter/lib/";
 export const DIR_BUILD      = "./.userscripter/build/";
 export const DIR_VALIDATION = "./config/validation/";
+export const DIR_DIST       = "./dist/";
 
 export const COMMAND_INIT = "./init";
 export const COMMAND_BUILD = "./build";
@@ -23,14 +24,43 @@ export const FILE_GLOBALS_SITE = DIR_SOURCE + "globals-site.ts";
 
 export const FILE_MAIN            = DIR_SOURCE + "main.ts";
 export const EXTENSION_USERSCRIPT = ".user.js";
+export const EXTENSION_METADATA   = ".meta.js";
 
 export const USERSCRIPT_CONTENT_BUILDING = "Building...\n";
 export const USERSCRIPT_CONTENT_BUILD_FAILED = "*** Build failed! ***\n";
 
-export function outputFileName(id: string): string {
-    return id + EXTENSION_USERSCRIPT;
+function slashed(path: string): string {
+    return path.replace(/\/?$/, "/");
 }
+
+export const distFileName = (
+    (extension: string) => (id: string) => id + extension
+);
+
+export const distFileNameWithPath = (
+    (dir: string | null) => (extension: string) => (id: string) => (
+        (dir === null ? "" : slashed(dir)) + distFileName(extension)(id)
+    )
+);
+
+export const outputFile_userscript = distFileNameWithPath(DIR_DIST)(EXTENSION_USERSCRIPT);
+export const outputFile_metadata = distFileNameWithPath(DIR_DIST)(EXTENSION_METADATA);
 
 export function format(path: string): string {
     return path.replace(/(^\.\/)|(\/$)/g, "");
+}
+
+export function url(options: {
+    withDistDir: boolean,
+}) {
+    return (hostedAt: string, id: string) => {
+        const completeFileName = distFileNameWithPath(options.withDistDir ? DIR_DIST : null);
+        return (type: "download" | "update") => (
+            slashed(hostedAt) + format(completeFileName(
+                type === "update"
+                ? EXTENSION_METADATA
+                : EXTENSION_USERSCRIPT
+            )(id))
+        );
+    };
 }
