@@ -221,31 +221,32 @@ Operations are basically everything that involves modifying the host page (excep
 It contains a list of items like this one:
 
 ```typescript
-{
+new DependentOperation({
     description: "change heading content",
     condition: ALWAYS,
-    selectors: [ "body h1", ".author" ],
-    action: (heading, author) => {
-        if (heading.textContent !== null) {
-            heading.textContent = heading.textContent.toUpperCase() + " by " + author.textContent;
+    selectors: { heading: "body h1", author: ".author" },
+    action: e => {
+        if (e.heading.textContent !== null) {
+            e.heading.textContent = e.heading.textContent.toUpperCase() + " by " + e.author.textContent;
         }
     },
-},
+}),
 ```
 
 The structure of this snippet is as follows:
 
+* `DependentOperation` indicates that the operation depends on some element(s) being present in the page. Otherwise, `IndependentOperation` should be used instead.
 * `description` is just a description of what the operation is supposed to do. It makes it easier to detect if the operation fails, e.g. because the site has changed its content.
 * `condition` is exactly as described under _Inserting CSS_ above.
-* `selectors` is a list of CSS selectors identifying the elements used by the operation.
-* `action` is what should be done. It is a function whose arguments should correspond to `selectors`. Userscripter handles the lookup of elements in the host page and calls this function as soon as they are available.
+* `selectors` is a set of CSS selectors identifying the elements used by the operation.
+* `action` is what should be done. It is a function whose argument could be thought of as the result of mapping `document.querySelector` over `selectors`. Userscripter handles the lookup of elements in the host page and calls this function as soon as they are available.
 
-Here, `heading` is the first element matching `body h1`, and `author` is the first element matching `.author`.
+Here, `e.heading` is the first element matching `body h1`, and `e.author` is the first element matching `.author`.
 If the elements are not found at all, the operation fails and an error message is logged to the console.
 
-Userscripter makes sure that the TypeScript typechecker understands that `heading` and `author` actually are non-`null` `Element`s.
+Userscripter makes sure that the TypeScript typechecker understands that `e.heading` and `e.author` actually are `HTMLElement`s (and that `e.foo` is not, because `foo` is not a key in `selectors`).
 But it cannot know that the `textContent` property is not `null`, so it will not allow `toUpperCase()` on it.
-This is the reason behind the seemingly redundant `if (heading.textContent !== null) { ... }` check.
+This is the reason behind the seemingly redundant `if (e.heading.textContent !== null) { ... }` check.
 
 To announce the result of an operation from within the action, return `SUCCESS` or `FAILURE` (alias for `true` and `false`, respectively).
 Not returning anything (or explicitly returning `undefined`) is equivalent to returning `SUCCESS`.
@@ -262,7 +263,7 @@ The former approach makes for a much more maintainable userscript.
 
 As described [above](#script), `globals-site.ts` is intended for data that must be kept coherent with the host site, such as CSS selectors and regexes, while configuration parameters chosen by the userscript creator should reside in `globals-config.ts`.
 
-For example, instead of `[ "body h1", ".author" ]` above, one should typically write `[ SITE.SELECTOR_HEADING, SITE.SELECTOR_AUTHOR ]` and define those constants in `globals-site.ts` like so:
+For example, instead of `{ heading: "body h1", author: ".author" }` above, one should typically write `{ heading: SITE.SELECTOR_HEADING, author: SITE.SELECTOR_AUTHOR }` and define those constants in `globals-site.ts` like so:
 
 ```typescript
 export const SELECTOR_HEADING = "body h1";
