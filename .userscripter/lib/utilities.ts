@@ -61,6 +61,10 @@ export function isNegative(x: number): boolean {
     return x < 0;
 }
 
+export function fromMaybeUndefined<T>(fallback: T, x?: T): T {
+    return x === undefined ? fallback : x;
+}
+
 /**
  * Transforms a string into one with underscores instead of whitespace.
  * @param {string} s The string to transform.

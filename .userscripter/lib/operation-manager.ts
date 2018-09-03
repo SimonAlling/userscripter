@@ -1,4 +1,4 @@
-import { equals, compose } from "./utilities";
+import { equals, compose, fromMaybeUndefined } from "./utilities";
 import { is, isBoolean } from "ts-type-guards";
 
 export const SUCCESS: boolean = true;
@@ -7,6 +7,7 @@ export const FAILURE: boolean = false;
 export interface OperationDefinition {
     condition: boolean;
     description: string;
+    waitForDOMContentLoaded?: boolean;
 }
 
 export interface IndependentOperationDefinition extends OperationDefinition {
@@ -21,9 +22,11 @@ export interface DependentOperationDefinition<K extends string> extends Operatio
 export abstract class Operation {
     public readonly condition: boolean;
     public readonly description: string;
+    public readonly waitForDOMContentLoaded: boolean;
     constructor(definition: OperationDefinition) {
         this.condition = definition.condition;
         this.description = definition.description;
+        this.waitForDOMContentLoaded = fromMaybeUndefined(false, definition.waitForDOMContentLoaded);
     }
 }
 
@@ -56,6 +59,10 @@ export function OperationManager(
     successCallback: () => void,
 ) {
     let keepTrying: boolean = true;
+    let DOMHasLoaded: boolean = false;
+    document.addEventListener("DOMContentLoaded", () => {
+        DOMHasLoaded = true;
+    });
 
     function handleError(operation: Operation): void {
         if (is(DependentOperation)(operation)) {
@@ -91,7 +98,15 @@ export function OperationManager(
     function run(operations: Operation[]): void {
         if (keepTrying) {
             // Run all operations and keep those that failed:
-            const remainingOperations = operations.filter(compose(equals(FAILURE), perform));
+            const operationsToRunAfterDOMContentLoaded = operations.filter(o => o.waitForDOMContentLoaded);
+            const operationsToRunNow = (
+                operations.filter(o => !o.waitForDOMContentLoaded)
+                .concat(DOMHasLoaded ? operationsToRunAfterDOMContentLoaded : [])
+            );
+            const remainingOperations = (
+                operationsToRunNow.filter(compose(equals(FAILURE), perform))
+                .concat(DOMHasLoaded ? [] : operationsToRunAfterDOMContentLoaded)
+            );
             if (remainingOperations.length > 0) {
                 setTimeout(() => { run(remainingOperations); }, interval);
             }
