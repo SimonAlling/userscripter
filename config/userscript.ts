@@ -8,4 +8,5 @@ export default {
     sitename: "Example.com",
     namespace: "mywebsite.example",
     runAt: "document-start",
+    hostedAt: "https://example.com/userscripts/",
 };
