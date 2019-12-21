@@ -1,8 +1,0 @@
-// <<<<<<< EXAMPLE
-$SELECTOR_FOOBARS: "." + getGlobal("CONFIG.CLASS_FOOBAR");
-
-#{$SELECTOR_FOOBARS} {
-    font-family: monospace;
-}
-// =======
-// >>>>>>> CLEAN
