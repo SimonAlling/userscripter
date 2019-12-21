@@ -1,7 +1,5 @@
-node_modules
-*.log
-*.user.js
-.babelrc
-.awcache
-dist/
-src
+node_modules/
+lib/**
+build/**
+*.tgz
+*.html
