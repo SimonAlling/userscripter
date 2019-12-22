@@ -88,7 +88,7 @@
     "sass": "^1.23.7",
     "sass-loader": "^8.0.0",
     "schema-utils": "^2.5.0",
-    "terser-webpack-plugin": "^2.2.1",
+    "terser-webpack-plugin": "^2.3.1",
     "to-string-loader": "^1.1.6",
     "ts-type-guards": "^0.6.1",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
