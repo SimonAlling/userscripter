@@ -24,9 +24,13 @@
   },
   "main": "lib/index",
   "files": [
+    "bin/*",
     "build/*",
     "lib/*"
   ],
+  "bin": {
+    "userscripter": "./bin/cli.js"
+  },
   "scripts": {
     "build-cjs": "npm run clean && npm run compile-cjs",
     "build-esm": "npm run clean && npm run compile-esm",
@@ -71,6 +75,7 @@
   },
   "dependencies": {
     "@typed/compose": "^1.0.0",
+    "@types/fs-extra": "^8.0.1",
     "@types/json-schema": "^7.0.3",
     "@types/loader-utils": "^1.1.3",
     "@types/node": "^12.12.8",
@@ -78,8 +83,10 @@
     "@types/schema-utils": "^2.4.0",
     "@types/terser-webpack-plugin": "^2.2.0",
     "@types/webpack": "^4.39.9",
+    "@types/yargs": "^13.0.3",
     "awesome-typescript-loader": "^5.2.0",
     "css-loader": "^3.2.0",
+    "fs-extra": "^8.1.0",
     "lines-unlines": "^1.0.0",
     "loader-utils": "^1.2.3",
     "node-sass": "^4.13.0",
@@ -95,6 +102,7 @@
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "userscript-metadata": "^1.0.0",
     "webpack": "^4.41.2",
-    "webpack-userscript": "^2.3.1"
+    "webpack-userscript": "^2.3.1",
+    "yargs": "^15.0.2"
   }
 }

@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "~src/*": [ "./src/*" ]
+        },
+        "target": "es6",
+        "strict": true,
+        "module": "es2015",
+        "moduleResolution": "node",
+        "preserveConstEnums": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "lib": [
+            "esnext",
+            "dom"
+        ],
+        "jsx": "react",
+        "jsxFactory": "h"
+    },
+    "include": [
+        "./src/*.d.ts",
+        "./src/**/*.tsx",
+        "./src/**/*.ts"
+    ]
+}
