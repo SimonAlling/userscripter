@@ -23,6 +23,7 @@ const EXTENSIONS = {
     TS: ["ts", "tsx"],
     JS: ["mjs", "js", "jsx"], // Order is important: mjs must come before js to enable tree-shaking for dual-mode ESM/CJS packages.
     SASS: ["scss"],
+    SVG: ["svg"],
 } as const;
 
 const WEBPACK_STATS_TO_STRING_OPTIONS = {
@@ -92,6 +93,14 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         stats: WEBPACK_STATS_TO_STRING_OPTIONS,
         module: {
             rules: [
+                {
+                    test: filenameExtensionRegex(EXTENSIONS.SVG),
+                    loaders: [
+                        {
+                            loader: require.resolve("raw-loader"),
+                        },
+                    ],
+                },
                 {
                     test: filenameExtensionRegex(EXTENSIONS.SASS),
                     loaders: [
