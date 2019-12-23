@@ -43,12 +43,17 @@ export function loggingResponseHandler<T extends AllowedTypes>(summary: RequestS
             switch (summary.action) {
                 case "get":
                     log.error(`Could not read preference '${summary.preference.key}' because localStorage could not be accessed. Using value ${JSON.stringify(summary.preference.default)}.`);
-                    return response;
+                    break;
                 case "set":
                     log.error(`Could not save value ${JSON.stringify(summary.response.value)} for preference '${summary.preference.key}' because localStorage could not be accessed.`);
-                    return response;
+                    break;
+                default:
+                    assertUnreachable(summary.action);
             }
-            return assertUnreachable(summary.action);
+            return response;
+
+        default:
+            return assertUnreachable(response.status);
     }
 }
 
