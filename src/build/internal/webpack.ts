@@ -165,6 +165,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 metajs: true,
                 headers: {
                     ...metadata,
+                    name: metadata.name + (nightly ? " Nightly" : ""),
                     version: (
                         nightly || mode === Mode.development
                         ? metadata.version + "." + dateAsSemver(now)
