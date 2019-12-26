@@ -1,12 +1,34 @@
 import {
     AllowedTypes,
+    Preference,
     PreferenceManager,
     RequestSummary,
     Response,
+    ResponseHandler,
     Status,
 } from "ts-preferences";
 
 import * as log from "./log";
+
+type Listener<T extends AllowedTypes> = (p: Preference<T>) => void;
+
+export function subscriptable(handler: ResponseHandler): Readonly<{
+    subscribe: (listener: Listener<any>) => void
+    unsubscribe: (listener: Listener<any>) => void
+    handler: ResponseHandler
+}> {
+    const changeListeners: Set<Listener<any>> = new Set();
+    return {
+        subscribe: (listener: Listener<any>) => { changeListeners.add(listener); },
+        unsubscribe: (listener: Listener<any>) => { changeListeners.delete(listener); },
+        handler: (summary, preferences) => {
+            if (summary.action === "set") {
+                changeListeners.forEach(f => f(summary.preference));
+            }
+            return handler(summary, preferences);
+        },
+    };
+}
 
 export function loggingResponseHandler<T extends AllowedTypes>(summary: RequestSummary<T>, preferences: PreferenceManager): Response<T> {
     const response = summary.response;
