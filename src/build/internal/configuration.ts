@@ -25,6 +25,7 @@ export type BuildConfig = Readonly<{
     rootDir: string
     sassVariables: object
     sourceDir: string
+    verbose: boolean
 }>;
 
 export type WebpackConfigParameters = Readonly<{
@@ -72,6 +73,12 @@ const ENVIRONMENT_VARIABLES = [
         overrides: "hostedAt",
         mustBe: `a valid URL (e.g. "${HOSTED_AT_EXAMPLE}")`,
     },
+    {
+        nameWithoutPrefix: "VERBOSE",
+        parser: booleanParser,
+        overrides: "verbose",
+        mustBe: ["true", "false"],
+    },
 ] as const;
 
 {
@@ -94,6 +101,13 @@ export function distFileName(id: string, type: DistFileType): string {
 
 export function metadataUrl(hostedAt: string, id: string, type: DistFileType): string {
     return hostedAt.replace(/\/?$/, "/") + distFileName(id, type);
+}
+
+export function envVars(env: NodeJS.ProcessEnv) {
+    return ENVIRONMENT_VARIABLES.map(e => {
+        const name = ENV_VAR_PREFIX + e.nameWithoutPrefix;
+        return [ name, env[name] ] as const;
+    });
 }
 
 export function overrideBuildConfig(

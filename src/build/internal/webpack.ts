@@ -10,6 +10,7 @@ import {
     BuildConfig,
     WebpackConfigParameters,
     distFileName,
+    envVars,
     overrideBuildConfig,
 } from "./configuration";
 import { Mode } from "./mode";
@@ -50,6 +51,7 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     rootDir: x.rootDir,
     sassVariables: {},
     sourceDir: "src",
+    verbose: false,
 });
 
 export const DEFAULT_METADATA_SCHEMA: Metadata.ValidateOptions = {
@@ -78,7 +80,17 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         rootDir,
         sassVariables,
         sourceDir,
+        verbose,
     } = buildConfig;
+    if (verbose) {
+        const envVarLines = envVars(x.env).map(e => "  " + e[0] + ": " + (e[1] === undefined ? "(not specified)" : e[1]));
+        console.log("Environment variables:");
+        console.log(envVarLines.join("\n"));
+        console.log();
+        console.log("Effective build config (after considering environment variables):");
+        console.log(buildConfig);
+        console.log();
+    }
     const metadata = x.metadata(buildConfig);
     // tslint:disable:object-literal-sort-keys
     return {
