@@ -2,7 +2,7 @@ import * as log from "./log";
 import { OperationsPlan, runOperations } from "./operations";
 import { Stylesheets, insertStylesheets } from "./stylesheets";
 
-export function main(userscript: {
+export function run(userscript: {
     id: string,
     name: string,
     initialAction: () => void,

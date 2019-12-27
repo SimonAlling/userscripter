@@ -35,10 +35,10 @@ it("exposes everything in lib in index.ts", done => {
       "errors.ts",
       "index.ts",
       "log.ts",
-      "main.ts",
       "operations.ts",
       "preferences.ts",
       "stylesheets.ts",
+      "userscripter.ts",
     ]);
     const modulesThatAreExported = Object.keys(index);
     const modulesThatShouldBeExported = filenames.map(n => n.replace(/\.ts$/, "")).filter(n => n !== "index");
