@@ -1,6 +1,6 @@
 import { isNull, isNumber, isString } from "ts-type-guards";
 
-import { Condition, isDesired } from "./environment";
+import { Condition } from "./environment";
 
 type ActionResult = string | void;
 type OperationResult = OperationFailure | undefined;
@@ -103,7 +103,7 @@ export function runOperations(plan: OperationsPlan): void {
         }
     }
 
-    run(plan.operations.filter(isDesired), []);
+    run(plan.operations.filter(o => o.condition(window)), []);
 }
 
 function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
