@@ -1,3 +1,4 @@
+/* tslint:disable:no-console */
 import * as path from "path";
 import { everythingInPackage } from "restrict-imports-loader";
 import TerserPlugin from "terser-webpack-plugin";
