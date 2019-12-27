@@ -57,6 +57,10 @@ export function loggingResponseHandler<T extends AllowedTypes>(summary: RequestS
     }
 }
 
+export function noopResponseHandler<T extends AllowedTypes>(summary: RequestSummary<T>, _: PreferenceManager): Response<T> {
+    return summary.response;
+}
+
 function assertUnreachable(x: never): never {
     throw new Error("assertUnreachable: " + x);
 }
