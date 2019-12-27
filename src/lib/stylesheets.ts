@@ -28,7 +28,7 @@ export function stylesheet(spec: Stylesheet): Stylesheet {
 
 export type Stylesheets = Readonly<{ [_: string]: Stylesheet }>;
 
-export function insertStylesheets(stylesheets: Stylesheets): void {
+export function insert(stylesheets: Stylesheets): void {
     const fragment = document.createDocumentFragment();
     Object.entries(stylesheets).forEach(([ _, sheet ]) => {
         const style = document.createElement("style");
@@ -47,5 +47,5 @@ const setMediaQuery = (m: string) => (s: StylesheetWithId) => {
     }
 };
 
-export const enableStylesheet = setMediaQuery(MATCH_ALL);
-export const disableStylesheet = setMediaQuery(MATCH_NONE);
+export const enable = setMediaQuery(MATCH_ALL);
+export const disable = setMediaQuery(MATCH_NONE);

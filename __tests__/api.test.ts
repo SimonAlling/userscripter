@@ -19,12 +19,12 @@ it("exposes the intended API", () => {
   expect(Operations.Reason.DEPENDENCIES).toBeDefined();
   expect(Operations.Reason.INTERNAL).toBeDefined();
   expect(Operations.operation).toBeDefined();
-  expect(Operations.runOperations).toBeDefined();
+  expect(Operations.run).toBeDefined();
 
   expect(Stylesheets).toBeDefined();
-  expect(Stylesheets.insertStylesheets).toBeDefined();
-  expect(Stylesheets.enableStylesheet).toBeDefined();
-  expect(Stylesheets.disableStylesheet).toBeDefined();
+  expect(Stylesheets.insert).toBeDefined();
+  expect(Stylesheets.enable).toBeDefined();
+  expect(Stylesheets.disable).toBeDefined();
 });
 
 it("exposes everything in lib in index.ts", done => {

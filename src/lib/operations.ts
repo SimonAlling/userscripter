@@ -51,7 +51,7 @@ export function operation<K extends string>(spec: Operation<K>): Operation<any> 
 
 export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<any>>) => void;
 
-export type OperationsPlan = Readonly<{
+export type Plan = Readonly<{
     operations: ReadonlyArray<Operation<any>>
     interval: number // time between each try in milliseconds
     tryUntil: (state: DocumentReadyState) => boolean // when to stop trying
@@ -59,8 +59,8 @@ export type OperationsPlan = Readonly<{
     handleFailures: FailuresHandler
 }>;
 
-export function runOperations(plan: OperationsPlan): void {
-    function run(
+export function run(plan: Plan): void {
+    function recurse(
         operations: ReadonlyArray<Operation<any>>,
         failures: Array<OperationAndFailure<any>>,
         triesLeft?: number,
@@ -91,7 +91,7 @@ export function runOperations(plan: OperationsPlan): void {
         // Check how things went and act accordingly:
         if (remaining.length > 0) {
             setTimeout(
-                () => run(remaining, failures, (
+                () => recurse(remaining, failures, (
                     isNumber(triesLeft)
                     ? triesLeft - 1
                     : plan.tryUntil(readyState) ? plan.extraTries : undefined
@@ -103,7 +103,7 @@ export function runOperations(plan: OperationsPlan): void {
         }
     }
 
-    run(plan.operations.filter(o => o.condition(window)), []);
+    recurse(plan.operations.filter(o => o.condition(window)), []);
 }
 
 function tryToPerform<K extends string>(o: Operation<K>): OperationResult {

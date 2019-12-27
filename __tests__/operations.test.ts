@@ -10,8 +10,8 @@ import {
   Operation,
   OperationAndFailure,
   operation,
-  runOperations,
 } from "../src/lib/operations";
+import { operations } from "../src/lib";
 
 const consoleLog = jest.spyOn(console, "log");
 const consoleError = jest.spyOn(console, "error");
@@ -106,7 +106,7 @@ const OPERATIONS_BLABLABLA = [
 
 it("can run operations", () => {
   document.documentElement.innerHTML = HTML_EXAMPLE;
-  runOperations({
+  operations.run({
     ...PLAN,
     operations: OPERATIONS,
   });
@@ -115,7 +115,7 @@ it("can run operations", () => {
 
 it("can log "+BLABLABLA, () => {
   document.documentElement.innerHTML = HTML_WITH_BLABLABLA;
-  runOperations({
+  operations.run({
     ...PLAN,
     operations: OPERATIONS_BLABLABLA,
   });
@@ -125,7 +125,7 @@ it("can log "+BLABLABLA, () => {
 
 it("can handle an internal failure", () => {
   document.documentElement.innerHTML = HTML_WITHOUT_BLABLABLA;
-  runOperations({
+  operations.run({
     ...PLAN,
     operations: OPERATIONS_BLABLABLA,
   });

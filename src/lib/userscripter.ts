@@ -1,13 +1,13 @@
 import * as log from "./log";
-import { OperationsPlan, runOperations } from "./operations";
-import { Stylesheets, insertStylesheets } from "./stylesheets";
+import * as operations from "./operations";
+import * as stylesheets from "./stylesheets";
 
 export function run(userscript: {
     id: string,
     name: string,
     initialAction: () => void,
-    stylesheets: Stylesheets,
-    operationsPlan: OperationsPlan,
+    stylesheets: stylesheets.Stylesheets,
+    operationsPlan: operations.Plan,
 }): void {
     log.setPrefix(`[${userscript.name}]`);
     // Make sure the userscript does not run more than once (e.g. if it's installed
@@ -18,8 +18,8 @@ export function run(userscript: {
     } else {
         document.documentElement.setAttribute(attr, "");
         userscript.initialAction();
-        insertStylesheets(userscript.stylesheets);
-        runOperations(userscript.operationsPlan);
+        stylesheets.insert(userscript.stylesheets);
+        operations.run(userscript.operationsPlan);
     }
 }
 
