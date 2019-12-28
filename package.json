@@ -1,12 +1,12 @@
 {
-  "private": true,
   "name": "userscripter",
   "version": "0.1.0",
-  "description": "Strongly typed library for creating userscripts/WebExtensions.",
+  "description": "Create userscripts in a breeze!",
   "keywords": [
     "userscript",
-    "extension",
-    "WebExtension"
+    "user script",
+    "browser",
+    "extension"
   ],
   "author": {
     "name": "Simon Alling",
@@ -20,7 +20,7 @@
     "url": "https://github.com/simonalling/userscripter"
   },
   "bugs": {
-    "url": "https://github.com/simonalling/userscripter"
+    "url": "https://github.com/simonalling/userscripter/issues"
   },
   "main": "lib/index",
   "files": [
@@ -53,9 +53,7 @@
     "testRegex": ".+\\.test\\.ts$",
     "moduleFileExtensions": [
       "ts",
-      "js",
-      "json",
-      "node"
+      "js"
     ]
   },
   "devDependencies": {
