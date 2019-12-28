@@ -94,7 +94,16 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         console.log(buildConfig);
         console.log();
     }
-    const metadata = x.metadata(buildConfig);
+    const unfinishedMetadata = x.metadata(buildConfig);
+    const finalMetadata: Metadata.Metadata = {
+        ...unfinishedMetadata,
+        name: unfinishedMetadata.name + (nightly ? " Nightly" : ""),
+        version: (
+            nightly || mode === Mode.development
+            ? unfinishedMetadata.version + "." + dateAsSemver(now)
+            : unfinishedMetadata.version
+        ),
+    } as const;
     // tslint:disable:object-literal-sort-keys
     return {
         mode: mode,
@@ -178,15 +187,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             new UserscripterWebpackPlugin(x),
             new WebpackUserscriptPlugin({
                 metajs: true,
-                headers: {
-                    ...metadata,
-                    name: metadata.name + (nightly ? " Nightly" : ""),
-                    version: (
-                        nightly || mode === Mode.development
-                        ? metadata.version + "." + dateAsSemver(now)
-                        : metadata.version
-                    ),
-                },
+                headers: finalMetadata,
             }),
         ],
         optimization: {
