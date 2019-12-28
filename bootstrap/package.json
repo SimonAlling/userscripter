@@ -6,7 +6,7 @@
     "build": "npm run clean && npm run build-webpack-config && npm run build-userscript && npm run clean",
     "clean": "rm -rf .userscripter-temp"
   },
-  "devDependencies": {
+  "dependencies": {
     "@typed/compose": "^1.0.0",
     "@types/app-root-path": "^1.2.4",
     "app-root-path": "^3.0.0",
@@ -16,6 +16,5 @@
     "userscripter": "file:../userscripter",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
-  },
-  "dependencies": {}
+  }
 }
