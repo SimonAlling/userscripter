@@ -25,6 +25,7 @@
   "main": "lib/index",
   "files": [
     "bin/*",
+    "bootstrap/*",
     "build/*",
     "lib/*"
   ],
