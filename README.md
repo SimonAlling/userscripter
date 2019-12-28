@@ -55,7 +55,7 @@ You should also see the message `[Bootstrapped Userscript] Bootstrapped Userscri
 ## How to write a userscript
 
 A userscript typically consists primarily of **CSS** and **DOM operations**.
-It can also have user-facing **preferences**. These projects demonstrate how Userscripter is intended to be used:
+It can also have user-facing **preferences**. These repositories demonstrate how Userscripter is intended to be used:
 
   * [Example Userscript][example-userscript] is a basic userscript featuring [operations][example-userscript-operations], [stylesheets][example-userscript-stylesheets], [preferences][example-userscript-preferences] and a [preferences menu][example-userscript-preferences-menu].
   * [Better SweClockers][better-sweclockers] is a large, full-fledged, real-world userscript.
