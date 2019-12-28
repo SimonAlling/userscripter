@@ -1,8 +1,9 @@
 import { compose } from "@typed/compose";
 import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
+import { RawSource } from "webpack-sources";
 
-import { WebpackConfigParameters, overrideBuildConfig } from "./configuration";
+import { WebpackConfigParameters, distFileName, overrideBuildConfig } from "./configuration";
 import * as Msg from "./messages";
 import { buildConfigErrors } from "./validation";
 
@@ -14,6 +15,7 @@ export class UserscripterWebpackPlugin {
         compiler.hooks.afterCompile.tap(
             UserscripterWebpackPlugin.name,
             compilation => {
+                const logger = compilation.getLogger(UserscripterWebpackPlugin.name);
                 // Validate environment variables:
                 const overridden = overrideBuildConfig(w.buildConfig, w.env);
                 compilation.errors.push(...overridden.errors.map(compose(Error, Msg.envVarError)));
@@ -27,6 +29,9 @@ export class UserscripterWebpackPlugin {
                 } else {
                     compilation.warnings.push(...metadataValidationResult.Right.warnings.map(Msg.metadataWarning));
                 }
+                // Log metadata:
+                const metadataAsset = distFileName(w.buildConfig.id, "meta");
+                logger.info((compilation.assets[metadataAsset] as RawSource).source());
             },
         );
     }
