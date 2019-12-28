@@ -4,7 +4,6 @@
             "es2018",
             "dom"
         ],
-        "sourceMap": true,
         "target": "es2018",
         "declaration": true,
         "strict": true,
