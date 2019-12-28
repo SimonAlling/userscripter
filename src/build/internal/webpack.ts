@@ -50,6 +50,7 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     now: x.now,
     outDir: "dist",
     rootDir: x.rootDir,
+    sassVariableGetter: "getGlobal",
     sassVariables: {},
     sourceDir: "src",
     verbose: false,
@@ -79,6 +80,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         now,
         outDir,
         rootDir,
+        sassVariableGetter,
         sassVariables,
         sourceDir,
         verbose,
@@ -134,7 +136,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                             loader: require.resolve("sass-loader"),
                             options: {
                                 sassOptions: {
-                                    functions: { getGlobal: getGlobalFrom(sassVariables) },
+                                    functions: { [sassVariableGetter]: getGlobalFrom(sassVariables) },
                                 },
                             },
                         },

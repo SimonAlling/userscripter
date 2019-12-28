@@ -23,6 +23,7 @@ export type BuildConfig = Readonly<{
     now: Date
     outDir: string
     rootDir: string
+    sassVariableGetter: string
     sassVariables: object
     sourceDir: string
     verbose: boolean
