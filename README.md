@@ -54,7 +54,7 @@ You should also see the message `[Bootstrapped Userscript] Bootstrapped Userscri
 
 ## How to write a userscript
 
-A userscript typically consists primarily of **CSS** and **DOM operations**.
+A userscript typically consists primarily of **DOM operations** and **stylesheets**.
 It can also have user-facing **preferences**. These repositories demonstrate how Userscripter is intended to be used:
 
   * [Example Userscript][example-userscript] is a basic userscript featuring [operations][example-userscript-operations], [stylesheets][example-userscript-stylesheets], [preferences][example-userscript-preferences] and a [preferences menu][example-userscript-preferences-menu].
@@ -65,7 +65,7 @@ It can also have user-facing **preferences**. These repositories demonstrate how
 
 The object passed to `createWebpackConfig` controls how the userscript is built (see e.g. [`webpack.config.ts` in the example repo][example-userscript-webpack-config]).
 
-You can also specify certain options on the fly using environment variables:
+You can override certain options on the command line using environment variables:
 
 ```bash
 USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
