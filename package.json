@@ -90,7 +90,7 @@
     "node-sass": "^4.13.0",
     "node-sass-utils": "^1.1.2",
     "raw-loader": "^4.0.0",
-    "restrict-imports-loader": "^3.2.0",
+    "restrict-imports-loader": "^3.2.1",
     "sass": "^1.23.7",
     "sass-loader": "^8.0.0",
     "schema-utils": "^2.5.0",
