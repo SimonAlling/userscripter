@@ -76,7 +76,6 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 
 [violentmonkey-firefox]: https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/
 [violentmonkey-chrome]: https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag
-[ts-preferences]: https://github.com/SimonAlling/ts-preferences
 [better-sweclockers]: https://github.com/SimonAlling/better-sweclockers
 [example-userscript]: https://github.com/SimonAlling/example-userscript
 [example-userscript-operations]: https://github.com/SimonAlling/example-userscript/blob/master/src/operations.ts
