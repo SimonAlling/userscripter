@@ -34,7 +34,7 @@ export function buildConfigErrors(
 ): ReadonlyArray<BuildConfigError<any>> {
     const REQUIREMENTS = [
         requirement({
-            description: `a valid URL (e.g. "https://example.com/userscripts/") or null`,
+            description: `a valid URL (e.g. "${HOSTED_AT_EXAMPLE}") or null`,
             key: "hostedAt",
             value: buildConfig.hostedAt,
             predicate: x => x === null || urlParser(x).kind === "valid",
