@@ -1,4 +1,4 @@
-import { BuildConfig, BuildConfigAndListOf, HOSTED_AT_EXAMPLE } from "./configuration";
+import { BuildConfig, HOSTED_AT_EXAMPLE } from "./configuration";
 import { urlParser } from "./parsing";
 
 export type BuildConfigError<K extends keyof BuildConfig> = Readonly<{
