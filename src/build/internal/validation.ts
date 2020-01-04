@@ -2,9 +2,9 @@ import { BuildConfig, HOSTED_AT_EXAMPLE } from "./configuration";
 import { urlParser } from "./parsing";
 
 export type BuildConfigError<K extends keyof BuildConfig> = Readonly<{
-    name: K,
-    expected: string,
-    found: BuildConfig[K],
+    name: K
+    expected: string
+    found: BuildConfig[K]
 }>;
 
 export type BuildConfigValidators = Readonly<{
@@ -17,10 +17,10 @@ type PredicateWithDescription<T> = Readonly<{
 }>;
 
 function requirement<K extends keyof BuildConfig>(x: {
-    description: string,
-    key: K,
-    value: BuildConfig[K],
-    predicate: (value: BuildConfig[K]) => boolean,
+    description: string
+    key: K
+    value: BuildConfig[K]
+    predicate: (value: BuildConfig[K]) => boolean
 }) {
     return { ...x, valid: x.predicate(x.value) };
 }

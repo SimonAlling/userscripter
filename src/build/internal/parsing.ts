@@ -1,9 +1,9 @@
 import { TypeGuard } from "ts-type-guards";
 
 export type ParseResult<T> = Readonly<{
-    kind: "valid", value: T,
+    kind: "valid", value: T
 } | {
-    kind: "invalid", input: string,
+    kind: "invalid", input: string
 }>;
 
 export type Parser<T> = (input: string) => ParseResult<T>;

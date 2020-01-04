@@ -37,8 +37,8 @@ const WEBPACK_STATS_TO_STRING_OPTIONS = {
 } as const;
 
 export const DEFAULT_BUILD_CONFIG: (x: {
-    rootDir: string,
-    id: string,
+    rootDir: string
+    id: string
     now: Date
 }) => BuildConfig = x => ({
     allowJs: false,

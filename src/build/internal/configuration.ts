@@ -30,27 +30,27 @@ export type BuildConfig = Readonly<{
 }>;
 
 export type WebpackConfigParameters = Readonly<{
-    buildConfig: BuildConfig,
-    metadata: (buildConfig: BuildConfig) => Metadata.Metadata,
-    metadataSchema: Metadata.ValidateOptions,
-    env: NodeJS.ProcessEnv,
+    buildConfig: BuildConfig
+    metadata: (buildConfig: BuildConfig) => Metadata.Metadata
+    metadataSchema: Metadata.ValidateOptions
+    env: NodeJS.ProcessEnv
 }>;
 
 type FromEnv<T> = ParseResult<T> | Readonly<{
-    kind: "undefined",
+    kind: "undefined"
 }>;
 
 type EnvVarSpec<K extends keyof BuildConfig, V> = Readonly<{
-    nameWithoutPrefix: string,
-    parser: Parser<V>,
-    overrides: K,
-    mustBe: string | readonly string[], // plaintext description (e.g. "a positive integer") or list of allowed values
+    nameWithoutPrefix: string
+    parser: Parser<V>
+    overrides: K
+    mustBe: string | readonly string[] // plaintext description (e.g. "a positive integer") or list of allowed values
 }>;
 
 export type EnvVarError = Readonly<{
-    fullName: string,
-    expected: string | readonly string[],
-    found: string,
+    fullName: string
+    expected: string | readonly string[]
+    found: string
 }>;
 
 const ENVIRONMENT_VARIABLES = [
@@ -90,7 +90,7 @@ const ENVIRONMENT_VARIABLES = [
 }
 
 export type BuildConfigAndListOf<E> = Readonly<{
-    buildConfig: BuildConfig,
+    buildConfig: BuildConfig
     errors: readonly E[]
 }>;
 
