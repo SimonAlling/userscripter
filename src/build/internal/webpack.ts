@@ -17,6 +17,7 @@ import {
 import { Mode } from "./mode";
 import { getGlobalFrom } from "./sass";
 import { concat } from "./utilities";
+import { buildConfigErrors } from "./validation";
 import { UserscripterWebpackPlugin } from "./webpack-plugin";
 
 const USERSCRIPTER_BUILD = "userscripter/build";
@@ -67,10 +68,7 @@ export const DEFAULT_METADATA_SCHEMA: Metadata.ValidateOptions = {
 } as const;
 
 export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configuration {
-    const buildConfig = (
-        // We intentionally ignore any errors here; they will be handled by our Webpack plugin.
-        overrideBuildConfig(x.buildConfig, x.env).buildConfig
-    );
+    const overridden = overrideBuildConfig(x.buildConfig, x.env);
     const {
         allowJs,
         id,
@@ -84,17 +82,17 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         sassVariables,
         sourceDir,
         verbose,
-    } = buildConfig;
+    } = overridden.buildConfig;
     if (verbose) {
         const envVarLines = envVars(x.env).map(e => "  " + e[0] + ": " + (e[1] === undefined ? "(not specified)" : e[1]));
         console.log("Environment variables:");
         console.log(envVarLines.join("\n"));
         console.log();
         console.log("Effective build config (after considering environment variables):");
-        console.log(buildConfig);
+        console.log(overridden.buildConfig);
         console.log();
     }
-    const unfinishedMetadata = x.metadata(buildConfig);
+    const unfinishedMetadata = x.metadata(overridden.buildConfig);
     const finalMetadata: Metadata.Metadata = {
         ...unfinishedMetadata,
         name: unfinishedMetadata.name + (nightly ? " Nightly" : ""),
@@ -184,7 +182,12 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             extensions: concat(Object.values(EXTENSIONS)).map(e => "." + e),
         },
         plugins: [
-            new UserscripterWebpackPlugin(x),
+            new UserscripterWebpackPlugin({
+                buildConfigErrors: buildConfigErrors(overridden.buildConfig),
+                envVarErrors: overridden.errors,
+                metadataValidationResult: Metadata.validateWith(x.metadataSchema)(x.metadata(overridden.buildConfig)),
+                metadataAssetName: distFileName(overridden.buildConfig.id, "meta"),
+            }),
             new WebpackUserscriptPlugin({
                 metajs: true,
                 headers: finalMetadata,
