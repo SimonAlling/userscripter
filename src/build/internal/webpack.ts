@@ -1,4 +1,3 @@
-/* tslint:disable:no-console */
 import * as path from "path";
 import { everythingInPackage } from "restrict-imports-loader";
 import TerserPlugin from "terser-webpack-plugin";
@@ -75,15 +74,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         sourceDir,
         verbose,
     } = overridden.buildConfig;
-    if (verbose) {
-        const envVarLines = envVars(x.env).map(e => "  " + e[0] + ": " + (e[1] === undefined ? "(not specified)" : e[1]));
-        console.log("Environment variables:");
-        console.log(envVarLines.join("\n"));
-        console.log();
-        console.log("Effective build config (after considering environment variables):");
-        console.log(overridden.buildConfig);
-        console.log();
-    }
     const unfinishedMetadata = x.metadata(overridden.buildConfig);
     const finalMetadata: Metadata.Metadata = {
         ...unfinishedMetadata,
@@ -110,7 +100,8 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             modules: false,
             entrypoints: false,
             colors: true,
-        },
+            logging: verbose ? "verbose" : "info",
+        } as webpack.Stats.ToStringOptionsObject, // because the `logging` property is not recognized
         module: {
             rules: [
                 {
@@ -183,8 +174,11 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             new UserscripterWebpackPlugin({
                 buildConfigErrors: buildConfigErrors(overridden.buildConfig),
                 envVarErrors: overridden.errors,
+                envVars: envVars(x.env),
                 metadataValidationResult: Metadata.validateWith(x.metadataSchema)(x.metadata(overridden.buildConfig)),
                 metadataAssetName: distFileName(overridden.buildConfig.id, "meta"),
+                overriddenBuildConfig: overridden.buildConfig,
+                verbose: verbose,
             }),
             new WebpackUserscriptPlugin({
                 metajs: true,
