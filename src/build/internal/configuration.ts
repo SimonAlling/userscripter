@@ -133,7 +133,7 @@ export function overrideBuildConfig(
                         ...acc,
                         buildConfig: {
                             ...acc.buildConfig,
-                            [envVar.overrides]: parsed.value
+                            [envVar.overrides]: parsed.value,
                         },
                     };
                 case "invalid":
@@ -142,7 +142,7 @@ export function overrideBuildConfig(
                         errors: acc.errors.concat({
                             fullName: envVarNameWithPrefix,
                             expected: envVar.mustBe,
-                            found: parsed.input
+                            found: parsed.input,
                         }),
                     };
             }
