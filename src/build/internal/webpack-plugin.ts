@@ -3,7 +3,7 @@ import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
 import { RawSource } from "webpack-sources";
 
-import { BuildConfig, EnvVarError } from "./configuration";
+import { BuildConfig, ENVIRONMENT_VARIABLES, EnvVarError, envVarName } from "./configuration";
 import * as Msg from "./messages";
 import { BuildConfigError } from "./validation";
 
@@ -57,6 +57,15 @@ export class UserscripterWebpackPlugin {
                         overriddenBuildConfig,
                     );
                     logger.log(" "); // The empty string is not logged at all.
+                } else {
+                    const hasUserscripterErrors = (
+                        [ envVarErrors, buildConfigErrors ].some(_ => _.length > 0)
+                        || Metadata.isLeft(metadataValidationResult)
+                    );
+                    if (hasUserscripterErrors) {
+                        const fullEnvVarName = envVarName(ENVIRONMENT_VARIABLES.VERBOSE.nameWithoutPrefix);
+                        logger.info(`Hint: Use ${fullEnvVarName}=true to display more information.`);
+                    }
                 }
                 // Log metadata:
                 if (!compilation.getStats().hasErrors()) {

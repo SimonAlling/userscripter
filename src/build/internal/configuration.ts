@@ -57,7 +57,7 @@ export function envVarName(nameWithoutPrefix: keyof typeof ENVIRONMENT_VARIABLES
     return ENV_VAR_PREFIX + nameWithoutPrefix;
 }
 
-const ENVIRONMENT_VARIABLES = {
+export const ENVIRONMENT_VARIABLES = {
     // `name` should NOT include "USERSCRIPTER_" prefix.
     // `overrides` must be in `keyof BuildConfig`.
     MODE: {
