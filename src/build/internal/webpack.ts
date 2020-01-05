@@ -29,14 +29,6 @@ const EXTENSIONS = {
     SVG: ["svg"],
 } as const;
 
-const WEBPACK_STATS_TO_STRING_OPTIONS = {
-    depth: false,
-    hash: false,
-    modules: false,
-    entrypoints: false,
-    colors: true,
-} as const;
-
 export const DEFAULT_BUILD_CONFIG: (x: {
     rootDir: string
     id: string
@@ -112,7 +104,13 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             path: resolveIn(rootDir)(outDir),
             filename: distFileName(id, "user"),
         },
-        stats: WEBPACK_STATS_TO_STRING_OPTIONS,
+        stats: {
+            depth: false,
+            hash: false,
+            modules: false,
+            entrypoints: false,
+            colors: true,
+        },
         module: {
             rules: [
                 {
