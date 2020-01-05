@@ -40,8 +40,10 @@ type FromEnv<T> = ParseResult<T> | Readonly<{
     kind: "undefined"
 }>;
 
-type EnvVarSpec<K extends keyof BuildConfig, V> = Readonly<{
-    nameWithoutPrefix: keyof typeof ENVIRONMENT_VARIABLES
+type EnvVarNameWithoutPrefix = keyof typeof ENVIRONMENT_VARIABLES;
+
+type EnvVarSpec<K extends keyof BuildConfig, N extends EnvVarNameWithoutPrefix, V> = Readonly<{
+    nameWithoutPrefix: N
     parser: Parser<V>
     overrides: K
     mustBe: string | readonly string[] // plaintext description (e.g. "a positive integer") or list of allowed values
@@ -53,7 +55,7 @@ export type EnvVarError = Readonly<{
     found: string
 }>;
 
-export function envVarName(nameWithoutPrefix: keyof typeof ENVIRONMENT_VARIABLES): string {
+export function envVarName(nameWithoutPrefix: EnvVarNameWithoutPrefix): string {
     return ENV_VAR_PREFIX + nameWithoutPrefix;
 }
 
@@ -89,7 +91,7 @@ export const ENVIRONMENT_VARIABLES = {
 {
     // A hack to make it easier to find type errors in ENVIRONMENT_VARIABLES.
     // It cannot have an explicit type itself since we want it to be `const`.
-    const typecheckedEnvVars: ReadonlyArray<EnvVarSpec<keyof BuildConfig, any>> = Object.values(ENVIRONMENT_VARIABLES);
+    const typecheckedEnvVars: { [N in EnvVarNameWithoutPrefix]: EnvVarSpec<keyof BuildConfig, N, unknown> } = ENVIRONMENT_VARIABLES;
     void typecheckedEnvVars; // tslint:disable-line:no-unused-expression
 }
 
@@ -120,7 +122,7 @@ export function overrideBuildConfig(
     env: NodeJS.ProcessEnv,
 ): BuildConfigAndListOf<EnvVarError> {
     return Object.values(ENVIRONMENT_VARIABLES).reduce(
-        (acc: BuildConfigAndListOf<EnvVarError>, envVar: EnvVarSpec<any, any>) => {
+        (acc: BuildConfigAndListOf<EnvVarError>, envVar: EnvVarSpec<keyof BuildConfig, EnvVarNameWithoutPrefix, unknown>) => {
             const envVarNameWithPrefix = envVarName(envVar.nameWithoutPrefix);
             const parsed = fromEnv(envVar, env[envVarNameWithPrefix]);
             switch (parsed.kind) {
@@ -149,8 +151,8 @@ export function overrideBuildConfig(
     );
 }
 
-function fromEnv<R extends keyof BuildConfig, V>(
-    envVarSpec: EnvVarSpec<R, V>,
+function fromEnv<R extends keyof BuildConfig, N extends EnvVarNameWithoutPrefix, V>(
+    envVarSpec: EnvVarSpec<R, N, V>,
     v: string | undefined,
 ): FromEnv<V> {
     return (
