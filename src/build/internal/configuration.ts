@@ -53,6 +53,10 @@ export type EnvVarError = Readonly<{
     found: string
 }>;
 
+export function envVarName(nameWithoutPrefix: string): string {
+    return ENV_VAR_PREFIX + nameWithoutPrefix;
+}
+
 const ENVIRONMENT_VARIABLES = [
     // `name` should NOT include "USERSCRIPTER_" prefix.
     // `overrides` must be in `keyof BuildConfig`.
@@ -106,7 +110,7 @@ export function metadataUrl(hostedAt: string, id: string, type: DistFileType): s
 
 export function envVars(env: NodeJS.ProcessEnv) {
     return ENVIRONMENT_VARIABLES.map(e => {
-        const name = ENV_VAR_PREFIX + e.nameWithoutPrefix;
+        const name = envVarName(e.nameWithoutPrefix);
         return [ name, env[name] ] as const;
     });
 }
@@ -117,7 +121,7 @@ export function overrideBuildConfig(
 ): BuildConfigAndListOf<EnvVarError> {
     return ENVIRONMENT_VARIABLES.reduce(
         (acc: BuildConfigAndListOf<EnvVarError>, envVar: EnvVarSpec<any, any>) => {
-            const envVarNameWithPrefix = ENV_VAR_PREFIX + envVar.nameWithoutPrefix;
+            const envVarNameWithPrefix = envVarName(envVar.nameWithoutPrefix);
             const parsed = fromEnv(envVar, env[envVarNameWithPrefix]);
             switch (parsed.kind) {
                 case "undefined":
