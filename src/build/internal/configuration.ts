@@ -1,4 +1,5 @@
 import * as Metadata from "userscript-metadata";
+import Manifest from "webextension-manifest";
 
 import { Mode, isMode } from "./mode";
 import {
@@ -31,6 +32,7 @@ export type BuildConfig = Readonly<{
 
 export type WebpackConfigParameters = Readonly<{
     buildConfig: BuildConfig
+    manifest?: (buildConfig: BuildConfig) => Manifest
     metadata: (buildConfig: BuildConfig) => Metadata.Metadata
     metadataSchema: Metadata.ValidateOptions
     env: NodeJS.ProcessEnv

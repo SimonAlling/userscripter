@@ -5,6 +5,7 @@ Create [userscripts](https://wiki.greasespot.net/User_script) in a breeze!
 * Safe, declarative DOM operations and stylesheets
 * Straightforward preference management
 * TypeScript constants in SASS code
+* Build as native browser extension (optional)
 * Metadata validation
 * Static typing
 
@@ -74,6 +75,19 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 (With `USERSCRIPTER_VERBOSE=true`, all available environment variables are listed.)
 
 
+## Native browser extension
+
+You can easily create a [native browser extension][webextension] from your userscript by including an object representation of [`manifest.json`][manifest-json] in the object passed to `createWebpackConfig` ([example][example-userscript-webpack-config]).
+If you do, `manifest.json` will be created alongside the compiled `.user.js` file.
+You can then use [`web-ext`][web-ext] to build the native extension:
+
+```bash
+npm install -g web-ext
+cd dist
+web-ext build
+```
+
+
 [violentmonkey-firefox]: https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/
 [violentmonkey-chrome]: https://chrome.google.com/webstore/detail/violentmonkey/jinjaccalgkegednnccohejagnlnfdag
 [better-sweclockers]: https://github.com/SimonAlling/better-sweclockers
@@ -83,3 +97,6 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 [example-userscript-preferences]: https://github.com/SimonAlling/example-userscript/blob/master/src/preferences.ts
 [example-userscript-preferences-menu]: https://github.com/SimonAlling/example-userscript/blob/master/src/preferences-menu.tsx
 [example-userscript-webpack-config]: https://github.com/SimonAlling/example-userscript/blob/master/webpack.config.ts
+[webextension]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions
+[manifest-json]: https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json
+[web-ext]: https://www.npmjs.com/package/web-ext

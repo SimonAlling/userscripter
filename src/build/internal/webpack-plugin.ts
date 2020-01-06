@@ -1,5 +1,6 @@
 import { compose } from "@typed/compose";
 import * as Metadata from "userscript-metadata";
+import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
 import { RawSource } from "webpack-sources";
 
@@ -7,11 +8,15 @@ import { BuildConfig, ENVIRONMENT_VARIABLES, EnvVarError, envVarName } from "./c
 import * as Msg from "./messages";
 import { BuildConfigError } from "./validation";
 
+const MANIFEST_FILE = "manifest.json";
+const MANIFEST_INDENTATION = 2;
+
 export class UserscripterWebpackPlugin {
     constructor(private readonly x: {
         buildConfigErrors: ReadonlyArray<BuildConfigError<any>>
         envVarErrors: readonly EnvVarError[]
         envVars: ReadonlyArray<readonly [string, string | undefined]>
+        manifest?: Manifest
         metadataAssetName: string
         metadataValidationResult: Metadata.ValidationResult<Metadata.Metadata>
         overriddenBuildConfig: BuildConfig
@@ -25,9 +30,20 @@ export class UserscripterWebpackPlugin {
             envVars,
             metadataAssetName,
             metadataValidationResult,
+            manifest,
             overriddenBuildConfig,
             verbose,
         } = this.x;
+        if (manifest !== undefined) {
+            compiler.hooks.afterCompile.tap(
+                UserscripterWebpackPlugin.name,
+                compilation => {
+                    compilation.assets[MANIFEST_FILE] = new RawSource(
+                        JSON.stringify(manifest, null, MANIFEST_INDENTATION)
+                    );
+                },
+            );
+        }
         compiler.hooks.afterEmit.tap(
             UserscripterWebpackPlugin.name,
             compilation => {

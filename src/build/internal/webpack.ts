@@ -74,16 +74,28 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         sourceDir,
         verbose,
     } = overridden.buildConfig;
-    const unfinishedMetadata = x.metadata(overridden.buildConfig);
-    const finalMetadata: Metadata.Metadata = {
-        ...unfinishedMetadata,
-        name: unfinishedMetadata.name + (nightly ? " Nightly" : ""),
-        version: (
-            nightly || mode === Mode.development
-            ? unfinishedMetadata.version + "." + dateAsSemver(now)
-            : unfinishedMetadata.version
-        ),
-    } as const;
+    function finalName(name: string): string {
+        return name + (nightly ? " Nightly" : "");
+    }
+    function finalVersion(version: string): string {
+        return version + (nightly || mode === Mode.development ? "." + dateAsSemver(now) : "");
+    }
+    const finalMetadata = (() => {
+        const unfinishedMetadata = x.metadata(overridden.buildConfig);
+        return {
+            ...unfinishedMetadata,
+            name: finalName(unfinishedMetadata.name as string),
+            version: finalVersion(unfinishedMetadata.version as string),
+        };
+    })();
+    const finalManifest = x.manifest === undefined ? undefined : (() => {
+        const unfinishedManifest = x.manifest(overridden.buildConfig);
+        return {
+            ...unfinishedManifest,
+            name: finalName(unfinishedManifest.name),
+            version: finalVersion(unfinishedManifest.version),
+        };
+    })();
     // tslint:disable:object-literal-sort-keys
     return {
         mode: mode,
@@ -177,6 +189,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 envVars: envVars(x.env),
                 metadataValidationResult: Metadata.validateWith(x.metadataSchema)(finalMetadata),
                 metadataAssetName: distFileName(overridden.buildConfig.id, "meta"),
+                manifest: finalManifest,
                 overriddenBuildConfig: overridden.buildConfig,
                 verbose: verbose,
             }),
