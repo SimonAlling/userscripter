@@ -1,23 +1,32 @@
-// tslint:disable:no-console
+type LoggerMethodName = "log" | "info" | "warn" | "error";
+
+export type Logger = {
+    readonly [K in LoggerMethodName]: (...xs: any[]) => void
+};
 
 let prefix: string = "";
+let logger: Logger = console;
 
 export function setPrefix(p: string): void {
     prefix = p;
 }
 
+export function setLogger(l: Logger): void {
+    logger = l;
+}
+
 export function log(str: string): void {
-    console.log(prefix, str);
+    logger.log(prefix, str);
 }
 
 export function info(str: string): void {
-    console.info(prefix, str);
+    logger.info(prefix, str);
 }
 
 export function warning(str: string): void {
-    console.warn(prefix, str);
+    logger.warn(prefix, str);
 }
 
 export function error(str: string): void {
-    console.error(prefix, str);
+    logger.error(prefix, str);
 }
