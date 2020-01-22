@@ -16,6 +16,8 @@ const webpackifyMessage_metadata = webpackifyMessage("metadata");
 
 const webpackifyMessage_buildConfig = webpackifyMessage("build configuration");
 
+const webpackifyMessage_userscripter = webpackifyMessage("Userscripter");
+
 export const envVarError = (e: EnvVarError) => (
     webpackifyMessage_environment(invalidValue(
         `environment variable ${e.fullName}`,
@@ -72,3 +74,7 @@ export const metadataError = compose(
 );
 
 export const quote = (s: string) => `"${s}"`;
+
+export const compilationAssetNotFound = (assetName: string) => (
+    webpackifyMessage_userscripter(`Compilation asset ${quote(assetName)} expected but not found.`)
+);

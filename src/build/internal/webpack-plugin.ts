@@ -30,8 +30,13 @@ export class UserscripterWebpackPlugin {
                     compilation.warnings.push(...metadataValidationResult.Right.warnings.map(Msg.metadataWarning));
                 }
                 // Log metadata:
-                const metadataAsset = distFileName(w.buildConfig.id, "meta");
-                logger.info((compilation.assets[metadataAsset] as RawSource).source());
+                const metadataAssetName = distFileName(w.buildConfig.id, "meta");
+                const metadataAsset: unknown = compilation.assets[metadataAssetName];
+                if (metadataAsset instanceof RawSource) {
+                    logger.info(metadataAsset.source());
+                } else {
+                    compilation.warnings.push(Msg.compilationAssetNotFound(metadataAssetName));
+                }
             },
         );
     }
