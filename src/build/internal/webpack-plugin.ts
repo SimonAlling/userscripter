@@ -12,7 +12,7 @@ export class UserscripterWebpackPlugin {
 
     public apply(compiler: webpack.Compiler) {
         const w = this.w;
-        compiler.hooks.afterCompile.tap(
+        compiler.hooks.afterEmit.tap(
             UserscripterWebpackPlugin.name,
             compilation => {
                 const logger = compilation.getLogger(UserscripterWebpackPlugin.name);
