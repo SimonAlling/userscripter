@@ -57,7 +57,7 @@ export const metadataWarning = compose(
         warning.summary,
         "",
         warning.description,
-    ])
+    ]),
 );
 
 export const metadataError = compose(
@@ -70,7 +70,7 @@ export const metadataError = compose(
             case Kind.REQUIRED_MISSING: return `A ${tag(error.item.key)} entry is required, but none was found.`;
             case Kind.UNRECOGNIZED_KEY: return `Unrecognized key: "${error.entry.key}".`;
         }
-    }
+    },
 );
 
 export const quote = (s: string) => `"${s}"`;
