@@ -6,8 +6,6 @@ import { Kind, ValidationError, Warning, tag } from "userscript-metadata";
 import { BuildConfig, EnvVarError } from "./configuration";
 import { BuildConfigError } from "./validation";
 
-export const failed = `Build failed. Userscript file could not be assembled.`;
-
 const webpackifyMessage = (context: string) => (s: string) => context + "\n" + s;
 
 const webpackifyMessage_environment = webpackifyMessage("environment");
