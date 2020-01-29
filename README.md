@@ -63,7 +63,7 @@ It can also have user-facing **preferences**. These repositories demonstrate how
 
 ## Build options
 
-The object passed to `createWebpackConfig` controls how the userscript is built (see e.g. [`webpack.config.ts` in the example repo][example-userscript-webpack-config]).
+The `buildConfig` property of the object passed to `createWebpackConfig` controls how the userscript is built (see e.g. [`webpack.config.ts` in the example repo][example-userscript-webpack-config]).
 
 You can override certain options on the command line using environment variables:
 
