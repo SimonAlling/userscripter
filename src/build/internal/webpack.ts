@@ -175,7 +175,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 buildConfigErrors: buildConfigErrors(overridden.buildConfig),
                 envVarErrors: overridden.errors,
                 envVars: envVars(x.env),
-                metadataValidationResult: Metadata.validateWith(x.metadataSchema)(x.metadata(overridden.buildConfig)),
+                metadataValidationResult: Metadata.validateWith(x.metadataSchema)(finalMetadata),
                 metadataAssetName: distFileName(overridden.buildConfig.id, "meta"),
                 overriddenBuildConfig: overridden.buildConfig,
                 verbose: verbose,
