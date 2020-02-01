@@ -4,7 +4,6 @@ import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
-import WebpackUserscriptPlugin from "webpack-userscript";
 
 import {
     BuildConfig,
@@ -96,6 +95,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             version: finalVersion(unfinishedManifest.version),
         };
     })();
+    const finalMetadataStringified = Metadata.stringify(finalMetadata);
     // tslint:disable:object-literal-sort-keys
     return {
         mode: mode,
@@ -187,15 +187,15 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 buildConfigErrors: buildConfigErrors(overridden.buildConfig),
                 envVarErrors: overridden.errors,
                 envVars: envVars(x.env),
+                metadataStringified: finalMetadataStringified,
                 metadataValidationResult: Metadata.validateWith(x.metadataSchema)(finalMetadata),
-                metadataAssetName: distFileName(overridden.buildConfig.id, "meta"),
                 manifest: finalManifest,
                 overriddenBuildConfig: overridden.buildConfig,
                 verbose: verbose,
             }),
-            new WebpackUserscriptPlugin({
-                metajs: true,
-                headers: finalMetadata,
+            new webpack.BannerPlugin({
+                banner: finalMetadataStringified,
+                raw: true,
             }),
         ],
         optimization: {

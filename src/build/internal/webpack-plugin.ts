@@ -4,7 +4,13 @@ import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
 import { RawSource } from "webpack-sources";
 
-import { BuildConfig, ENVIRONMENT_VARIABLES, EnvVarError, envVarName } from "./configuration";
+import {
+    BuildConfig,
+    ENVIRONMENT_VARIABLES,
+    EnvVarError,
+    distFileName,
+    envVarName,
+} from "./configuration";
 import * as Msg from "./messages";
 import { BuildConfigError } from "./validation";
 
@@ -17,7 +23,7 @@ export class UserscripterWebpackPlugin {
         envVarErrors: readonly EnvVarError[]
         envVars: ReadonlyArray<readonly [string, string | undefined]>
         manifest?: Manifest
-        metadataAssetName: string
+        metadataStringified: string
         metadataValidationResult: Metadata.ValidationResult<Metadata.Metadata>
         overriddenBuildConfig: BuildConfig
         verbose: boolean
@@ -28,22 +34,24 @@ export class UserscripterWebpackPlugin {
             buildConfigErrors,
             envVarErrors,
             envVars,
-            metadataAssetName,
+            metadataStringified,
             metadataValidationResult,
             manifest,
             overriddenBuildConfig,
             verbose,
         } = this.x;
-        if (manifest !== undefined) {
-            compiler.hooks.afterCompile.tap(
-                UserscripterWebpackPlugin.name,
-                compilation => {
+        const metadataAssetName = distFileName(overriddenBuildConfig.id, "meta");
+        compiler.hooks.afterCompile.tap(
+            UserscripterWebpackPlugin.name,
+            compilation => {
+                compilation.assets[metadataAssetName] = new RawSource(metadataStringified);
+                if (manifest !== undefined) {
                     compilation.assets[MANIFEST_FILE] = new RawSource(
                         JSON.stringify(manifest, null, MANIFEST_INDENTATION)
                     );
-                },
-            );
-        }
+                }
+            },
+        );
         compiler.hooks.afterEmit.tap(
             UserscripterWebpackPlugin.name,
             compilation => {

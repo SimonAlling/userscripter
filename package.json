@@ -101,7 +101,6 @@
     "userscript-metadata": "^1.0.0",
     "webextension-manifest": "^1.0.0",
     "webpack": "^4.41.2",
-    "webpack-userscript": "^2.5.1",
     "yargs": "^15.0.2"
   }
 }
