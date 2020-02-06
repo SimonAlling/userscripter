@@ -193,10 +193,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 overriddenBuildConfig: overridden.buildConfig,
                 verbose: verbose,
             }),
-            new webpack.BannerPlugin({
-                banner: finalMetadataStringified,
-                raw: true,
-            }),
+            // If we insert metadata with BannerPlugin, it is removed when building in production mode.
         ],
         optimization: {
             minimize: mode === Mode.production,

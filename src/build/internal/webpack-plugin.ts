@@ -2,7 +2,7 @@ import { compose } from "@typed/compose";
 import * as Metadata from "userscript-metadata";
 import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
-import { RawSource } from "webpack-sources";
+import { RawSource, Source } from "webpack-sources";
 
 import {
     BuildConfig,
@@ -41,10 +41,22 @@ export class UserscripterWebpackPlugin {
             verbose,
         } = this.x;
         const metadataAssetName = distFileName(overriddenBuildConfig.id, "meta");
+        const userscriptAssetName = distFileName(overriddenBuildConfig.id, "user");
         compiler.hooks.afterCompile.tap(
             UserscripterWebpackPlugin.name,
             compilation => {
+                // Create metadata file:
                 compilation.assets[metadataAssetName] = new RawSource(metadataStringified);
+                // Prepend metadata to compiled userscript (must be done after minification so metadata isn't removed in production mode):
+                const compiledUserscript = compilation.assets[userscriptAssetName] as Source | undefined;
+                if (compiledUserscript !== undefined) { // `instanceof RawSource` and `instanceof Source` don't work.
+                    compilation.assets[userscriptAssetName] = new RawSource(
+                        metadataStringified + "\n" + compiledUserscript.source()
+                    );
+                } else {
+                    compilation.errors.push(Msg.compilationAssetNotFound(userscriptAssetName));
+                }
+                // Create manifest file if requested:
                 if (manifest !== undefined) {
                     compilation.assets[MANIFEST_FILE] = new RawSource(
                         JSON.stringify(manifest, null, MANIFEST_INDENTATION)
