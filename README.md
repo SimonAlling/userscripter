@@ -94,12 +94,10 @@ export default {
         ...webpackConfig.resolve,
         alias: {
             ...webpackConfig.resolve?.alias,
-            "react": "preact/compat",
-            // adding aliases here
+            "react": "preact/compat", // Adding an alias here.
         },
-        // adding "resolve" options here
     },
-    // overwriting or adding some other config options here
+    // Other properties (e.g. 'stats') could be added/overridden here.
 };
 ```
 
