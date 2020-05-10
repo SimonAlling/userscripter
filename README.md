@@ -74,14 +74,9 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 
 (With `USERSCRIPTER_VERBOSE=true`, all available environment variables are listed.)
 
-## How to override Webpack config
-
-Userscripter's API exposes `createWebpackConfig` function which creates a Webpack config object.
-You can easily overwrite it or add some additional fields:
+You can also customize the object returned from `createWebpackConfig` in `webpack.config.ts`:
 
 ```typescript
-// file: webpack.config.ts
-
 import { createWebpackConfig } from 'userscripter/build';
 
 const webpackConfig = createWebpackConfig({
