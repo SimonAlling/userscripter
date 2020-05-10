@@ -74,6 +74,29 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 
 (With `USERSCRIPTER_VERBOSE=true`, all available environment variables are listed.)
 
+You can also customize the object returned from `createWebpackConfig` in `webpack.config.ts`:
+
+```typescript
+import { createWebpackConfig } from 'userscripter/build';
+
+const webpackConfig = createWebpackConfig({
+    // ...
+});
+
+export default {
+    ...webpackConfig,
+    resolve: {
+        ...webpackConfig.resolve,
+        alias: {
+            ...webpackConfig.resolve?.alias,
+            "react": "preact/compat", // Adding an alias here.
+        },
+    },
+    // Other properties (e.g. 'stats') could be added/overridden here.
+};
+```
+
+(Customizations in `webpack.config.ts` will take precedence over environment variables, because the latter only affect the return value of `createWebpackConfig`.)
 
 ## Native browser extension
 
