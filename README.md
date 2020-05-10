@@ -96,6 +96,8 @@ export default {
 };
 ```
 
+(Customizations in `webpack.config.ts` will take precedence over environment variables, because the latter only affect the return value of `createWebpackConfig`.)
+
 ## Native browser extension
 
 You can easily create a [native browser extension][webextension] from your userscript by including an object representation of [`manifest.json`][manifest-json] in the object passed to `createWebpackConfig` ([example][example-userscript-webpack-config]).
