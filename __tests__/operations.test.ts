@@ -50,6 +50,13 @@ const HTML_EXAMPLE = `
 <footer>Original Footer</footer>
 `;
 
+const SVG_EXAMPLE = `
+<title>Original Title</title>
+<h1>Original Heading</h1>
+<svg></svg>
+<footer>Original Footer</footer>
+`;
+
 const BLABLABLA = "blablabla";
 const BLA = "bla";
 
@@ -74,6 +81,14 @@ function logBlablablaProperty(e: { body: HTMLElement }) {
   } else {
     return `Property '${BLABLABLA}' not found.`;
   }
+}
+
+function dependenciesOfDifferentTypes(e: {
+  heading: HTMLElement,
+  icon: SVGElement,
+}) {
+  console.log(String(e.heading.spellcheck));
+  console.log(String(e.icon.viewportElement?.textContent));
 }
 
 const OPERATIONS: ReadonlyArray<Operation<any>> = [
@@ -111,6 +126,15 @@ const OPERATIONS_BLABLABLA = [
   }),
 ];
 
+const OPERATIONS_DIFFERENT_DEPENDENCY_TYPES = [
+  operation({
+    description: "inspect heading and icon",
+    condition: ALWAYS,
+    dependencies: { heading: "h1", icon: "svg" },
+    action: dependenciesOfDifferentTypes,
+  }),
+];
+
 it("can run operations", () => {
   document.documentElement.innerHTML = HTML_EXAMPLE;
   operations.run({
@@ -127,6 +151,17 @@ it("can log " + BLABLABLA, () => {
     operations: OPERATIONS_BLABLABLA,
   });
   expect(consoleLog).toHaveBeenCalledWith(BLA);
+  expect(consoleError).not.toHaveBeenCalled();
+});
+
+it("can use different types of elements as dependencies", () => {
+  document.documentElement.innerHTML = SVG_EXAMPLE;
+  operations.run({
+    ...PLAN,
+    operations: OPERATIONS_DIFFERENT_DEPENDENCY_TYPES,
+  });
+  expect(consoleLog).toHaveBeenCalledTimes(2);
+  expect(consoleLog).toHaveBeenCalledWith("undefined");
   expect(consoleError).not.toHaveBeenCalled();
 });
 
