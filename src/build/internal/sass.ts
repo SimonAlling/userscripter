@@ -1,8 +1,8 @@
-import node_sass from "node-sass";
+import sass from "sass";
 import node_sass_utils from "node-sass-utils";
 import { isString } from "ts-type-guards";
 
-const SassUtils = node_sass_utils(node_sass);
+const SassUtils = node_sass_utils(sass);
 
 interface IKeyString {
     getValue: () => unknown;
