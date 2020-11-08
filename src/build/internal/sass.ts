@@ -1,5 +1,5 @@
-import sass from "sass";
 import node_sass_utils from "node-sass-utils";
+import sass from "sass";
 import { isString } from "ts-type-guards";
 
 const SassUtils = node_sass_utils(sass);
