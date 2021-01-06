@@ -39,8 +39,9 @@ jobs:
         run: |
           npm install --global .
       - name: Bootstrap
-        working-directory: bootstrapped-userscript
         run: |
+          mkdir bootstrapped-userscript
+          cd $_
           userscripter init
           npm install
           npm run build
