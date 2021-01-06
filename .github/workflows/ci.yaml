@@ -38,7 +38,7 @@ jobs:
       - name: Install CLI tool
         run: |
           npm install --global .
-      - name: Bootstrap
+      - name: Bootstrap userscript
         run: |
           mkdir bootstrapped-userscript
           cd $_
