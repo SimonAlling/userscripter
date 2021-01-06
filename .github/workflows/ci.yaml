@@ -35,3 +35,14 @@ jobs:
           npm run build
         env:
           CI: true
+      - name: Install CLI tool
+        run: |
+          npm install --global .
+      - name: Bootstrap userscript
+        working-directory: ${{ runner.temp }}
+        run: |
+          mkdir bootstrapped-userscript
+          cd $_
+          userscripter init
+          npm install
+          npm run build
