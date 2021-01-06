@@ -35,7 +35,7 @@ jobs:
           npm run build
         env:
           CI: true
-      - name: Install
+      - name: Install CLI tool
         run: |
           npm install --global .
       - name: Bootstrap
