@@ -39,6 +39,7 @@ jobs:
         run: |
           npm install --global .
       - name: Bootstrap userscript
+        working-directory: ${{ runner.temp }}
         run: |
           mkdir bootstrapped-userscript
           cd $_
