@@ -37,6 +37,7 @@ jobs:
           CI: true
       - name: Install
         run: |
+          npm trololo
           npm install --global .
       - name: Bootstrap
         working-directory: bootstrapped-userscript
