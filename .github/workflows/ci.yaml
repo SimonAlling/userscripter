@@ -43,7 +43,3 @@ jobs:
         working-directory: bootstrapped-userscript
         run: |
           echo "$PATH"
-          which userscripter
-          userscripter init
-          npm install
-          npm run build
