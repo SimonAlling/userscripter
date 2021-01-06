@@ -10,7 +10,7 @@
     "@typed/compose": "^1.0.0",
     "@types/app-root-path": "^1.2.4",
     "app-root-path": "^3.0.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
     "ts-preferences": "^2.0.0",
     "typescript": "^3.7.4",
     "userscript-metadata": "^1.0.0",
