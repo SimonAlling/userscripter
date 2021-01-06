@@ -38,6 +38,7 @@ jobs:
       - name: Install
         run: |
           npm install --global .
+          echo "$PATH"
       - name: Bootstrap
         working-directory: bootstrapped-userscript
         run: |
