@@ -35,3 +35,12 @@ jobs:
           npm run build
         env:
           CI: true
+      - name: Install
+        run: |
+          npm install --global .
+      - name: Bootstrap
+        working-directory: bootstrapped-userscript
+        run: |
+          userscripter init
+          npm install
+          npm run build
