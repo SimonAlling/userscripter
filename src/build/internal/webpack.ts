@@ -106,6 +106,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             path: resolveIn(rootDir)(outDir),
             filename: distFileName(id, "user"),
         },
+        devtool: mode === Mode.production ? "hidden-source-map" : "inline-cheap-source-map",
         stats: {
             depth: false,
             hash: false,
