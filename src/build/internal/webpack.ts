@@ -38,6 +38,7 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     mainFile: "main.ts",
     mode: Mode.development,
     nightly: false,
+    dateAsSemverVersion: true,
     now: x.now,
     outDir: "dist",
     rootDir: x.rootDir,
@@ -65,6 +66,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         mainFile,
         mode,
         nightly,
+        dateAsSemverVersion,
         now,
         outDir,
         rootDir,
@@ -77,7 +79,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         return name + (nightly ? " Nightly" : "");
     }
     function finalVersion(version: string): string {
-        return version + (nightly || mode === Mode.development ? "." + dateAsSemver(now) : "");
+        return version + ((nightly || mode === Mode.development) && dateAsSemverVersion ? "." + dateAsSemver(now) : "");
     }
     const finalMetadata = (() => {
         const unfinishedMetadata = x.metadata(overridden.buildConfig);

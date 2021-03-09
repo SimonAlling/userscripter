@@ -19,6 +19,7 @@ export type BuildConfig = Readonly<{
     id: string
     hostedAt: string | null
     mainFile: string
+    dateAsSemverVersion: boolean
     mode: Mode
     nightly: boolean
     now: Date
