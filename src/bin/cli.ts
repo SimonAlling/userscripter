@@ -30,7 +30,7 @@ function init(_: yargs.Arguments) {
         }
         if (relevant(files).length > 0) {
             console.error("Directory not empty. Stopping.");
-            return;
+            process.exit(1);
         }
         fsx.copy(BOOTSTRAP_ROOT, rootDir);
     });
