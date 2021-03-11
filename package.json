@@ -44,7 +44,7 @@
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
     "test": "npm run lint && npm run jest",
     "jest": "jest",
-    "verify": "repository-check-dirty && npm install && npm run build && npm test && npm pack"
+    "verify": "repository-check-dirty && npm ci && npm run build && npm test && npm pack"
   },
   "sideEffects": false,
   "jest": {
