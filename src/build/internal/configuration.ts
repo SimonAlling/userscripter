@@ -16,8 +16,10 @@ export const HOSTED_AT_EXAMPLE = "https://example.com/userscripts";
 
 export type BuildConfig = Readonly<{
     allowJs: boolean
-    devOptions: {
-        appendDateToVersion: boolean
+    appendDateToVersion: {
+        development: boolean
+        nightly: boolean
+        production: boolean
     }
     id: string
     hostedAt: string | null
