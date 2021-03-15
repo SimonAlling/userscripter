@@ -33,6 +33,11 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     now: Date
 }) => BuildConfig = x => ({
     allowJs: false,
+    appendDateToVersion: {
+        development: true,
+        nightly: true,
+        production: false,
+    },
     id: x.id,
     hostedAt: null,
     mainFile: "main.ts",
@@ -61,6 +66,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
     const overridden = overrideBuildConfig(x.buildConfig, x.env);
     const {
         allowJs,
+        appendDateToVersion,
         id,
         mainFile,
         mode,
@@ -77,7 +83,14 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         return name + (nightly ? " Nightly" : "");
     }
     function finalVersion(version: string): string {
-        return version + (nightly || mode === Mode.development ? "." + dateAsSemver(now) : "");
+        switch (true) {
+            case nightly && appendDateToVersion.nightly:
+            case mode === Mode.development && appendDateToVersion.development:
+            case mode === Mode.production && appendDateToVersion.production:
+                return version + "." + dateAsSemver(now);
+            default:
+                return version;
+        }
     }
     const finalMetadata = (() => {
         const unfinishedMetadata = x.metadata(overridden.buildConfig);
