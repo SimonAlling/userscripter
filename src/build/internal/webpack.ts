@@ -27,6 +27,8 @@ const EXTENSIONS = {
     SVG: ["svg"],
 } as const;
 
+export const defaultSassVariableGetter = "getGlobal($keyString)";
+
 export const DEFAULT_BUILD_CONFIG: (x: {
     rootDir: string
     id: string
@@ -46,7 +48,7 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     now: x.now,
     outDir: "dist",
     rootDir: x.rootDir,
-    sassVariableGetter: "getGlobal",
+    sassVariableGetter: defaultSassVariableGetter,
     sassVariables: {},
     sourceDir: "src",
     verbose: false,
