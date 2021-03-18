@@ -25,3 +25,30 @@ SassNumber {
 }
 `);
 });
+
+it("can expose deep nested data to SASS", () => {
+  const deepNestedConfig = {
+    'deep': {
+      'nested': {
+        CONFIG
+      }
+    }
+  }
+  const getGlobal = getGlobalFrom(deepNestedConfig);
+  const height = getGlobal(new sass.types.String("deep.nested.CONFIG.EXAMPLE_HEIGHT"));
+  expect(height).toMatchInlineSnapshot(`
+SassNumber {
+  "dartValue": SingleUnitSassNumber0 {
+    "_single_unit$_unit": "px",
+    "asSlash": null,
+    "value": 200,
+  },
+}
+`);
+});
+
+it("should throw an error when trying to get undefined variable", () => {
+  const getGlobal = getGlobalFrom({ CONFIG });
+  expect(() => getGlobal(new sass.types.String("CONFIG.NON_EXISTENT")))
+    .toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`)
+});
