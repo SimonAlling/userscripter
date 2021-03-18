@@ -4,17 +4,15 @@ import { isString } from "ts-type-guards";
 
 const SassUtils = node_sass_utils(sass);
 
-interface IKeyString {
-    getValue: () => unknown;
-}
-
-export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: IKeyString) => any {
+export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType | void {
     const sassVars = toSassDimension_recursively(objectToBeExposedToSass);
     return keyString => {
-        if (keyString.getValue === undefined) fail("nothing");
-        const wholeName = keyString.getValue();
-        if (!isString(wholeName)) return fail(wholeName); // `return` necessary for typechecking
-        return SassUtils.castToSass(dig(sassVars, wholeName.split("."), wholeName));
+        if (keyString instanceof sass.types.String) {
+            const wholeName = keyString.getValue();
+            return SassUtils.castToSass(dig(sassVars, wholeName.split("."), wholeName));
+        } else {
+            throw new TypeError(`Expected a string as argument, but saw: ${keyString}`);
+        }
     };
 }
 
@@ -44,10 +42,6 @@ function toSassDimension_recursively(x: any): any {
     } else {
         return x;
     }
-}
-
-function fail(input: any): never {
-    throw new TypeError(`Expected a string, but saw: ${input}`);
 }
 
 function dig(obj: any, keys: string[], wholeName: string): any {
