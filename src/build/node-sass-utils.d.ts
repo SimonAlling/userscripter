@@ -5,7 +5,7 @@ declare module "node-sass-utils" {
     export default function(sassInstance: typeof sass): {
         SassDimension: typeof SassDimension
         castToSass: (dug: any) => sass.types.SassType
-    }
+    };
 }
 
 declare class SassDimension {

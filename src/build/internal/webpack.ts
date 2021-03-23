@@ -111,7 +111,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         };
     })();
     const finalMetadataStringified = Metadata.stringify(finalMetadata);
-    // tslint:disable:object-literal-sort-keys
     return {
         mode: mode,
         entry: {
@@ -220,7 +219,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             ],
         },
     };
-    // tslint:enable:object-literal-sort-keys
 }
 
 const resolveIn = (root: string) => (subdir: string) => path.resolve(root, subdir);

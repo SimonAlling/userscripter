@@ -4,7 +4,7 @@ export type Logger = {
     readonly [K in LoggerMethodName]: (...xs: any[]) => void
 };
 
-let prefix: string = "";
+let prefix = "";
 let logger: Logger = console;
 
 export function setPrefix(p: string): void {

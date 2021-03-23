@@ -51,7 +51,7 @@ export class UserscripterWebpackPlugin {
                 const compiledUserscript = compilation.assets[userscriptAssetName] as Source | undefined;
                 if (compiledUserscript !== undefined) { // `instanceof RawSource` and `instanceof Source` don't work.
                     compilation.assets[userscriptAssetName] = new RawSource(
-                        metadataStringified + "\n" + compiledUserscript.source()
+                        metadataStringified + "\n" + compiledUserscript.source(),
                     );
                 } else {
                     compilation.errors.push(Msg.compilationAssetNotFound(userscriptAssetName));
@@ -59,7 +59,7 @@ export class UserscripterWebpackPlugin {
                 // Create manifest file if requested:
                 if (manifest !== undefined) {
                     compilation.assets[MANIFEST_FILE] = new RawSource(
-                        JSON.stringify(manifest, null, MANIFEST_INDENTATION)
+                        JSON.stringify(manifest, null, MANIFEST_INDENTATION),
                     );
                 }
             },
@@ -82,7 +82,7 @@ export class UserscripterWebpackPlugin {
                 }
                 if (verbose) {
                     const envVarLines = envVars.map(
-                        ([ name, value ]) => "  " + name + ": " + (value === undefined ? "(not specified)" : value)
+                        ([ name, value ]) => "  " + name + ": " + (value === undefined ? "(not specified)" : value),
                     );
                     logWithHeading(
                         "Environment variables:",

@@ -4,7 +4,7 @@ import { isString } from "ts-type-guards";
 
 const SassUtils = node_sass_utils(sass);
 
-export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType {
+export function getGlobalFrom(objectToBeExposedToSass: Record<string, unknown>): (keyString: sass.types.SassType) => sass.types.SassType {
     const sassVars = toSassDimension_recursively(objectToBeExposedToSass);
     return keyString => {
         if (keyString instanceof sass.types.String) {
@@ -32,7 +32,7 @@ export function withDartSassEncodedParameters<
 
 function toSassDimension(s: string): SassDimension {
     const CSS_UNITS = [ "rem", "em", "vh", "vw", "vmin", "vmax", "ex", "%", "px", "cm", "mm", "in", "pt", "pc", "ch" ];
-    const parts = s.match(/^([\.0-9]+)([a-zA-Z]+)$/);
+    const parts = s.match(/^([.0-9]+)([a-zA-Z]+)$/);
     if (parts === null) {
         return s;
     }
