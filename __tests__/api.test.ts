@@ -1,15 +1,15 @@
 import * as fs from "fs";
 import * as path from "path";
 
+import * as index from "../src/lib";
 import * as environment from "../src/lib/environment";
 import * as errors from "../src/lib/errors";
 import * as operations from "../src/lib/operations";
 import * as stylesheets from "../src/lib/stylesheets";
-import * as index from "../src/lib";
 
 it("exposes the intended API", () => {
   const a: environment.Condition = environment.ALWAYS;
-  void a;
+  void a; // tslint:disable-line:no-unused-expression
   expect(environment.DOMCONTENTLOADED).toBeDefined();
   expect(environment.LOAD).toBeDefined();
 
