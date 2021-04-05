@@ -1,5 +1,6 @@
-import * as CONFIG from "./config-example";
 import { getGlobalFrom } from "../src/build/internal/sass";
+
+import * as CONFIG from "./config-example";
 
 it("can expose data to SASS", () => {
   const getGlobal = getGlobalFrom({ CONFIG });

@@ -39,7 +39,7 @@
     "compile-esm": "tsc -d -p .",
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
     "clean": "rm -rf lib build bin",
-    "lint": "tslint --project .",
+    "lint": "tslint --project . && tslint __tests__/*.ts",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
     "test": "npm run lint && npm run jest",
