@@ -11,6 +11,14 @@ on:
       - v1
 
 jobs:
+  commitlint:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v3
   nightly:
     name: CI Build
     runs-on: ubuntu-latest
