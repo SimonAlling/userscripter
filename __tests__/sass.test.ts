@@ -1,6 +1,6 @@
 import sass from "sass";
 
-import { getGlobalFrom } from "../src/build/internal/sass";
+import { getGlobalFrom, withDartSassEncodedParameters } from "../src/build/internal/sass";
 import { defaultSassVariableGetter } from "../src/build/internal/webpack";
 
 import * as CONFIG from "./config-example";
@@ -62,11 +62,13 @@ describe("sass in scss context", () => {
   it("can call getGlobal inside scss context with default sassVariableGetter", () => {
     const getGlobal = getGlobalFrom({ CONFIG });
     const scssTemplate = `div { min-height: #{getGlobal("CONFIG.EXAMPLE_HEIGHT")} }`;
+    const encodedFunctionName = withDartSassEncodedParameters(defaultSassVariableGetter, getGlobal);
+    expect(encodedFunctionName).toBe(`${defaultSassVariableGetter}($x0)`);
     const sassRenderConfig: sass.Options = {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [defaultSassVariableGetter]: getGlobal
+        [encodedFunctionName]: getGlobal
       }
     };
     const result = sass.renderSync(sassRenderConfig);
@@ -80,7 +82,7 @@ describe("sass in scss context", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [defaultSassVariableGetter]: getGlobal
+        [withDartSassEncodedParameters(defaultSassVariableGetter, getGlobal)]: getGlobal
       }
     };
     expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`);
@@ -93,7 +95,7 @@ describe("sass in scss context", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [defaultSassVariableGetter]: getGlobal
+        [withDartSassEncodedParameters(defaultSassVariableGetter, getGlobal)]: getGlobal
       }
     };
     expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Error: Expected a string as argument, but saw: 42`);
