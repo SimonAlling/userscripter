@@ -4,7 +4,7 @@ import { isString } from "ts-type-guards";
 
 const SassUtils = node_sass_utils(sass);
 
-export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType | void {
+export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType {
     const sassVars = toSassDimension_recursively(objectToBeExposedToSass);
     return keyString => {
         if (keyString instanceof sass.types.String) {
