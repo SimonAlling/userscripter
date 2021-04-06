@@ -1,9 +1,11 @@
-import * as CONFIG from "./config-example";
-import { defaultSassVariableGetter } from '../src/build/internal/webpack';
-import { getGlobalFrom } from "../src/build/internal/sass";
-import sass from 'sass'
+import sass from "sass";
 
-describe('sass in programmatic context', function () {
+import { getGlobalFrom } from "../src/build/internal/sass";
+import { defaultSassVariableGetter } from "../src/build/internal/webpack";
+
+import * as CONFIG from "./config-example";
+
+describe("sass in programmatic context", () => {
   it("can expose data to SASS", () => {
     const getGlobal = getGlobalFrom({ CONFIG });
     const height = getGlobal(new sass.types.String("CONFIG.EXAMPLE_HEIGHT"));
@@ -30,12 +32,12 @@ describe('sass in programmatic context', function () {
 
   it("can expose deep nested data to SASS", () => {
     const deepNestedConfig = {
-      'deep': {
-        'nested': {
+      deep: {
+        nested: {
           CONFIG
         }
       }
-    }
+    };
     const getGlobal = getGlobalFrom(deepNestedConfig);
     const height = getGlobal(new sass.types.String("deep.nested.CONFIG.EXAMPLE_HEIGHT"));
     expect(height).toMatchInlineSnapshot(`
@@ -52,11 +54,11 @@ describe('sass in programmatic context', function () {
   it("should throw an error when trying to get undefined variable", () => {
     const getGlobal = getGlobalFrom({ CONFIG });
     expect(() => getGlobal(new sass.types.String("CONFIG.NON_EXISTENT")))
-      .toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`)
+      .toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`);
   });
 });
 
-describe('sass in scss context', function () {
+describe("sass in scss context", () => {
   it("can call getGlobal inside scss context with default sassVariableGetter", () => {
     const getGlobal = getGlobalFrom({ CONFIG });
     const scssTemplate = `div { min-height: #{getGlobal("CONFIG.EXAMPLE_HEIGHT")} }`;
@@ -67,8 +69,8 @@ describe('sass in scss context', function () {
         [defaultSassVariableGetter]: getGlobal
       }
     };
-    const result = sass.renderSync(sassRenderConfig)
-    expect(result.css.toString()).toBe(`div{min-height:200px}`)
+    const result = sass.renderSync(sassRenderConfig);
+    expect(result.css.toString()).toBe(`div{min-height:200px}`);
   });
 
   it("getGlobal should throw an error if the variable doesn't exist", () => {
@@ -81,7 +83,7 @@ describe('sass in scss context', function () {
         [defaultSassVariableGetter]: getGlobal
       }
     };
-    expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`)
+    expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`);
   });
 
   it("sass should throw error if invalid argument type is passed to getGlobal", () => {
@@ -94,6 +96,6 @@ describe('sass in scss context', function () {
         [defaultSassVariableGetter]: getGlobal
       }
     };
-    expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Error: Expected a string as argument, but saw: 42`)
+    expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Error: Expected a string as argument, but saw: 42`);
   });
 });
