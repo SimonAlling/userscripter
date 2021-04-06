@@ -19,8 +19,4 @@ jobs:
           validateSingleCommit: true
           subjectPattern: ^(?![a-z]).+$
           subjectPatternError: |
-            The subject
-
-                {subject}
-
-            found in the pull request title didn't match the required pattern. Please ensure that the subject doesn't start with a lowercase character.
+            The subject "{subject}" found in the pull request title didn't match the required pattern. Please ensure that the subject doesn't start with a lowercase character.
