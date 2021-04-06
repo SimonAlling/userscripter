@@ -67,7 +67,7 @@
     "ts-jest": "^24.1.0",
     "ts-preferences": "^2.0.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "typescript": "^4.2.3"
   },
   "peerDependencies": {
     "ts-preferences": "^2.0.0"
