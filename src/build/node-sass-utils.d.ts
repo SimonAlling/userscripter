@@ -4,7 +4,7 @@ declare module "node-sass-utils" {
     import Sass from "sass";
     export default function(sass: typeof Sass): {
         SassDimension: typeof SassDimension
-        castToSass: (dug: any) => any
+        castToSass: (dug: any) => Sass.types.SassType
     }
 }
 
