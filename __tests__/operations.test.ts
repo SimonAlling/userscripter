@@ -1,5 +1,6 @@
 import { compose } from "@typed/compose";
 
+import { operations } from "../src/lib";
 import {
   ALWAYS,
   DOMCONTENTLOADED,
@@ -11,10 +12,16 @@ import {
   OperationAndFailure,
   operation,
 } from "../src/lib/operations";
-import { operations } from "../src/lib";
 
-const consoleLog = jest.spyOn(console, "log");
-const consoleError = jest.spyOn(console, "error");
+const mockConsole = {
+  // tslint:disable:no-unused-expression
+  log: (message: string) => void message,
+  error: (message: string) => void message,
+  // tslint:enable
+};
+
+const consoleLog = jest.spyOn(mockConsole, "log");
+const consoleError = jest.spyOn(mockConsole, "error");
 beforeEach(() => {
   consoleLog.mockReset();
   consoleError.mockReset();
@@ -34,7 +41,7 @@ const PLAN = {
 };
 
 function handleFailures(failures: ReadonlyArray<OperationAndFailure<any>>) {
-  failures.forEach(compose(console.error, failureDescriber(CONTEXT)));
+  failures.forEach(compose(mockConsole.error, failureDescriber(CONTEXT)));
 }
 
 const HTML_EXAMPLE = `
@@ -63,7 +70,7 @@ function removeFooter(e: { footer: HTMLElement }) {
 function logBlablablaProperty(e: { body: HTMLElement }) {
   const value = e.body.dataset[BLABLABLA];
   if (value !== undefined) {
-    console.log(value);
+    mockConsole.log(value);
   } else {
     return `Property '${BLABLABLA}' not found.`;
   }
@@ -73,7 +80,7 @@ const OPERATIONS: ReadonlyArray<Operation<any>> = [
   operation({
     description: "do nothing",
     condition: ALWAYS,
-    action: () => {},
+    action: () => { /* Do nothing. */ },
   }),
   operation({
     description: "change title",
@@ -113,7 +120,7 @@ it("can run operations", () => {
   expect(document.title).toMatchInlineSnapshot(`"Test"`);
 });
 
-it("can log "+BLABLABLA, () => {
+it("can log " + BLABLABLA, () => {
   document.documentElement.innerHTML = HTML_WITH_BLABLABLA;
   operations.run({
     ...PLAN,
