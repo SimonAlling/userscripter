@@ -1,9 +1,11 @@
 import sass from "sass";
 
 import { getGlobalFrom, withDartSassEncodedParameters } from "../src/build/internal/sass";
-import { defaultSassVariableGetter } from "../src/build/internal/webpack";
+import { DEFAULT_BUILD_CONFIG } from "../src/build/internal/webpack";
 
 import * as CONFIG from "./config-example";
+
+const defaultSassVariableGetter = DEFAULT_BUILD_CONFIG({ rootDir: "", id: "", now: new Date() }).sassVariableGetter;
 
 describe("sass in programmatic context", () => {
   it("can expose data to SASS", () => {
