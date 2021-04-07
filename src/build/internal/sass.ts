@@ -1,13 +1,13 @@
 import node_sass_utils from "node-sass-utils";
-import Sass from "sass";
+import sass from "sass";
 import { isString } from "ts-type-guards";
 
-const SassUtils = node_sass_utils(Sass);
+const SassUtils = node_sass_utils(sass);
 
-export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: Sass.types.SassType) => Sass.types.SassType {
+export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType {
     const sassVars = toSassDimension_recursively(objectToBeExposedToSass);
     return keyString => {
-        if (keyString instanceof Sass.types.String) {
+        if (keyString instanceof sass.types.String) {
             const wholeName = keyString.getValue();
             return SassUtils.castToSass(dig(sassVars, wholeName.split("."), wholeName));
         } else {
@@ -24,7 +24,7 @@ export function withDartSassEncodedParameters<
     Args extends unknown[],
 >(
     functionName: Name,
-    f: (...args: Args) => Sass.types.SassType,
+    f: (...args: Args) => sass.types.SassType,
 ): `${Name}(${string})` {
     const encodedArguments = new Array(f.length).fill(undefined).map((_, ix) => `$x${ix}`).join(", ");
     return `${functionName}(${encodedArguments})` as `${Name}(${string})`;
