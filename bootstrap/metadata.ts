@@ -1,7 +1,7 @@
+import { Metadata } from "userscript-metadata";
 import {
     BuildConfig,
 } from "userscripter/build";
-import { Metadata } from "userscript-metadata";
 
 import U from "./src/userscript";
 
