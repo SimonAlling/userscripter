@@ -18,8 +18,8 @@ describe("SASS variable getter", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [encodedFunctionName]: getGlobal
-      }
+        [encodedFunctionName]: getGlobal,
+      },
     };
     const result = sass.renderSync(sassRenderConfig);
     expect(result.css.toString()).toBe(`div{min-height:200px}`);
@@ -33,8 +33,8 @@ describe("SASS variable getter", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [encodedFunctionName]: getGlobal
-      }
+        [encodedFunctionName]: getGlobal,
+      },
     };
     const result = sass.renderSync(sassRenderConfig);
     expect(result.css.toString()).toBe(`div{min-height:200px}`);
@@ -49,8 +49,8 @@ describe("SASS variable getter", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [encodedFunctionName]: getGlobal
-      }
+        [encodedFunctionName]: getGlobal,
+      },
     };
     const result = sass.renderSync(sassRenderConfig);
     expect(result.css.toString()).toBe(`div{min-height:200px}`);
@@ -64,8 +64,8 @@ describe("SASS variable getter", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [withDartSassEncodedParameters(variableGetter, getGlobal)]: getGlobal
-      }
+        [withDartSassEncodedParameters(variableGetter, getGlobal)]: getGlobal,
+      },
     };
     expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Unknown global: 'CONFIG.NON_EXISTENT' (failed on 'NON_EXISTENT')`);
   });
@@ -78,8 +78,8 @@ describe("SASS variable getter", () => {
       data: scssTemplate,
       outputStyle: "compressed",
       functions: {
-        [withDartSassEncodedParameters(variableGetter, getGlobal)]: getGlobal
-      }
+        [withDartSassEncodedParameters(variableGetter, getGlobal)]: getGlobal,
+      },
     };
     expect(() => sass.renderSync(sassRenderConfig)).toThrowError(`Error: Expected a string as argument, but saw: 42`);
   });
