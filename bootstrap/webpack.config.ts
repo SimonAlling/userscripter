@@ -1,10 +1,10 @@
 import * as AppRootPath from "app-root-path";
-
 import {
     createWebpackConfig,
     DEFAULT_BUILD_CONFIG,
     DEFAULT_METADATA_SCHEMA,
 } from "userscripter/build";
+
 import METADATA from "./metadata";
 import * as CONFIG from "./src/config";
 import * as SITE from "./src/site";

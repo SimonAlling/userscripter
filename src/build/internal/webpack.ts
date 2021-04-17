@@ -1,4 +1,5 @@
 import * as path from "path";
+
 import { everythingInPackage } from "restrict-imports-loader";
 import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
