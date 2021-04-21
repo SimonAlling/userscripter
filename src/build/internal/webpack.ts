@@ -14,7 +14,7 @@ import {
     overrideBuildConfig,
 } from "./configuration";
 import { Mode } from "./mode";
-import { getGlobalFrom } from "./sass";
+import { getGlobalFrom, withDartSassEncodedParameters } from "./sass";
 import { concat } from "./utilities";
 import { buildConfigErrors } from "./validation";
 import { UserscripterWebpackPlugin } from "./webpack-plugin";
@@ -80,6 +80,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         sourceDir,
         verbose,
     } = overridden.buildConfig;
+    const getGlobal = getGlobalFrom(sassVariables);
     function finalName(name: string): string {
         return name + (nightly ? " Nightly" : "");
     }
@@ -159,7 +160,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                             loader: require.resolve("sass-loader"),
                             options: {
                                 sassOptions: {
-                                    functions: { [sassVariableGetter]: getGlobalFrom(sassVariables) },
+                                    functions: { [withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal },
                                 },
                             },
                         },

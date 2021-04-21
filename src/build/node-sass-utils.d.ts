@@ -1,10 +1,10 @@
 // This declaration file contains only what's required for Userscripter.
 
 declare module "node-sass-utils" {
-    import NodeSass from "node-sass";
-    export default function(node_sass: typeof NodeSass): {
+    import sass from "sass";
+    export default function(sassInstance: typeof sass): {
         SassDimension: typeof SassDimension
-        castToSass: (dug: any) => any
+        castToSass: (dug: any) => sass.types.SassType
     }
 }
 
