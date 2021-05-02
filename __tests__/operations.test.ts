@@ -14,10 +14,8 @@ import {
 } from "../src/lib/operations";
 
 const mockConsole = {
-  // tslint:disable:no-unused-expression
   log: (message: string) => void message,
   error: (message: string) => void message,
-  // tslint:enable
 };
 
 const consoleLog = jest.spyOn(mockConsole, "log");

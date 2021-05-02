@@ -84,7 +84,11 @@ export function run(plan: Plan): void {
             if (result !== SUCCESS) {
                 switch (result.reason) {
                     case Reason.DEPENDENCIES:
-                        lastTry ? failures.push({ result, operation: o }) : remaining.push(o);
+                        if (lastTry) {
+                            failures.push({ result, operation: o });
+                        } else {
+                            remaining.push(o);
+                        }
                         break;
                     case Reason.INTERNAL:
                         failures.push({ result, operation: o });

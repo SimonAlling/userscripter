@@ -9,7 +9,7 @@ import * as stylesheets from "../src/lib/stylesheets";
 
 it("exposes the intended API", () => {
   const a: environment.Condition = environment.ALWAYS;
-  void a; // tslint:disable-line:no-unused-expression
+  void a;
   expect(environment.DOMCONTENTLOADED).toBeDefined();
   expect(environment.LOAD).toBeDefined();
 
