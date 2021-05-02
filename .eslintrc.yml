@@ -5,6 +5,7 @@ plugins:
     - import
 root: true
 rules:
+    "@typescript-eslint/ban-tslint-comment": error
     "@typescript-eslint/explicit-module-boundary-types": off
     "@typescript-eslint/no-explicit-any": off
     "@typescript-eslint/no-namespace": [ error ]
