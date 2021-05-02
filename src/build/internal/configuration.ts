@@ -30,7 +30,7 @@ export type BuildConfig = Readonly<{
     outDir: string
     rootDir: string
     sassVariableGetter: string
-    sassVariables: object
+    sassVariables: Record<string, unknown>
     sourceDir: string
     verbose: boolean
 }>;
@@ -99,7 +99,7 @@ export const ENVIRONMENT_VARIABLES = {
     // A hack to make it easier to find type errors in ENVIRONMENT_VARIABLES.
     // It cannot have an explicit type itself since we want it to be `const`.
     const typecheckedEnvVars: { [N in EnvVarNameWithoutPrefix]: EnvVarSpec<keyof BuildConfig, N, unknown> } = ENVIRONMENT_VARIABLES;
-    void typecheckedEnvVars; // tslint:disable-line:no-unused-expression
+    void typecheckedEnvVars; // eslint-disable-line no-unused-expressions
 }
 
 export type BuildConfigAndListOf<E> = Readonly<{

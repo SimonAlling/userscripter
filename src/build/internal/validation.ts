@@ -26,7 +26,7 @@ function requirement<K extends keyof BuildConfig>(x: {
 }
 
 function isValidId(x: string): boolean {
-    return /^[a-z][a-z0-9\-]*$/.test(x);
+    return /^[a-z][a-z0-9-]*$/.test(x);
 }
 
 export function buildConfigErrors(
