@@ -2,8 +2,9 @@
 
 // tslint:disable:no-console
 
-import * as fsx from "fs-extra";
 import * as path from "path";
+
+import * as fsx from "fs-extra";
 import * as yargs from "yargs";
 
 const BOOTSTRAP_ROOT = path.resolve(__dirname, "..", "bootstrap");

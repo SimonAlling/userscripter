@@ -14,6 +14,28 @@
             {
                 "import-sources-order": "case-insensitive",
                 "named-imports-order": "lowercase-last",
+                "groups": [
+                    {
+                        "name": "builtin",
+                        "match": "^(fs|path)$",
+                        "order": 10
+                    },
+                    {
+                        "name": "external",
+                        "match": "^(?!\\.{1,2}/)",
+                        "order": 20
+                    },
+                    {
+                        "name": "parent",
+                        "match": "^\\.{2}\/",
+                        "order": 30
+                    },
+                    {
+                        "name": "sibling",
+                        "match": "^\\.\/",
+                        "order": 40
+                    }
+                ],
                 "grouped-imports": true
             }
         ],
