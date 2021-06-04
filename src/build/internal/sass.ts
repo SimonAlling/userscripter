@@ -1,21 +1,33 @@
-import node_sass from "node-sass";
 import node_sass_utils from "node-sass-utils";
+import sass from "sass";
 import { isString } from "ts-type-guards";
 
-const SassUtils = node_sass_utils(node_sass);
+const SassUtils = node_sass_utils(sass);
 
-interface IKeyString {
-    getValue: () => unknown;
-}
-
-export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: IKeyString) => any {
+export function getGlobalFrom(objectToBeExposedToSass: object): (keyString: sass.types.SassType) => sass.types.SassType {
     const sassVars = toSassDimension_recursively(objectToBeExposedToSass);
     return keyString => {
-        if (keyString.getValue === undefined) fail("nothing");
-        const wholeName = keyString.getValue();
-        if (!isString(wholeName)) return fail(wholeName); // `return` necessary for typechecking
-        return SassUtils.castToSass(dig(sassVars, wholeName.split("."), wholeName));
+        if (keyString instanceof sass.types.String) {
+            const wholeName = keyString.getValue();
+            return SassUtils.castToSass(dig(sassVars, wholeName.split("."), wholeName));
+        } else {
+            throw new TypeError(`Expected a string as argument, but saw: ${keyString}`);
+        }
     };
+}
+
+/**
+ * Dart Sass requires that functions be referred to as e.g. `f($x, $y)`, not just `f`. This function performs that encoding; for example, given `"foo"` and a function of arity 2, it returns `"foo($x0, $x1)"`.
+ */
+export function withDartSassEncodedParameters<
+    Name extends string,
+    Args extends unknown[],
+>(
+    functionName: Name,
+    f: (...args: Args) => sass.types.SassType,
+): `${Name}(${string})` {
+    const encodedArguments = new Array(f.length).fill(undefined).map((_, ix) => `$x${ix}`).join(", ");
+    return `${functionName}(${encodedArguments})` as `${Name}(${string})`;
 }
 
 function toSassDimension(s: string): SassDimension {
@@ -44,10 +56,6 @@ function toSassDimension_recursively(x: any): any {
     } else {
         return x;
     }
-}
-
-function fail(input: any): never {
-    throw new TypeError(`Expected a string, but saw: ${input}`);
 }
 
 function dig(obj: any, keys: string[], wholeName: string): any {
