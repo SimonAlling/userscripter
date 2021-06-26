@@ -48,3 +48,39 @@ jobs:
           userscripter init
           npm install
           npm run build
+  userscripts:
+    name: Dependent Userscripts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x]
+        include:
+          - name: Better SweClockers
+            repo: https://github.com/SimonAlling/better-sweclockers
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: |
+          npm ci
+      - name: Build
+        run: |
+          npm run build
+      - name: Clone userscript
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ matrix.repo }}
+          path: ${{ runner.temp }}/${{ matrix.name }}
+      - name: Install userscript dependencies
+        working-directory: ${{ runner.temp }}/userscripts/${{ matrix.name }}
+        run: |
+          npm ci
+      - name: Install Userscripter
+        run: |
+          npm install ${{ github.workspace }}
+      - name: Build userscript
+        run: |
+          npm run build
