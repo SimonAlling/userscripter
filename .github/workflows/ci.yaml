@@ -56,7 +56,7 @@ jobs:
         node-version: [12.x, 14.x]
         include:
           - name: Better SweClockers
-            repo: https://github.com/SimonAlling/better-sweclockers
+            repo: SimonAlling/better-sweclockers
     steps:
       - uses: actions/checkout@v1
       - name: Use Node.js ${{ matrix.node-version }}
