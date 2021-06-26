@@ -1,6 +1,0 @@
-node_modules
-*.log
-.babelrc
-.awcache
-dist/
-.userscripter-temp
