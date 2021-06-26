@@ -39,7 +39,7 @@ export type WebpackConfigParameters = Readonly<{
     buildConfig: BuildConfig
     manifest?: (buildConfig: BuildConfig) => Manifest
     metadata: (buildConfig: BuildConfig) => Metadata.Metadata
-    metadataSchema: Metadata.ValidateOptions
+    theMetadataSchema: Metadata.ValidateOptions
     env: NodeJS.ProcessEnv
 }>;
 

@@ -203,7 +203,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 envVarErrors: overridden.errors,
                 envVars: envVars(x.env),
                 metadataStringified: finalMetadataStringified,
-                metadataValidationResult: Metadata.validateWith(x.metadataSchema)(finalMetadata),
+                metadataValidationResult: Metadata.validateWith(x.theMetadataSchema)(finalMetadata),
                 manifest: finalManifest,
                 overriddenBuildConfig: overridden.buildConfig,
                 verbose: verbose,
