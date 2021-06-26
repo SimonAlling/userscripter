@@ -1,0 +1,9 @@
+# This file is named gitignore rather than .gitignore because otherwise it would be renamed to .npmignore by npm when installing Userscripter via a tarball (e.g. from the npm registry).
+# https://github.com/SimonAlling/userscripter/issues/24
+
+node_modules
+*.log
+.babelrc
+.awcache
+dist/
+.userscripter-temp
