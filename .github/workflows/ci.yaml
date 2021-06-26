@@ -79,8 +79,10 @@ jobs:
         run: |
           npm ci
       - name: Install Userscripter
+        working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.name }}
         run: |
           npm install ${{ github.workspace }}
       - name: Build userscript
+        working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.name }}
         run: |
           npm run build
