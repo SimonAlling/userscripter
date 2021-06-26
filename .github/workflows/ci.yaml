@@ -72,9 +72,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: ${{ matrix.repo }}
-          path: ${{ runner.temp }}/${{ matrix.name }}
+          path: dependent-userscripts/${{ matrix.name }}
       - name: Install userscript dependencies
-        working-directory: ${{ runner.temp }}/userscripts/${{ matrix.name }}
+        working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.name }}
         run: |
           npm ci
       - name: Install Userscripter
