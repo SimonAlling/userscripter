@@ -53,7 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
         include:
           - name: Better SweClockers
             repo: SimonAlling/better-sweclockers
