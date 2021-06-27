@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        userscript:
+        repository:
           - SimonAlling/better-sweclockers
         node-version: [12.x, 14.x]
       fail-fast: false
@@ -77,21 +77,21 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: ${{ matrix.repo }}
-          path: dependent-userscripts/${{ matrix.userscript }} # Must be relative to github.workspace, apparently.
+          path: dependent-userscripts/${{ matrix.repository }} # Must be relative to github.workspace, apparently.
       - name: Move userscript
         run: |
-          mv "${{ github.workspace }}/dependent-userscripts/${{ matrix.userscript }}" "${{ runner.temp }}/${{ matrix.userscript }}"
+          mv "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository }}" "${{ runner.temp }}/${{ matrix.repository }}"
       - name: Install userscript dependencies
-        working-directory: ${{ runner.temp }}/${{ matrix.userscript }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           npm ci
       - name: Install Userscripter
-        working-directory: ${{ runner.temp }}/${{ matrix.userscript }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           pwd
           ls -al
           npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
-        working-directory: ${{ runner.temp }}/${{ matrix.userscript }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
           npm run build
