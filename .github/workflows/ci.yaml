@@ -91,8 +91,6 @@ jobs:
       - name: Install Userscripter
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
-          pwd
-          ls -al
           npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
