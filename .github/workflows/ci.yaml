@@ -72,7 +72,7 @@ jobs:
       - name: Pack
         id: pack
         run: |
-          echo "::set-output name=tarball::$(npm pack)"
+          echo "::set-output name=tarball::$(pwd)/$(npm pack)"
       - name: Clone userscript
         uses: actions/checkout@v2
         with:
@@ -85,7 +85,7 @@ jobs:
       - name: Install Userscripter
         working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.name }}
         run: |
-          npm install ${{ github.workspace }}/${{ steps.pack.outputs.tarball }}
+          npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
         working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.name }}
         run: |
