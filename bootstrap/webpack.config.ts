@@ -20,6 +20,6 @@ export default createWebpackConfig({
         sassVariables: { CONFIG, SITE },
     },
     metadata: METADATA,
-    theMetadataSchema: DEFAULT_METADATA_SCHEMA,
+    metadataSchema: DEFAULT_METADATA_SCHEMA,
     env: process.env,
 });
