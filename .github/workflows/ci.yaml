@@ -80,7 +80,10 @@ jobs:
           path: dependent-userscripts/${{ matrix.repository }} # Must be relative to github.workspace, apparently.
       - name: Move userscript
         run: |
-          mv "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository }}" "${{ runner.temp }}/${{ matrix.repository }}"
+          mkdir -p "${TARGET_DIR}"
+          mv --no-target-directory "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository }}" "${TARGET_DIR}"
+        env:
+          TARGET_DIR: ${{ runner.temp }}/${{ matrix.repository }}
       - name: Install userscript dependencies
         working-directory: ${{ runner.temp }}/${{ matrix.repository }}
         run: |
