@@ -85,6 +85,8 @@ jobs:
       - name: Install Userscripter
         working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.userscript }}
         run: |
+          pwd
+          ls -al
           npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
         working-directory: ${{ github.workspace }}/dependent-userscripts/${{ matrix.userscript }}
