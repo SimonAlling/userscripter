@@ -76,7 +76,7 @@ jobs:
       - name: Clone userscript
         uses: actions/checkout@v2
         with:
-          repository: ${{ matrix.repo }}
+          repository: ${{ matrix.repository }}
           path: dependent-userscripts/${{ matrix.repository }} # Must be relative to github.workspace, apparently.
       - name: Move userscript
         run: |
