@@ -85,8 +85,9 @@ function dependenciesOfDifferentTypes(e: {
   heading: HTMLElement,
   icon: SVGElement,
 }) {
-  console.log(String(e.heading.spellcheck));
-  console.log(String(e.icon.viewportElement?.textContent));
+  // This function deliberately accesses properties that require more granular static knowledge about the type of each individual dependency than just `Element`.
+  mockConsole.log(String(e.heading.spellcheck));
+  mockConsole.log(String(e.icon.viewportElement?.textContent));
 }
 
 const OPERATIONS: ReadonlyArray<Operation<any>> = [
@@ -159,7 +160,8 @@ it("can use different types of elements as dependencies", () => {
     operations: OPERATIONS_DIFFERENT_DEPENDENCY_TYPES,
   });
   expect(consoleLog).toHaveBeenCalledTimes(2);
-  expect(consoleLog).toHaveBeenCalledWith("undefined");
+  expect(consoleLog).toHaveBeenNthCalledWith(1, "undefined");
+  expect(consoleLog).toHaveBeenNthCalledWith(2, "undefined");
   expect(consoleError).not.toHaveBeenCalled();
 });
 
