@@ -48,3 +48,52 @@ jobs:
           userscripter init
           npm install
           npm run build
+  userscripts:
+    name: Dependent Userscripts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository:
+          - SimonAlling/better-sweclockers
+          - SimonAlling/example-userscript
+        node-version: [12.x, 14.x]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install dependencies
+        run: |
+          npm ci
+      - name: Build
+        run: |
+          npm run build
+      - name: Pack
+        id: pack
+        run: |
+          echo "::set-output name=tarball::$(pwd)/$(npm pack)"
+      - name: Clone userscript
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ matrix.repository }}
+          path: dependent-userscripts/${{ matrix.repository }} # Must be relative to github.workspace, apparently.
+      - name: Move userscript
+        run: |
+          mkdir -p "${TARGET_DIR}"
+          mv --no-target-directory "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository }}" "${TARGET_DIR}"
+        env:
+          TARGET_DIR: ${{ runner.temp }}/${{ matrix.repository }}
+      - name: Install userscript dependencies
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        run: |
+          npm ci
+      - name: Install Userscripter
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        run: |
+          npm install "${{ steps.pack.outputs.tarball }}"
+      - name: Build userscript
+        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        run: |
+          npm run build
