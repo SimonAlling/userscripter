@@ -171,7 +171,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                     loaders: [
                         {
                             loader: require.resolve("ts-loader"),
-                            options: { compilerOptions: { allowJs, skipLibCheck: true } },
+                            options: { compilerOptions: { allowJs } },
                         },
                         {
                             loader: require.resolve("restrict-imports-loader"),
