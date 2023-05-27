@@ -170,8 +170,8 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                     include: resolveIn(rootDir)(sourceDir),
                     loaders: [
                         {
-                            loader: require.resolve("awesome-typescript-loader"),
-                            options: { allowJs, useCache: true },
+                            loader: require.resolve("ts-loader"),
+                            options: { compilerOptions: { allowJs } },
                         },
                         {
                             loader: require.resolve("restrict-imports-loader"),
