@@ -5,6 +5,7 @@
             "~src/*": [ "./src/*" ]
         },
         "target": "es6",
+        "skipLibCheck": true,
         "strict": true,
         "module": "es2015",
         "moduleResolution": "node",
