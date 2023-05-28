@@ -1,5 +1,3 @@
-import { compose } from "@typed/compose";
-
 import { operations } from "../src/lib";
 import {
   ALWAYS,
@@ -39,7 +37,7 @@ const PLAN = {
 };
 
 function handleFailures(failures: ReadonlyArray<OperationAndFailure<any>>) {
-  failures.forEach(compose(mockConsole.error, failureDescriber(CONTEXT)));
+  failures.forEach(f => mockConsole.error(failureDescriber(CONTEXT)(f)));
 }
 
 const HTML_EXAMPLE = `

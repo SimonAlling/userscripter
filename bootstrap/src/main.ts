@@ -1,4 +1,3 @@
-import { compose } from "@typed/compose";
 import { environment, errors, log, userscripter } from "userscripter";
 
 import * as CONFIG from "~src/config";
@@ -23,6 +22,6 @@ userscripter.run({
         interval: CONFIG.OPERATIONS_INTERVAL,
         tryUntil: environment.DOMCONTENTLOADED,
         extraTries: CONFIG.OPERATIONS_EXTRA_TRIES,
-        handleFailures: failures => failures.forEach(compose(log.error, describeFailure)),
+        handleFailures: failures => failures.forEach(f => log.error(describeFailure(f))),
     },
 });

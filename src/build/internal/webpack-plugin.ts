@@ -1,4 +1,3 @@
-import { compose } from "@typed/compose";
 import * as Metadata from "userscript-metadata";
 import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
@@ -73,10 +72,10 @@ export class UserscripterWebpackPlugin {
                     logger.log(heading);
                     logger.log(subject);
                 }
-                compilation.errors.push(...envVarErrors.map(compose(Error, Msg.envVarError)));
-                compilation.errors.push(...buildConfigErrors.map(compose(Error, Msg.buildConfigError)));
+                compilation.errors.push(...envVarErrors.map(e => Error(Msg.envVarError(e))));
+                compilation.errors.push(...buildConfigErrors.map(e => Error(Msg.buildConfigError(e))));
                 if (Metadata.isLeft(metadataValidationResult)) {
-                    compilation.errors.push(...metadataValidationResult.Left.map(compose(Error, Msg.metadataError)));
+                    compilation.errors.push(...metadataValidationResult.Left.map(e => Error(Msg.metadataError(e))));
                 } else {
                     compilation.warnings.push(...metadataValidationResult.Right.warnings.map(Msg.metadataWarning));
                 }
