@@ -15,7 +15,6 @@ const ENV_VAR_PREFIX = "USERSCRIPTER_";
 export const HOSTED_AT_EXAMPLE = "https://example.com/userscripts";
 
 export type BuildConfig = Readonly<{
-    allowJs: boolean
     appendDateToVersion: {
         development: boolean
         nightly: boolean

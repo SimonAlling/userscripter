@@ -33,7 +33,6 @@ export const DEFAULT_BUILD_CONFIG: (x: {
     id: string
     now: Date
 }) => BuildConfig = x => ({
-    allowJs: false,
     appendDateToVersion: {
         development: true,
         nightly: true,
@@ -66,7 +65,6 @@ export const DEFAULT_METADATA_SCHEMA: Metadata.ValidateOptions = {
 export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configuration {
     const overridden = overrideBuildConfig(x.buildConfig, x.env);
     const {
-        allowJs,
         appendDateToVersion,
         id,
         mainFile,
@@ -171,7 +169,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                     loaders: [
                         {
                             loader: require.resolve("ts-loader"),
-                            options: { compilerOptions: { allowJs } },
                         },
                         {
                             loader: require.resolve("restrict-imports-loader"),
