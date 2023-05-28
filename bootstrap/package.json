@@ -7,7 +7,6 @@
     "clean": "rimraf .userscripter-temp"
   },
   "dependencies": {
-    "@typed/compose": "^1.0.0",
     "@types/app-root-path": "^1.2.4",
     "app-root-path": "^3.0.0",
     "rimraf": "^3.0.2",

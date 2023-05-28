@@ -76,7 +76,6 @@
     "ts-preferences": "^2.0.0"
   },
   "dependencies": {
-    "@typed/compose": "^1.0.0",
     "@types/fs-extra": "^8.0.1",
     "@types/json-schema": "^7.0.3",
     "@types/loader-utils": "^1.1.3",

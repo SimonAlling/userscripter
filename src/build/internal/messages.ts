@@ -1,4 +1,3 @@
-import { compose } from "@typed/compose";
 import { unlines } from "lines-unlines";
 import { isString } from "ts-type-guards";
 import { Kind, ValidationError, Warning, tag } from "userscript-metadata";
@@ -49,18 +48,16 @@ export const oneOf = (xs: readonly string[]) => {
     return allButLast + quoted[quoted.length - 1];
 };
 
-export const metadataWarning = compose(
-    webpackifyMessage_metadata,
-    (warning: Warning) => unlines([
+export const metadataWarning = (warning: Warning) => (
+    webpackifyMessage_metadata(unlines([
         warning.summary,
         "",
         warning.description,
-    ]),
+    ]))
 );
 
-export const metadataError = compose(
-    webpackifyMessage_metadata,
-    (error: ValidationError) => {
+export const metadataError = (error: ValidationError) => (
+    webpackifyMessage_metadata((() => {
         switch (error.kind) {
             case Kind.INVALID_KEY: return `Invalid key: "${error.entry.key}". ${error.reason}`;
             case Kind.INVALID_VALUE: return `Invalid ${tag(error.entry.key)} value: ${JSON.stringify(error.entry.value)}. ${error.reason}`;
@@ -68,7 +65,7 @@ export const metadataError = compose(
             case Kind.REQUIRED_MISSING: return `A ${tag(error.item.key)} entry is required, but none was found.`;
             case Kind.UNRECOGNIZED_KEY: return `Unrecognized key: "${error.entry.key}".`;
         }
-    },
+    })())
 );
 
 export const quote = (s: string) => `"${s}"`;
