@@ -21,11 +21,6 @@ export type OperationAndFailure<K extends string> = Readonly<{
     result: OperationFailure
 }>;
 
-/*
-The type of `condition` is chosen so that side-effects can be deferred from the time of declaring operations to when they are executed.
-A prime example is if a condition should be based on the content of document.head:
-In some scenarios, e.g. a WebExtension running in Google Chrome, document.head is null when the operations are declared.
-*/
 type BaseOperation = Readonly<{
     condition: Condition
     description: string
