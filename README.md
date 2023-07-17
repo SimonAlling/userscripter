@@ -19,8 +19,6 @@ Create [userscripts](https://wiki.greasespot.net/User_script) in a breeze!
 
 ### Create a new userscript
 
-You can use Userscripter to bootstrap a new userscript:
-
 ```bash
 npm install --global userscripter
 cd path/to/my-new-userscript
@@ -40,7 +38,7 @@ The compiled userscript should be saved as `dist/bootstrapped-userscript.user.js
 ### Install the userscript
 
 Userscripts are usually installed through a browser extension, for example **Violentmonkey** ([Firefox][violentmonkey-firefox], [Chrome][violentmonkey-chrome]).
-Please refer to the documentation for your browser/extension:
+Please refer to the documentation for the one you use:
 
 * [_Install a local script - Violentmonkey_](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/#install-a-local-script)
 * [_Greasemonkey Manual:Installing Scripts_](https://wiki.greasespot.net/Greasemonkey_Manual:Installing_Scripts)
@@ -49,14 +47,13 @@ Please refer to the documentation for your browser/extension:
 ### Check that the userscript works
 
 Go to [`http://example.com`](http://example.com).
-If you haven't modified anything, you should see a green background.
-You should also see the message `[Bootstrapped Userscript] Bootstrapped Userscript 0.1.0` in the developer console.
+If you haven't modified anything, you should see a green background and `[Bootstrapped Userscript] Bootstrapped Userscript 0.1.0` in the developer console.
 
 
 ## How to write a userscript
 
 A userscript typically consists primarily of **DOM operations** and **stylesheets**.
-It can also have user-facing **preferences**. These repositories demonstrate how Userscripter is intended to be used:
+It can also have user-facing **preferences**. Check out these repositories for examples:
 
   * [Example Userscript][example-userscript] is a basic userscript featuring [operations][example-userscript-operations], [stylesheets][example-userscript-stylesheets], [preferences][example-userscript-preferences] and a [preferences menu][example-userscript-preferences-menu].
   * [Better SweClockers][better-sweclockers] is a large, full-fledged, real-world userscript.
@@ -74,13 +71,13 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 
 (With `USERSCRIPTER_VERBOSE=true`, all available environment variables are listed.)
 
-You can also customize the object returned from `createWebpackConfig` in `webpack.config.ts`:
+You can also customize the object _returned_ from `createWebpackConfig` in `webpack.config.ts`:
 
 ```typescript
 import { createWebpackConfig } from 'userscripter/build';
 
 const webpackConfig = createWebpackConfig({
-    // ...
+    // …
 });
 
 export default {
@@ -96,12 +93,12 @@ export default {
 };
 ```
 
-(Customizations in `webpack.config.ts` will take precedence over environment variables, because the latter only affect the return value of `createWebpackConfig`.)
+Such customizations will take precedence over environment variables.
 
 ## Native browser extension
 
-You can easily create a [native browser extension][webextension] from your userscript by including an object representation of [`manifest.json`][manifest-json] in the object passed to `createWebpackConfig` ([example][example-userscript-webpack-config]).
-If you do, `manifest.json` will be created alongside the compiled `.user.js` file.
+To create a [native browser extension][webextension] from your userscript, include a [manifest][manifest-json] in the object passed to `createWebpackConfig` ([example][example-userscript-webpack-config]).
+`manifest.json` will then be created alongside the compiled `.user.js` file.
 You can then use [`web-ext`][web-ext] to build the native extension:
 
 ```bash
