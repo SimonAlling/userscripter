@@ -96,8 +96,8 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         const unfinishedMetadata = x.metadata(overridden.buildConfig);
         return {
             ...unfinishedMetadata,
-            name: finalName(unfinishedMetadata.name as string),
-            version: finalVersion(unfinishedMetadata.version as string),
+            name: finalName(unfinishedMetadata["name"] as string),
+            version: finalVersion(unfinishedMetadata["version"] as string),
         };
     })();
     const finalManifest = x.manifest === undefined ? undefined : (() => {
