@@ -1,6 +1,5 @@
 import * as path from "path";
 
-import { everythingInPackage } from "restrict-imports-loader";
 import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import * as Metadata from "userscript-metadata";
@@ -18,8 +17,6 @@ import { getGlobalFrom, withDartSassEncodedParameters } from "./sass";
 import { concat } from "./utilities";
 import { buildConfigErrors } from "./validation";
 import { UserscripterWebpackPlugin } from "./webpack-plugin";
-
-const USERSCRIPTER_BUILD = "userscripter/build";
 
 const EXTENSIONS = {
     TS: ["ts", "tsx"],
@@ -169,20 +166,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                     loaders: [
                         {
                             loader: require.resolve("ts-loader"),
-                        },
-                        {
-                            loader: require.resolve("restrict-imports-loader"),
-                            options: {
-                                severity: "error",
-                                detailedErrorMessages: true,
-                                rules: [
-                                    {
-                                        restricted: everythingInPackage(USERSCRIPTER_BUILD),
-                                        severity: "fatal", // necessary to protect the user from being drowned in unintelligible errors
-                                        info: `"${USERSCRIPTER_BUILD}" and its submodules cannot be imported in the source directory ('${sourceDir}'). Please remove these imports:`,
-                                    },
-                                ],
-                            },
                         },
                     ],
                 },
