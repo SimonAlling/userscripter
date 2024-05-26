@@ -3,6 +3,7 @@ import * as errors from "./errors";
 import * as log from "./log";
 import * as operations from "./operations";
 import * as preferences from "./preferences";
+import * as results from "./results";
 import * as stylesheets from "./stylesheets";
 import * as userscripter from "./userscripter";
 
@@ -12,6 +13,7 @@ export {
     log,
     operations,
     preferences,
+    results,
     stylesheets,
     userscripter,
 };

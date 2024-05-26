@@ -1,8 +1,9 @@
-import { isNull, isNumber, isString } from "ts-type-guards";
+import { isNull, isNumber } from "ts-type-guards";
 
 import { Condition } from "./environment";
+import { Result } from "./results";
 
-type ActionResult = string | void;
+export type ActionResult = Result<null, string>;
 type OperationResult = OperationFailure | undefined;
 const SUCCESS = undefined;
 
@@ -122,5 +123,11 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
 }
 
 function fromActionResult(r: ActionResult): OperationResult {
-    return isString(r) ? { reason: Reason.INTERNAL, message: r } : SUCCESS;
+    switch (r.tag) {
+        case "Ok":
+            return SUCCESS;
+
+        case "Err":
+            return { reason: Reason.INTERNAL, message: r.error };
+    }
 }

@@ -37,6 +37,7 @@ it("exposes everything in lib in index.ts", done => {
       "log.ts",
       "operations.ts",
       "preferences.ts",
+      "results.ts",
       "stylesheets.ts",
       "userscripter.ts",
     ]);

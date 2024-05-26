@@ -5,10 +5,12 @@ import {
 } from "../src/lib/environment";
 import { failureDescriber } from "../src/lib/errors";
 import {
+  ActionResult,
   Operation,
   OperationAndFailure,
   operation,
 } from "../src/lib/operations";
+import { Err, Ok } from "../src/lib/results";
 
 const mockConsole = {
   log: (message: string) => void message,
@@ -60,14 +62,16 @@ const HTML_WITHOUT_BLABLABLA = `
 
 function removeFooter(e: { footer: HTMLElement }) {
   e.footer.remove();
+  return Ok(null);
 }
 
-function logBlablablaProperty(e: { body: HTMLElement }): string | void {
+function logBlablablaProperty(e: { body: HTMLElement }): ActionResult {
   const value = e.body.dataset[BLABLABLA];
   if (value !== undefined) {
     mockConsole.log(value);
+    return Ok(null);
   } else {
-    return `Property '${BLABLABLA}' not found.`;
+    return Err(`Property '${BLABLABLA}' not found.`);
   }
 }
 
@@ -75,19 +79,25 @@ const OPERATIONS: ReadonlyArray<Operation<any>> = [
   operation({
     description: "do nothing",
     condition: ALWAYS,
-    action: () => { /* Do nothing. */ },
+    action: () => Ok(null),
   }),
   operation({
     description: "change title",
     condition: ALWAYS,
     dependencies: {},
-    action: () => document.title = "Test",
+    action: () => {
+      document.title = "Test";
+      return Ok(null);
+    },
   }),
   operation({
     description: "change heading",
     condition: ALWAYS,
     dependencies: { heading: "h1" },
-    action: e => e.heading.textContent = "Test",
+    action: e => {
+      e.heading.textContent = "Test";
+      return Ok(null);
+    },
   }),
   operation({
     description: "remove footer",
