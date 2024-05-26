@@ -136,14 +136,14 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
 function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
-    const lel: Array<[ key: string, element: Element ]> = [];
+    const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
     const errors: Array<DependencyFailure> = [];
 
     for (const [ key, maybeElement ] of keysAndQueryResults) {
         if (maybeElement.tag === "Err") {
             errors.push(maybeElement.error);
         } else {
-            lel.push([ key, maybeElement.value ]);
+            resolvedDependencies.push([ key, maybeElement.value ]);
         }
     }
 
@@ -151,7 +151,7 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>
         return Err(errors);
     }
 
-    return Ok((Object as any /* TODO */).fromEntries(lel) as ResolvedDependencies<S>);
+    return Ok((Object as any /* TODO */).fromEntries(resolvedDependencies) as ResolvedDependencies<S>);
 }
 
 function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
