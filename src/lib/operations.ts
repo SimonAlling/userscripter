@@ -13,10 +13,10 @@ type SingleDependencySpec<E extends Element> = { selector: string, elementType: 
 
 type FdGeneralDepsSpec = { [k in string]: SingleDependencySpec<Element> };
 
-type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
+type ResolvedDependencies<S extends FdGeneralDepsSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
 
 
-function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<DependencyFailure>> {
+function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
     const lel: Array<[ key: string, element: Element ]> = [];
@@ -30,7 +30,7 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<Depe
         }
     }
 
-    return Ok((Object as any /* TODO */).fromEntries(lel) as Realized<S>);
+    return Ok((Object as any /* TODO */).fromEntries(lel) as ResolvedDependencies<S>);
 }
 
 function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
@@ -77,7 +77,7 @@ type BaseOperation = Readonly<{
 // The purpose of these types is to enforce the dependencies–action relationship.
 type DependentOperationSpec<Dependencies extends FdGeneralDepsSpec> = BaseOperation & Readonly<{
     dependencies: Dependencies
-    action: (e: Realized<Dependencies>) => ActionResult
+    action: (e: ResolvedDependencies<Dependencies>) => ActionResult
 }>;
 
 type IndependentOperationSpec = BaseOperation & Readonly<{
