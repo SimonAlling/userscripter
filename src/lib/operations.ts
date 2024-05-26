@@ -122,7 +122,7 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
         return fromActionResult(o.action());
     }
 
-    const lelelel = f(o.dependencies);
+    const lelelel = resolveDependencies(o.dependencies);
 
     switch (lelelel.tag) {
         case "Err":
@@ -133,7 +133,7 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
     }
 }
 
-function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
+function resolveDependencies<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
     const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
