@@ -11,7 +11,7 @@ type DependenciesSpec = { [k in string]: SingleDependencySpec<Element> };
 
 type SingleDependencySpec<E extends Element> = { selector: string, elementType: new () => E };
 
-type ResolvedDependencies<S extends DependenciesSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
+type ResolvedDependencies<Spec extends DependenciesSpec> = { [k in keyof Spec]: InstanceType<Spec[k]["elementType"]> };
 
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
@@ -21,8 +21,8 @@ export type OperationFailure = Readonly<{
     message: string
 }>;
 
-export type OperationAndFailure<Dependencies extends DependenciesSpec> = Readonly<{
-    operation: Operation<Dependencies>
+export type OperationAndFailure<Spec extends DependenciesSpec> = Readonly<{
+    operation: Operation<Spec>
     result: OperationFailure
 }>;
 
@@ -38,9 +38,9 @@ type BaseOperation = Readonly<{
 }>;
 
 // The purpose of these types is to enforce the dependencies–action relationship.
-type DependentOperationSpec<Dependencies extends DependenciesSpec> = BaseOperation & Readonly<{
-    dependencies: Dependencies
-    action: (e: ResolvedDependencies<Dependencies>) => ActionResult
+type DependentOperationSpec<Spec extends DependenciesSpec> = BaseOperation & Readonly<{
+    dependencies: Spec
+    action: (e: ResolvedDependencies<Spec>) => ActionResult
 }>;
 
 type IndependentOperationSpec = BaseOperation & Readonly<{
@@ -48,9 +48,9 @@ type IndependentOperationSpec = BaseOperation & Readonly<{
     action: () => ActionResult
 }>;
 
-export type Operation<Dependencies extends DependenciesSpec> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
+export type Operation<Spec extends DependenciesSpec> = DependentOperationSpec<Spec> | IndependentOperationSpec;
 
-export function operation<Dependencies extends DependenciesSpec>(spec: Operation<Dependencies>): Operation<DependenciesSpec> {
+export function operation<Spec extends DependenciesSpec>(spec: Operation<Spec>): Operation<DependenciesSpec> {
     return spec as Operation<DependenciesSpec>;
 }
 
@@ -131,7 +131,7 @@ function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
     }
 }
 
-function resolveDependencies<S extends DependenciesSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
+function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<ResolvedDependencies<Spec>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
     const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
@@ -149,7 +149,7 @@ function resolveDependencies<S extends DependenciesSpec>(spec: S): Result<Resolv
         return Err(errors);
     }
 
-    return Ok((Object as any /* TODO */).fromEntries(resolvedDependencies) as ResolvedDependencies<S>);
+    return Ok((Object as any /* TODO */).fromEntries(resolvedDependencies) as ResolvedDependencies<Spec>);
 }
 
 function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
