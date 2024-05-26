@@ -65,7 +65,7 @@ function removeFooter(e: { footer: HTMLElement }) {
   return Ok(null);
 }
 
-function logBlablablaProperty(e: { body: HTMLElement }): ActionResult {
+function logBlablablaProperty(e: { body: HTMLBodyElement }): ActionResult {
   const value = e.body.dataset[BLABLABLA];
   if (value !== undefined) {
     mockConsole.log(value);
@@ -93,7 +93,7 @@ const OPERATIONS: ReadonlyArray<Operation<any>> = [
   operation({
     description: "change heading",
     condition: ALWAYS,
-    dependencies: { heading: "h1" },
+    dependencies: { heading: { selector: "h1", elementType: HTMLHeadingElement } },
     action: e => {
       e.heading.textContent = "Test";
       return Ok(null);
@@ -102,7 +102,7 @@ const OPERATIONS: ReadonlyArray<Operation<any>> = [
   operation({
     description: "remove footer",
     condition: ALWAYS,
-    dependencies: { footer: "footer" },
+    dependencies: { footer: { selector: "footer", elementType: HTMLElement } },
     action: removeFooter,
   }),
 ];
@@ -111,7 +111,7 @@ const OPERATIONS_BLABLABLA = [
   operation({
     description: `log ${BLABLABLA}`,
     condition: ALWAYS,
-    dependencies: { body: "body" },
+    dependencies: { body: { selector: "body", elementType: HTMLBodyElement } },
     action: logBlablablaProperty,
   }),
 ];

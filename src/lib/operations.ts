@@ -157,9 +157,9 @@ export function run(plan: Plan): void {
     recurse(plan.operations.filter(o => o.condition(window)), []);
 }
 
-function tryToPerform<Dependencies extends FdGeneralDepsSpec>(o: Operation<Dependencies>): OperationResult {
+function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
     if (o.dependencies === undefined) {
-        throw "TODO";
+        return fromActionResult(o.action());
     }
 
     const lelelel = f(o.dependencies);
