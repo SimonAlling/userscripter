@@ -20,9 +20,6 @@ type FdGeneralDepsSpec = { [k in string]: SpecifiedDependency<Element> };
 
 type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: ExtractElementType<S[k]> };
 
-// const spec = { foo: { selector: "foo", elementType: HTMLBodyElement }} satisfies Spec;
-
-
 
 function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
