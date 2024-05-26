@@ -131,24 +131,6 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
         case "Ok":
             return fromActionResult(o.action(lelelel.value));
     }
-
-
-
-    /*
-    const dependencies = o.dependencies === undefined ? {} as { [k in keyof Dependencies]: string } : o.dependencies;
-    const queryResults = Object.entries<string>(dependencies).map(([ key, selector ]) => ({
-        key, selector, element: document.querySelector<HTMLElement>(selector),
-    }));
-    const missingDependencies = queryResults.filter(x => isNull(x.element));
-    if (missingDependencies.length > 0) {
-        return Err({ reason: "Dependencies", dependencies: missingDependencies });
-    }
-    const e = queryResults.reduce(
-        (acc, x) => Object.defineProperty(acc, x.key, { value: x.element, enumerable: true }),
-        {} as Dependencies,
-    );
-    return fromActionResult(o.action(e));
-    */
 }
 
 function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
