@@ -132,7 +132,7 @@ function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
 }
 
 function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<ResolvedDependencies<Spec>, Array<DependencyFailure>> {
-    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
+    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, resolveDependency(key, specifiedDep) ] as const);
 
     const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
     const errors: Array<DependencyFailure> = [];
@@ -152,7 +152,7 @@ function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<
     return Ok((Object as any /* TODO */).fromEntries(resolvedDependencies) as ResolvedDependencies<Spec>);
 }
 
-function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
+function resolveDependency<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
     const element = document.querySelector(specDep.selector);
     if (element === null) {
         return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
