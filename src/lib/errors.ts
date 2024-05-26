@@ -17,7 +17,7 @@ function formatDependency(d: DependencyFailure): string {
             return INDENTATION + "TODO not exist" + d.key + ": " + d.selector;
 
         case "IsOfWrongType":
-            return INDENTATION + "TODO is not a" + (new d.elementType().tagName) + "; is " + d.actualTagName;
+            return INDENTATION + "TODO is not a" + (new d.expectedType().tagName) + "; is " + d.actualTagName;
     }
 }
 

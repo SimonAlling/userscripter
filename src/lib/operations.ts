@@ -161,7 +161,7 @@ function resolveDependency<E extends Element>(key: string, spec: SingleDependenc
     return (
         element instanceof spec.elementType
             ? Ok(element)
-            : Err({ tag: "IsOfWrongType", elementType: spec.elementType, actualTagName: element.tagName })
+            : Err({ tag: "IsOfWrongType", expectedType: spec.elementType, actualTagName: element.tagName })
     );
 }
 

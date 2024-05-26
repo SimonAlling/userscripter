@@ -1,4 +1,4 @@
 export type DependencyFailure = (
     | { tag: "DoesNotExist", key: string, selector: string }
-    | { tag: "IsOfWrongType", elementType: new () => Element, actualTagName: string }
+    | { tag: "IsOfWrongType", expectedType: new () => Element, actualTagName: string }
 );
