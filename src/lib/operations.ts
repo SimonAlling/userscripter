@@ -1,14 +1,59 @@
-import { isNull, isNumber } from "ts-type-guards";
+import { isNumber } from "ts-type-guards";
 
 import { Condition } from "./environment";
-import { Err, Result } from "./results";
+import { Err, Ok, Result } from "./results";
 
 export type ActionResult = Result<null, string>;
 type OperationResult = Result<null, OperationFailure>;
 
-type GeneralDependencies = {
-    [k in string]: Element // This lets the user depend on e.g. <svg> elements.
-};
+
+
+type SpecifiedDependency<E extends Element> = { selector: string, elementType: new () => E };
+
+type ExtractElementType<S extends SpecifiedDependency<Element>> = InstanceType<S["elementType"]>;
+
+
+
+
+type FdGeneralDepsSpec = { [k in string]: SpecifiedDependency<Element> };
+
+type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: ExtractElementType<S[k]> };
+
+// const spec = { foo: { selector: "foo", elementType: HTMLBodyElement }} satisfies Spec;
+
+
+
+function f<S extends FdGeneralDepsSpec>(spec: S): Realized<S> {
+    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(specifiedDep) ] as const);
+
+    const lel: Array<[ key: string, element: Element ]> = [];
+
+    for (const [ key, maybeElement ] of keysAndQueryResults) {
+        if (maybeElement.tag === "Err") {
+            throw "TODO";
+        } else {
+            lel.push([ key, maybeElement.value ]);
+        }
+    }
+
+    return (Object as any /* TODO */).fromEntries(lel) as Realized<S>;
+}
+
+function getIt<E extends Element>(specDep: SpecifiedDependency<E>): Result<E, "TODO"> {
+    const element = document.querySelector(specDep.selector);
+    if (element instanceof specDep.elementType) {
+        return Ok(element);
+    }
+
+    return Err("TODO");
+}
+
+
+
+
+
+
+
 
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
@@ -18,7 +63,7 @@ export type OperationFailure = Readonly<{
     message: string
 }>;
 
-export type OperationAndFailure<Dependencies extends GeneralDependencies> = Readonly<{
+export type OperationAndFailure<Dependencies extends FdGeneralDepsSpec> = Readonly<{
     operation: Operation<Dependencies>
     result: OperationFailure
 }>;
@@ -35,9 +80,9 @@ type BaseOperation = Readonly<{
 }>;
 
 // The purpose of these types is to enforce the dependencies–action relationship.
-type DependentOperationSpec<Dependencies extends GeneralDependencies> = BaseOperation & Readonly<{
-    dependencies: { [k in keyof Dependencies]: string }
-    action: (e: { [k in keyof Dependencies]: Dependencies[k] }) => ActionResult
+type DependentOperationSpec<Dependencies extends FdGeneralDepsSpec> = BaseOperation & Readonly<{
+    dependencies: Dependencies
+    action: (e: Realized<Dependencies>) => ActionResult
 }>;
 
 type IndependentOperationSpec = BaseOperation & Readonly<{
@@ -45,16 +90,16 @@ type IndependentOperationSpec = BaseOperation & Readonly<{
     action: () => ActionResult
 }>;
 
-export type Operation<Dependencies extends GeneralDependencies> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
+export type Operation<Dependencies extends FdGeneralDepsSpec> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
 
-export function operation<Dependencies extends GeneralDependencies>(spec: Operation<Dependencies>): Operation<GeneralDependencies> {
-    return spec as Operation<GeneralDependencies>;
+export function operation<Dependencies extends FdGeneralDepsSpec>(spec: Operation<Dependencies>): Operation<FdGeneralDepsSpec> {
+    return spec as Operation<FdGeneralDepsSpec>;
 }
 
-export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<GeneralDependencies>>) => void;
+export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<FdGeneralDepsSpec>>) => void;
 
 export type Plan = Readonly<{
-    operations: ReadonlyArray<Operation<GeneralDependencies>>
+    operations: ReadonlyArray<Operation<FdGeneralDepsSpec>>
     interval: number // time between each try in milliseconds
     tryUntil: (state: DocumentReadyState) => boolean // when to stop trying
     extraTries: number // number of extra tries after tryUntil is satisfied
@@ -63,13 +108,13 @@ export type Plan = Readonly<{
 
 export function run(plan: Plan): void {
     function recurse(
-        operations: ReadonlyArray<Operation<GeneralDependencies>>,
-        failures: Array<OperationAndFailure<GeneralDependencies>>,
+        operations: ReadonlyArray<Operation<FdGeneralDepsSpec>>,
+        failures: Array<OperationAndFailure<FdGeneralDepsSpec>>,
         triesLeft?: number,
     ): void {
         const lastTry = isNumber(triesLeft) && triesLeft <= 0;
-        const operationsToRunNow: Array<Operation<GeneralDependencies>> = [];
-        const remaining: Array<Operation<GeneralDependencies>> = [];
+        const operationsToRunNow: Array<Operation<FdGeneralDepsSpec>> = [];
+        const remaining: Array<Operation<FdGeneralDepsSpec>> = [];
         const readyState = document.readyState;
         // Decide which operations to run now:
         for (const o of operations) {
@@ -112,7 +157,17 @@ export function run(plan: Plan): void {
     recurse(plan.operations.filter(o => o.condition(window)), []);
 }
 
-function tryToPerform<Dependencies extends GeneralDependencies>(o: Operation<Dependencies>): OperationResult {
+function tryToPerform<Dependencies extends FdGeneralDepsSpec>(o: Operation<Dependencies>): OperationResult {
+    if (o.dependencies === undefined) {
+        throw "TODO";
+    }
+
+    const lelelel = f(o.dependencies);
+
+    return fromActionResult(o.action(lelelel));
+
+
+    /*
     const dependencies = o.dependencies === undefined ? {} as { [k in keyof Dependencies]: string } : o.dependencies;
     const queryResults = Object.entries<string>(dependencies).map(([ key, selector ]) => ({
         key, selector, element: document.querySelector<HTMLElement>(selector),
@@ -126,6 +181,7 @@ function tryToPerform<Dependencies extends GeneralDependencies>(o: Operation<Dep
         {} as Dependencies,
     );
     return fromActionResult(o.action(e));
+    */
 }
 
 function fromActionResult(r: ActionResult): OperationResult {
