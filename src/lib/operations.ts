@@ -115,7 +115,7 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
         return { reason: Reason.DEPENDENCIES, dependencies: missingDependencies };
     }
     const e = queryResults.reduce(
-        (acc, x) => Object.defineProperty(acc, x.key, { value: x.element }),
+        (acc, x) => Object.defineProperty(acc, x.key, { value: x.element, enumerable: true }),
         {} as { [k in K]: HTMLElement },
     );
     return fromActionResult(o.action(e));
