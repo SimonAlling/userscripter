@@ -11,9 +11,9 @@ type OperationResult = Result<null, OperationFailure>;
 
 type SingleDependencySpec<E extends Element> = { selector: string, elementType: new () => E };
 
-type FdGeneralDepsSpec = { [k in string]: SingleDependencySpec<Element> };
+type DependenciesSpec = { [k in string]: SingleDependencySpec<Element> };
 
-type ResolvedDependencies<S extends FdGeneralDepsSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
+type ResolvedDependencies<S extends DependenciesSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
 
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
@@ -23,7 +23,7 @@ export type OperationFailure = Readonly<{
     message: string
 }>;
 
-export type OperationAndFailure<Dependencies extends FdGeneralDepsSpec> = Readonly<{
+export type OperationAndFailure<Dependencies extends DependenciesSpec> = Readonly<{
     operation: Operation<Dependencies>
     result: OperationFailure
 }>;
@@ -40,7 +40,7 @@ type BaseOperation = Readonly<{
 }>;
 
 // The purpose of these types is to enforce the dependencies–action relationship.
-type DependentOperationSpec<Dependencies extends FdGeneralDepsSpec> = BaseOperation & Readonly<{
+type DependentOperationSpec<Dependencies extends DependenciesSpec> = BaseOperation & Readonly<{
     dependencies: Dependencies
     action: (e: ResolvedDependencies<Dependencies>) => ActionResult
 }>;
@@ -50,16 +50,16 @@ type IndependentOperationSpec = BaseOperation & Readonly<{
     action: () => ActionResult
 }>;
 
-export type Operation<Dependencies extends FdGeneralDepsSpec> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
+export type Operation<Dependencies extends DependenciesSpec> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
 
-export function operation<Dependencies extends FdGeneralDepsSpec>(spec: Operation<Dependencies>): Operation<FdGeneralDepsSpec> {
-    return spec as Operation<FdGeneralDepsSpec>;
+export function operation<Dependencies extends DependenciesSpec>(spec: Operation<Dependencies>): Operation<DependenciesSpec> {
+    return spec as Operation<DependenciesSpec>;
 }
 
-export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<FdGeneralDepsSpec>>) => void;
+export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<DependenciesSpec>>) => void;
 
 export type Plan = Readonly<{
-    operations: ReadonlyArray<Operation<FdGeneralDepsSpec>>
+    operations: ReadonlyArray<Operation<DependenciesSpec>>
     interval: number // time between each try in milliseconds
     tryUntil: (state: DocumentReadyState) => boolean // when to stop trying
     extraTries: number // number of extra tries after tryUntil is satisfied
@@ -68,13 +68,13 @@ export type Plan = Readonly<{
 
 export function run(plan: Plan): void {
     function recurse(
-        operations: ReadonlyArray<Operation<FdGeneralDepsSpec>>,
-        failures: Array<OperationAndFailure<FdGeneralDepsSpec>>,
+        operations: ReadonlyArray<Operation<DependenciesSpec>>,
+        failures: Array<OperationAndFailure<DependenciesSpec>>,
         triesLeft?: number,
     ): void {
         const lastTry = isNumber(triesLeft) && triesLeft <= 0;
-        const operationsToRunNow: Array<Operation<FdGeneralDepsSpec>> = [];
-        const remaining: Array<Operation<FdGeneralDepsSpec>> = [];
+        const operationsToRunNow: Array<Operation<DependenciesSpec>> = [];
+        const remaining: Array<Operation<DependenciesSpec>> = [];
         const readyState = document.readyState;
         // Decide which operations to run now:
         for (const o of operations) {
@@ -117,7 +117,7 @@ export function run(plan: Plan): void {
     recurse(plan.operations.filter(o => o.condition(window)), []);
 }
 
-function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
+function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
     if (o.dependencies === undefined) {
         return fromActionResult(o.action());
     }
@@ -133,7 +133,7 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
     }
 }
 
-function resolveDependencies<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
+function resolveDependencies<S extends DependenciesSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
     const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
