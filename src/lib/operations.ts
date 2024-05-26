@@ -38,14 +38,14 @@ type IndependentOperationSpec = BaseOperation & Readonly<{
 
 export type Operation<K extends string> = DependentOperationSpec<K> | IndependentOperationSpec;
 
-export function operation<K extends string>(spec: Operation<K>): Operation<any> {
-    return spec as Operation<any>;
+export function operation<K extends string>(spec: Operation<K>): Operation<string> {
+    return spec as Operation<string>;
 }
 
-export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<any>>) => void;
+export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<string>>) => void;
 
 export type Plan = Readonly<{
-    operations: ReadonlyArray<Operation<any>>
+    operations: ReadonlyArray<Operation<string>>
     interval: number // time between each try in milliseconds
     tryUntil: (state: DocumentReadyState) => boolean // when to stop trying
     extraTries: number // number of extra tries after tryUntil is satisfied
@@ -54,13 +54,13 @@ export type Plan = Readonly<{
 
 export function run(plan: Plan): void {
     function recurse(
-        operations: ReadonlyArray<Operation<any>>,
-        failures: Array<OperationAndFailure<any>>,
+        operations: ReadonlyArray<Operation<string>>,
+        failures: Array<OperationAndFailure<string>>,
         triesLeft?: number,
     ): void {
         const lastTry = isNumber(triesLeft) && triesLeft <= 0;
-        const operationsToRunNow: Array<Operation<any>> = [];
-        const remaining: Array<Operation<any>> = [];
+        const operationsToRunNow: Array<Operation<string>> = [];
+        const remaining: Array<Operation<string>> = [];
         const readyState = document.readyState;
         // Decide which operations to run now:
         for (const o of operations) {
