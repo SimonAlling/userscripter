@@ -27,10 +27,11 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Realized<S> {
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(specifiedDep) ] as const);
 
     const lel: Array<[ key: string, element: Element ]> = [];
+    const errors: Array<DependencyFailure> = [];
 
     for (const [ key, maybeElement ] of keysAndQueryResults) {
         if (maybeElement.tag === "Err") {
-            throw "TODO";
+            errors.push(maybeElement.error);
         } else {
             lel.push([ key, maybeElement.value ]);
         }
