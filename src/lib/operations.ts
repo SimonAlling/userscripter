@@ -6,6 +6,10 @@ import { Err, Result } from "./results";
 export type ActionResult = Result<null, string>;
 type OperationResult = Result<null, OperationFailure>;
 
+type GeneralDependencies = {
+    [k in string]: Element // This lets the user depend on e.g. <svg> elements.
+};
+
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
     dependencies: ReadonlyArray<{ key: string, selector: string }>
@@ -14,11 +18,16 @@ export type OperationFailure = Readonly<{
     message: string
 }>;
 
-export type OperationAndFailure<K extends string> = Readonly<{
-    operation: Operation<K>
+export type OperationAndFailure<Dependencies extends GeneralDependencies> = Readonly<{
+    operation: Operation<Dependencies>
     result: OperationFailure
 }>;
 
+/*
+The type of `condition` is chosen so that side-effects can be deferred from the time of declaring operations to when they are executed.
+A prime example is if a condition should be based on the content of document.head:
+In some scenarios, e.g. a WebExtension running in Google Chrome, document.head is null when the operations are declared.
+*/
 type BaseOperation = Readonly<{
     condition: Condition
     description: string
@@ -26,9 +35,9 @@ type BaseOperation = Readonly<{
 }>;
 
 // The purpose of these types is to enforce the dependencies–action relationship.
-type DependentOperationSpec<K extends string> = BaseOperation & Readonly<{
-    dependencies: { [k in K]: string }
-    action: (e: { [k in K]: HTMLElement }) => ActionResult
+type DependentOperationSpec<Dependencies extends GeneralDependencies> = BaseOperation & Readonly<{
+    dependencies: { [k in keyof Dependencies]: string }
+    action: (e: { [k in keyof Dependencies]: Dependencies[k] }) => ActionResult
 }>;
 
 type IndependentOperationSpec = BaseOperation & Readonly<{
@@ -36,16 +45,16 @@ type IndependentOperationSpec = BaseOperation & Readonly<{
     action: () => ActionResult
 }>;
 
-export type Operation<K extends string> = DependentOperationSpec<K> | IndependentOperationSpec;
+export type Operation<Dependencies extends GeneralDependencies> = DependentOperationSpec<Dependencies> | IndependentOperationSpec;
 
-export function operation<K extends string>(spec: Operation<K>): Operation<string> {
-    return spec as Operation<string>;
+export function operation<Dependencies extends GeneralDependencies>(spec: Operation<Dependencies>): Operation<GeneralDependencies> {
+    return spec as Operation<GeneralDependencies>;
 }
 
-export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<string>>) => void;
+export type FailuresHandler = (failures: ReadonlyArray<OperationAndFailure<GeneralDependencies>>) => void;
 
 export type Plan = Readonly<{
-    operations: ReadonlyArray<Operation<string>>
+    operations: ReadonlyArray<Operation<GeneralDependencies>>
     interval: number // time between each try in milliseconds
     tryUntil: (state: DocumentReadyState) => boolean // when to stop trying
     extraTries: number // number of extra tries after tryUntil is satisfied
@@ -54,13 +63,13 @@ export type Plan = Readonly<{
 
 export function run(plan: Plan): void {
     function recurse(
-        operations: ReadonlyArray<Operation<string>>,
-        failures: Array<OperationAndFailure<string>>,
+        operations: ReadonlyArray<Operation<GeneralDependencies>>,
+        failures: Array<OperationAndFailure<GeneralDependencies>>,
         triesLeft?: number,
     ): void {
         const lastTry = isNumber(triesLeft) && triesLeft <= 0;
-        const operationsToRunNow: Array<Operation<string>> = [];
-        const remaining: Array<Operation<string>> = [];
+        const operationsToRunNow: Array<Operation<GeneralDependencies>> = [];
+        const remaining: Array<Operation<GeneralDependencies>> = [];
         const readyState = document.readyState;
         // Decide which operations to run now:
         for (const o of operations) {
@@ -103,8 +112,8 @@ export function run(plan: Plan): void {
     recurse(plan.operations.filter(o => o.condition(window)), []);
 }
 
-function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
-    const dependencies = o.dependencies === undefined ? {} as { [k in K]: string } : o.dependencies;
+function tryToPerform<Dependencies extends GeneralDependencies>(o: Operation<Dependencies>): OperationResult {
+    const dependencies = o.dependencies === undefined ? {} as { [k in keyof Dependencies]: string } : o.dependencies;
     const queryResults = Object.entries<string>(dependencies).map(([ key, selector ]) => ({
         key, selector, element: document.querySelector<HTMLElement>(selector),
     }));
@@ -114,7 +123,7 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
     }
     const e = queryResults.reduce(
         (acc, x) => Object.defineProperty(acc, x.key, { value: x.element, enumerable: true }),
-        {} as { [k in K]: HTMLElement },
+        {} as Dependencies,
     );
     return fromActionResult(o.action(e));
 }
