@@ -1,11 +1,10 @@
 import { isNull, isNumber } from "ts-type-guards";
 
 import { Condition } from "./environment";
-import { Result } from "./results";
+import { Err, Result } from "./results";
 
 export type ActionResult = Result<null, string>;
-type OperationResult = OperationFailure | undefined;
-const SUCCESS = undefined;
+type OperationResult = Result<null, OperationFailure>;
 
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
@@ -71,17 +70,17 @@ export function run(plan: Plan): void {
         // Run the operations and collect failures:
         for (const o of operationsToRunNow) {
             const result = tryToPerform(o);
-            if (result !== SUCCESS) {
-                switch (result.reason) {
+            if (result.tag !== "Ok") {
+                switch (result.error.reason) {
                     case "Dependencies":
                         if (lastTry) {
-                            failures.push({ result, operation: o });
+                            failures.push({ result: result.error, operation: o });
                         } else {
                             remaining.push(o);
                         }
                         break;
                     case "Internal":
-                        failures.push({ result, operation: o });
+                        failures.push({ result: result.error, operation: o });
                         break;
                 }
             }
@@ -111,7 +110,7 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
     }));
     const missingDependencies = queryResults.filter(x => isNull(x.element));
     if (missingDependencies.length > 0) {
-        return { reason: "Dependencies", dependencies: missingDependencies };
+        return Err({ reason: "Dependencies", dependencies: missingDependencies });
     }
     const e = queryResults.reduce(
         (acc, x) => Object.defineProperty(acc, x.key, { value: x.element, enumerable: true }),
@@ -123,9 +122,9 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
 function fromActionResult(r: ActionResult): OperationResult {
     switch (r.tag) {
         case "Ok":
-            return SUCCESS;
+            return r;
 
         case "Err":
-            return { reason: "Internal", message: r.error };
+            return Err({ reason: "Internal", message: r.error });
     }
 }
