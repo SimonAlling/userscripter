@@ -39,18 +39,23 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Realized<S> {
     return (Object as any /* TODO */).fromEntries(lel) as Realized<S>;
 }
 
-function getIt<E extends Element>(specDep: SpecifiedDependency<E>): Result<E, "TODO"> {
+function getIt<E extends Element>(specDep: SpecifiedDependency<E>): Result<E, DependencyFailure> {
     const element = document.querySelector(specDep.selector);
-    if (element instanceof specDep.elementType) {
-        return Ok(element);
+    if (element === null) {
+        return Err({ tag: "DoesNotExist" });
     }
 
-    return Err("TODO");
+    return (
+        element instanceof specDep.elementType
+            ? Ok(element)
+            : Err({ tag: "IsNotA", elementType: specDep.elementType, actualTagName: element.tagName })
+    );
 }
 
-
-
-
+type DependencyFailure = (
+    | { tag: "DoesNotExist" }
+    | { tag: "IsNotA", elementType: new () => Element, actualTagName: string }
+);
 
 
 
