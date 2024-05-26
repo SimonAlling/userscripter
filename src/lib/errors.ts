@@ -1,6 +1,6 @@
 import { unlines } from "lines-unlines";
 
-import { OperationAndFailure, Reason } from "./operations";
+import { OperationAndFailure } from "./operations";
 
 export type OperationContext = Readonly<{
     siteName: string
@@ -16,13 +16,13 @@ function formatDependency(d: { key: string, selector: string }): string {
 
 export function explanation(failure: OperationAndFailure<any>): string {
     switch (failure.result.reason) {
-        case Reason.DEPENDENCIES:
+        case "Dependencies":
             return unlines([
                 `These dependencies were not found:`,
                 ``,
                 unlines(failure.result.dependencies.map(formatDependency)),
             ]);
-        case Reason.INTERNAL:
+        case "Internal":
             return unlines([
                 `The operation failed with this error:`,
                 ``,

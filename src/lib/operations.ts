@@ -7,13 +7,11 @@ export type ActionResult = Result<null, string>;
 type OperationResult = OperationFailure | undefined;
 const SUCCESS = undefined;
 
-export const enum Reason { DEPENDENCIES, INTERNAL }
-
 export type OperationFailure = Readonly<{
-    reason: Reason.DEPENDENCIES
+    reason: "Dependencies"
     dependencies: ReadonlyArray<{ key: string, selector: string }>
 } | {
-    reason: Reason.INTERNAL
+    reason: "Internal"
     message: string
 }>;
 
@@ -75,14 +73,14 @@ export function run(plan: Plan): void {
             const result = tryToPerform(o);
             if (result !== SUCCESS) {
                 switch (result.reason) {
-                    case Reason.DEPENDENCIES:
+                    case "Dependencies":
                         if (lastTry) {
                             failures.push({ result, operation: o });
                         } else {
                             remaining.push(o);
                         }
                         break;
-                    case Reason.INTERNAL:
+                    case "Internal":
                         failures.push({ result, operation: o });
                         break;
                 }
@@ -113,7 +111,7 @@ function tryToPerform<K extends string>(o: Operation<K>): OperationResult {
     }));
     const missingDependencies = queryResults.filter(x => isNull(x.element));
     if (missingDependencies.length > 0) {
-        return { reason: Reason.DEPENDENCIES, dependencies: missingDependencies };
+        return { reason: "Dependencies", dependencies: missingDependencies };
     }
     const e = queryResults.reduce(
         (acc, x) => Object.defineProperty(acc, x.key, { value: x.element, enumerable: true }),
@@ -128,6 +126,6 @@ function fromActionResult(r: ActionResult): OperationResult {
             return SUCCESS;
 
         case "Err":
-            return { reason: Reason.INTERNAL, message: r.error };
+            return { reason: "Internal", message: r.error };
     }
 }

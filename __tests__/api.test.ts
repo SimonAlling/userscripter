@@ -16,8 +16,6 @@ it("exposes the intended API", () => {
   expect(errors.explanation).toBeDefined();
   expect(errors.failureDescriber).toBeDefined();
 
-  expect(operations.Reason.DEPENDENCIES).toBeDefined();
-  expect(operations.Reason.INTERNAL).toBeDefined();
   expect(operations.operation).toBeDefined();
   expect(operations.run).toBeDefined();
 
