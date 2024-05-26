@@ -11,14 +11,9 @@ type OperationResult = Result<null, OperationFailure>;
 
 type SingleDependencySpec<E extends Element> = { selector: string, elementType: new () => E };
 
-type ExtractElementType<S extends SingleDependencySpec<Element>> = InstanceType<S["elementType"]>;
-
-
-
-
 type FdGeneralDepsSpec = { [k in string]: SingleDependencySpec<Element> };
 
-type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: ExtractElementType<S[k]> };
+type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
 
 
 function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<DependencyFailure>> {
