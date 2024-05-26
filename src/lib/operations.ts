@@ -147,6 +147,10 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>
         }
     }
 
+    if (errors.length > 0) {
+        return Err(errors);
+    }
+
     return Ok((Object as any /* TODO */).fromEntries(lel) as ResolvedDependencies<S>);
 }
 
