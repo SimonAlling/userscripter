@@ -7,11 +7,9 @@ import { Err, Ok, Result } from "./results";
 export type ActionResult = Result<null, string>;
 type OperationResult = Result<null, OperationFailure>;
 
-
+type DependenciesSpec = { [k in string]: SingleDependencySpec<Element> };
 
 type SingleDependencySpec<E extends Element> = { selector: string, elementType: new () => E };
-
-type DependenciesSpec = { [k in string]: SingleDependencySpec<Element> };
 
 type ResolvedDependencies<S extends DependenciesSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
 
