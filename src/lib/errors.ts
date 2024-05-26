@@ -1,5 +1,6 @@
 import { unlines } from "lines-unlines";
 
+import { DependencyFailure } from "./internal/DependencyFailure";
 import { OperationAndFailure } from "./operations";
 
 export type OperationContext = Readonly<{
@@ -10,15 +11,21 @@ export type OperationContext = Readonly<{
 
 const INDENTATION = "  ";
 
-function formatDependency(d: { key: string, selector: string }): string {
-    return INDENTATION + d.key + ": " + d.selector;
+function formatDependency(d: DependencyFailure): string {
+    switch (d.tag) {
+        case "DoesNotExist":
+            return INDENTATION + "TODO not exist" + d.key + ": " + d.selector;
+
+        case "IsNotA":
+            return INDENTATION + "TODO is not a" + (new d.elementType().tagName) + "; is " + d.actualTagName;
+    }
 }
 
 export function explanation(failure: OperationAndFailure<any>): string {
     switch (failure.result.reason) {
         case "Dependencies":
             return unlines([
-                `These dependencies were not found:`,
+                `These dependencies were TODO:`,
                 ``,
                 unlines(failure.result.dependencies.map(formatDependency)),
             ]);

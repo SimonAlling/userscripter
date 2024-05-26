@@ -1,6 +1,7 @@
 import { isNumber } from "ts-type-guards";
 
 import { Condition } from "./environment";
+import { DependencyFailure } from "./internal/DependencyFailure";
 import { Err, Ok, Result } from "./results";
 
 export type ActionResult = Result<null, string>;
@@ -23,8 +24,8 @@ type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: ExtractElementTyp
 
 
 
-function f<S extends FdGeneralDepsSpec>(spec: S): Realized<S> {
-    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(specifiedDep) ] as const);
+function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<DependencyFailure>> {
+    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
 
     const lel: Array<[ key: string, element: Element ]> = [];
     const errors: Array<DependencyFailure> = [];
@@ -37,13 +38,13 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Realized<S> {
         }
     }
 
-    return (Object as any /* TODO */).fromEntries(lel) as Realized<S>;
+    return Ok((Object as any /* TODO */).fromEntries(lel) as Realized<S>);
 }
 
-function getIt<E extends Element>(specDep: SpecifiedDependency<E>): Result<E, DependencyFailure> {
+function getIt<E extends Element>(key: string, specDep: SpecifiedDependency<E>): Result<E, DependencyFailure> {
     const element = document.querySelector(specDep.selector);
     if (element === null) {
-        return Err({ tag: "DoesNotExist" });
+        return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
     }
 
     return (
@@ -53,17 +54,13 @@ function getIt<E extends Element>(specDep: SpecifiedDependency<E>): Result<E, De
     );
 }
 
-type DependencyFailure = (
-    | { tag: "DoesNotExist" }
-    | { tag: "IsNotA", elementType: new () => Element, actualTagName: string }
-);
 
 
 
 
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
-    dependencies: ReadonlyArray<{ key: string, selector: string }>
+    dependencies: ReadonlyArray<DependencyFailure>
 } | {
     reason: "Internal"
     message: string
@@ -170,7 +167,14 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
 
     const lelelel = f(o.dependencies);
 
-    return fromActionResult(o.action(lelelel));
+    switch (lelelel.tag) {
+        case "Err":
+            return Err({ reason: "Dependencies", dependencies: lelelel.error });
+
+        case "Ok":
+            return fromActionResult(o.action(lelelel.value));
+    }
+
 
 
     /*

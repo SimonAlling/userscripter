@@ -32,6 +32,7 @@ it("exposes everything in lib in index.ts", done => {
       "environment.ts",
       "errors.ts",
       "index.ts",
+      "internal",
       "log.ts",
       "operations.ts",
       "preferences.ts",
@@ -40,7 +41,7 @@ it("exposes everything in lib in index.ts", done => {
       "userscripter.ts",
     ]);
     const modulesThatAreExported = Object.keys(index);
-    const modulesThatShouldBeExported = filenames.map(n => n.replace(/\.ts$/, "")).filter(n => n !== "index");
+    const modulesThatShouldBeExported = filenames.map(n => n.replace(/\.ts$/, "")).filter(n => n !== "index" && n !== "internal");
     expect(modulesThatAreExported).toEqual(modulesThatShouldBeExported);
     done();
   });
