@@ -9,14 +9,14 @@ type OperationResult = Result<null, OperationFailure>;
 
 
 
-type SpecifiedDependency<E extends Element> = { selector: string, elementType: new () => E };
+type SingleDependencySpec<E extends Element> = { selector: string, elementType: new () => E };
 
-type ExtractElementType<S extends SpecifiedDependency<Element>> = InstanceType<S["elementType"]>;
-
-
+type ExtractElementType<S extends SingleDependencySpec<Element>> = InstanceType<S["elementType"]>;
 
 
-type FdGeneralDepsSpec = { [k in string]: SpecifiedDependency<Element> };
+
+
+type FdGeneralDepsSpec = { [k in string]: SingleDependencySpec<Element> };
 
 type Realized<S extends FdGeneralDepsSpec> = { [k in keyof S]: ExtractElementType<S[k]> };
 
@@ -38,7 +38,7 @@ function f<S extends FdGeneralDepsSpec>(spec: S): Result<Realized<S>, Array<Depe
     return Ok((Object as any /* TODO */).fromEntries(lel) as Realized<S>);
 }
 
-function getIt<E extends Element>(key: string, specDep: SpecifiedDependency<E>): Result<E, DependencyFailure> {
+function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
     const element = document.querySelector(specDep.selector);
     if (element === null) {
         return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
