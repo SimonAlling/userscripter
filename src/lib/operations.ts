@@ -15,41 +15,6 @@ type FdGeneralDepsSpec = { [k in string]: SingleDependencySpec<Element> };
 
 type ResolvedDependencies<S extends FdGeneralDepsSpec> = { [k in keyof S]: InstanceType<S[k]["elementType"]> };
 
-
-function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
-    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
-
-    const lel: Array<[ key: string, element: Element ]> = [];
-    const errors: Array<DependencyFailure> = [];
-
-    for (const [ key, maybeElement ] of keysAndQueryResults) {
-        if (maybeElement.tag === "Err") {
-            errors.push(maybeElement.error);
-        } else {
-            lel.push([ key, maybeElement.value ]);
-        }
-    }
-
-    return Ok((Object as any /* TODO */).fromEntries(lel) as ResolvedDependencies<S>);
-}
-
-function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
-    const element = document.querySelector(specDep.selector);
-    if (element === null) {
-        return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
-    }
-
-    return (
-        element instanceof specDep.elementType
-            ? Ok(element)
-            : Err({ tag: "IsNotA", elementType: specDep.elementType, actualTagName: element.tagName })
-    );
-}
-
-
-
-
-
 export type OperationFailure = Readonly<{
     reason: "Dependencies"
     dependencies: ReadonlyArray<DependencyFailure>
@@ -184,6 +149,36 @@ function tryToPerform(o: Operation<FdGeneralDepsSpec>): OperationResult {
     );
     return fromActionResult(o.action(e));
     */
+}
+
+function f<S extends FdGeneralDepsSpec>(spec: S): Result<ResolvedDependencies<S>, Array<DependencyFailure>> {
+    const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, getIt(key, specifiedDep) ] as const);
+
+    const lel: Array<[ key: string, element: Element ]> = [];
+    const errors: Array<DependencyFailure> = [];
+
+    for (const [ key, maybeElement ] of keysAndQueryResults) {
+        if (maybeElement.tag === "Err") {
+            errors.push(maybeElement.error);
+        } else {
+            lel.push([ key, maybeElement.value ]);
+        }
+    }
+
+    return Ok((Object as any /* TODO */).fromEntries(lel) as ResolvedDependencies<S>);
+}
+
+function getIt<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
+    const element = document.querySelector(specDep.selector);
+    if (element === null) {
+        return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
+    }
+
+    return (
+        element instanceof specDep.elementType
+            ? Ok(element)
+            : Err({ tag: "IsNotA", elementType: specDep.elementType, actualTagName: element.tagName })
+    );
 }
 
 function fromActionResult(r: ActionResult): OperationResult {
