@@ -152,16 +152,16 @@ function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<
     return Ok((Object as any /* TODO */).fromEntries(resolvedDependencies) as ResolvedDependencies<Spec>);
 }
 
-function resolveDependency<E extends Element>(key: string, specDep: SingleDependencySpec<E>): Result<E, DependencyFailure> {
-    const element = document.querySelector(specDep.selector);
+function resolveDependency<E extends Element>(key: string, spec: SingleDependencySpec<E>): Result<E, DependencyFailure> {
+    const element = document.querySelector(spec.selector);
     if (element === null) {
-        return Err({ tag: "DoesNotExist", key: key, selector: specDep.selector });
+        return Err({ tag: "DoesNotExist", key: key, selector: spec.selector });
     }
 
     return (
-        element instanceof specDep.elementType
+        element instanceof spec.elementType
             ? Ok(element)
-            : Err({ tag: "IsNotA", elementType: specDep.elementType, actualTagName: element.tagName })
+            : Err({ tag: "IsNotA", elementType: spec.elementType, actualTagName: element.tagName })
     );
 }
 
