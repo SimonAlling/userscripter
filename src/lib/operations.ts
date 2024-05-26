@@ -120,14 +120,14 @@ function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
         return fromActionResult(o.action());
     }
 
-    const lelelel = resolveDependencies(o.dependencies);
+    const resolution = resolveDependencies(o.dependencies);
 
-    switch (lelelel.tag) {
+    switch (resolution.tag) {
         case "Err":
-            return Err({ reason: "Dependencies", dependencies: lelelel.error });
+            return Err({ reason: "Dependencies", dependencies: resolution.error });
 
         case "Ok":
-            return fromActionResult(o.action(lelelel.value));
+            return fromActionResult(o.action(resolution.value));
     }
 }
 
