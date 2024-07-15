@@ -124,6 +124,7 @@ function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
 
     switch (resolution.tag) {
         case "Err":
+            console.warn("Nu blir det Err pga Depend")
             return Err({ reason: "Dependencies", dependencies: resolution.error });
 
         case "Ok":
@@ -132,7 +133,11 @@ function tryToPerform(o: Operation<DependenciesSpec>): OperationResult {
 }
 
 function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<ResolvedDependencies<Spec>, Array<DependencyFailure>> {
+    console.warn(spec);
+
     const keysAndQueryResults = Object.entries(spec).map(([ key, specifiedDep ]) => [ key, resolveDependency(key, specifiedDep) ] as const);
+
+    console.warn(keysAndQueryResults)
 
     const resolvedDependencies: Array<[ key: string, element: Element ]> = [];
     const errors: Array<DependencyFailure> = [];
@@ -145,7 +150,10 @@ function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<
         }
     }
 
+    console.warn("errors:",errors);
+    console.warn(resolvedDependencies);
     if (errors.length > 0) {
+        console.warn("då blir det Err")
         return Err(errors);
     }
 
@@ -153,11 +161,14 @@ function resolveDependencies<Spec extends DependenciesSpec>(spec: Spec): Result<
 }
 
 function resolveDependency<E extends Element>(key: string, spec: SingleDependencySpec<E>): Result<E, DependencyFailure> {
+    console.warn("Resolving", key)
+
     const element = document.querySelector(spec.selector);
     if (element === null) {
         return Err({ tag: "DoesNotExist", key: key, selector: spec.selector });
     }
 
+    console.warn(key, "FANNS")
     return (
         element instanceof spec.elementType
             ? Ok(element)

@@ -116,6 +116,11 @@ const OPERATIONS_BLABLABLA = [
   }),
 ];
 
+it("console TODO test", () => {
+  mockConsole.log("HEJ");
+  expect(consoleLog).toHaveBeenCalledWith("HEJ");
+});
+
 it("can run operations", () => {
   document.documentElement.innerHTML = HTML_EXAMPLE;
   operations.run({
@@ -123,6 +128,38 @@ it("can run operations", () => {
     operations: OPERATIONS,
   });
   expect(document.title).toMatchInlineSnapshot(`"Test"`);
+});
+
+it("can handle a missing dependency", async () => {
+  document.documentElement.innerHTML = HTML_EXAMPLE;
+  operations.run({
+    interval: 0,
+    tryUntil: ALWAYS,
+    extraTries: 0,
+    operations: [
+      operation({
+        description: `an operation that cannot find one of its dependencies`,
+        condition: ALWAYS,
+        dependencies: {
+          body: { selector: "body", elementType: HTMLBodyElement },
+          nonExistentElement: { selector: "somethingNonExistent", elementType: HTMLImageElement },
+        },
+        action: e => {
+          void e.body;
+          void e.nonExistentElement.src;
+          return Ok(null);
+        },
+      }),
+    ],
+    handleFailures: failures => {
+      console.warn("HANDLDINILDNL")
+      throw failures.length;
+    },
+  });
+  await Promise.resolve();
+  expect(consoleLog).toHaveBeenCalled();
+  expect(consoleError).toHaveBeenCalled();
+  expect(consoleError).toHaveBeenCalledWith(`HALLOJ DU`);
 });
 
 it("can log " + BLABLABLA, () => {
