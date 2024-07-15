@@ -2,7 +2,6 @@ import { operations } from "../src/lib";
 import {
   ALWAYS,
   DOMCONTENTLOADED,
-  LOAD,
 } from "../src/lib/environment";
 import { failureDescriber } from "../src/lib/errors";
 import {
@@ -63,7 +62,7 @@ function removeFooter(e: { footer: HTMLElement }) {
   e.footer.remove();
 }
 
-function logBlablablaProperty(e: { body: HTMLElement }) {
+function logBlablablaProperty(e: { body: HTMLElement }): string | void {
   const value = e.body.dataset[BLABLABLA];
   if (value !== undefined) {
     mockConsole.log(value);
