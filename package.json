@@ -22,7 +22,23 @@
   "bugs": {
     "url": "https://github.com/simonalling/userscripter/issues"
   },
-  "main": "lib/index",
+  "exports": {
+    "./build-time-only-do-not-import-in-run-time-code": "./build/index.js",
+    "./lib/*": "./lib/*.js"
+  },
+  "typesVersions": {
+    "*": {
+      "build-time-only-do-not-import-in-run-time-code": [
+        "./build/index.d.ts"
+      ],
+      "lib/*": [
+        "./lib/*.d.ts"
+      ],
+      "*": [
+        "This prevents imports of internal modules from compiling in TypeScript."
+      ]
+    }
+  },
   "files": [
     "bin/*",
     "bootstrap/*",
