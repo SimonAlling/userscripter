@@ -1,7 +1,4 @@
-import * as fs from "fs";
-import * as path from "path";
-
-import * as index from "../src/lib";
+import * as packageJson from "../package.json";
 import * as environment from "../src/lib/environment";
 import * as errors from "../src/lib/errors";
 import * as operations from "../src/lib/operations";
@@ -27,22 +24,7 @@ it("exposes the intended API", () => {
   expect(stylesheets.disable).toBeDefined();
 });
 
-it("exposes everything in lib in index.ts", done => {
-  fs.readdir(path.resolve(__dirname, "..", "src", "lib"), (err, filenames) => {
-    expect(err).toBeNull();
-    expect(filenames).toEqual([
-      "environment.ts",
-      "errors.ts",
-      "index.ts",
-      "log.ts",
-      "operations.ts",
-      "preferences.ts",
-      "stylesheets.ts",
-      "userscripter.ts",
-    ]);
-    const modulesThatAreExported = Object.keys(index);
-    const modulesThatShouldBeExported = filenames.map(n => n.replace(/\.ts$/, "")).filter(n => n !== "index");
-    expect(modulesThatAreExported).toEqual(modulesThatShouldBeExported);
-    done();
-  });
+it("exposes everything in lib", () => {
+  expect(packageJson.exports["./lib/*"]).toEqual("./lib/*.js");
+  expect(packageJson.typesVersions["*"]["lib/*"]).toEqual([ "./lib/*.d.ts" ]);
 });

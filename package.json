@@ -67,6 +67,13 @@
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": {
+          "resolveJsonModule": true
+        }
+      }
+    },
     "testRegex": ".+\\.test\\.ts$",
     "moduleFileExtensions": [
       "ts",
