@@ -23,6 +23,7 @@
     "url": "https://github.com/simonalling/userscripter/issues"
   },
   "main": "dist/lib/index",
+  "types": "index",
   "exports": {
     ".": {
       "import": "./dist/lib/index.mjs",
@@ -39,6 +40,9 @@
   },
   "typesVersions": {
     "*": {
+      "index": [
+        "./dist/lib/index.d.ts"
+      ],
       "build": [
         "./dist/build/index.d.ts"
       ],
