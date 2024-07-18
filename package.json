@@ -65,7 +65,7 @@
     "compile-cjs": "tsc -d --module CommonJS -p .",
     "compile-esm": "tsc -d -p .",
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
-    "clean": "rm -rf lib build bin",
+    "clean": "rimraf lib build bin",
     "lint": "eslint . --ext .ts,.tsx",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
@@ -95,6 +95,7 @@
     "prettier": "^1.19.1",
     "renamer": "^1.1.4",
     "repository-check-dirty": "^1.0.2",
+    "rimraf": "5.0.7",
     "ts-jest": "^24.1.0",
     "ts-preferences": "^2.0.0",
     "typescript": "^4.2.3"
