@@ -7,7 +7,7 @@ import * as path from "path";
 import * as fsx from "fs-extra";
 import * as yargs from "yargs";
 
-const BOOTSTRAP_ROOT = path.resolve(__dirname, "..", "bootstrap");
+const BOOTSTRAP_ROOT = path.resolve(__dirname, "..", "..", "bootstrap");
 
 // eslint-disable-next-line no-unused-expressions
 yargs
