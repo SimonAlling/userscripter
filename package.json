@@ -92,7 +92,6 @@
     "eslint": "^7.25.0",
     "eslint-plugin-import": "^2.22.1",
     "jest": "^24.9.0",
-    "prettier": "^1.19.1",
     "renamer": "^1.1.4",
     "repository-check-dirty": "^1.0.2",
     "rimraf": "5.0.7",
