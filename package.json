@@ -23,6 +23,33 @@
     "url": "https://github.com/simonalling/userscripter/issues"
   },
   "main": "lib/index",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.js"
+    },
+    "./build": {
+      "import": "./build/index.mjs",
+      "require": "./build/index.js"
+    },
+    "./lib/*": {
+      "import": "./lib/*.mjs",
+      "require": "./lib/*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "build": [
+        "./build/index.d.ts"
+      ],
+      "lib/*": [
+        "./lib/*.d.ts"
+      ],
+      "*": [
+        "This prevents imports of internal modules from compiling in TypeScript."
+      ]
+    }
+  },
   "files": [
     "bin/*",
     "bootstrap/*",
