@@ -1,6 +1,4 @@
 node_modules/
-lib/**
-build/**
-bin/**
+dist/**
 *.tgz
 *.html
