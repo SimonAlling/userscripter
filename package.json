@@ -51,6 +51,7 @@
     }
   },
   "files": [
+    "bootstrap/*",
     "dist/*"
   ],
   "bin": {
