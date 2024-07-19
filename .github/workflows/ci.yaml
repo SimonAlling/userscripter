@@ -40,7 +40,7 @@ jobs:
       - name: Pack
         id: pack
         run: |
-          echo "tarball=$(pwd)/$(npm pack)" >> $GITHUB_OUTPUT
+          echo "tarball=$(pwd)/$(npm pack | grep -E '^userscripter-.+\.tgz')" >> $GITHUB_OUTPUT
       - name: Install CLI tool
         run: |
           npm install --global "${{ steps.pack.outputs.tarball }}"
@@ -77,7 +77,7 @@ jobs:
       - name: Pack
         id: pack
         run: |
-          echo "tarball=$(pwd)/$(npm pack)" >> $GITHUB_OUTPUT
+          echo "tarball=$(pwd)/$(npm pack | grep -E '^userscripter-.+\.tgz')" >> $GITHUB_OUTPUT
       - name: Clone userscript
         uses: actions/checkout@v2
         with:
