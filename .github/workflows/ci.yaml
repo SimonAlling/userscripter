@@ -37,21 +37,6 @@ jobs:
           npm run build
         env:
           CI: true
-      - name: Pack
-        id: pack
-        run: |
-          echo "::set-output name=tarball::$(pwd)/$(npm pack)"
-      - name: Install CLI tool
-        run: |
-          npm install --global "${{ steps.pack.outputs.tarball }}"
-      - name: Bootstrap userscript
-        working-directory: ${{ runner.temp }}
-        run: |
-          mkdir bootstrapped-userscript
-          cd $_
-          userscripter init
-          npm install
-          npm run build
   userscripts:
     name: Dependent Userscripts
     runs-on: ubuntu-latest

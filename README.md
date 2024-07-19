@@ -19,35 +19,7 @@ Create [userscripts](https://wiki.greasespot.net/User_script) in a breeze!
 
 ### Create a new userscript
 
-```bash
-npm install --global userscripter
-cd path/to/my-new-userscript
-userscripter init
-```
-
-If everything went well, an `src` directory should have been created, along with some other files like `package.json` and `webpack.config.ts`.
-You should now be able to build the userscript:
-
-```bash
-npm install
-npm run build
-```
-
-The compiled userscript should be saved as `dist/bootstrapped-userscript.user.js`.
-
-### Install the userscript
-
-Userscripts are usually installed through a browser extension, for example **Violentmonkey** ([Firefox][violentmonkey-firefox], [Chrome][violentmonkey-chrome]).
-Please refer to the documentation for the one you use:
-
-* [_Install a local script - Violentmonkey_](https://violentmonkey.github.io/posts/how-to-edit-scripts-with-your-favorite-editor/#install-a-local-script)
-* [_Greasemonkey Manual:Installing Scripts_](https://wiki.greasespot.net/Greasemonkey_Manual:Installing_Scripts)
-* [_How to install new scripts to Tampermonkey_](http://tampermonkey.net/faq.php#Q102)
-
-### Check that the userscript works
-
-Go to [`http://example.com`](http://example.com).
-If you haven't modified anything, you should see a green background and `[Bootstrapped Userscript] Bootstrapped Userscript 0.1.0` in the developer console.
+See [`userscripter-cli`](https://www.npmjs.com/package/userscripter-cli).
 
 
 ## How to write a userscript
