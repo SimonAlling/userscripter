@@ -40,6 +40,11 @@ function init(_: yargs.Arguments) {
             path.resolve(rootDir, "gitignore"),
             path.resolve(rootDir, ".gitignore"),
         );
+        await fsx.rename(
+            // `npm pack` refuses to include any file named `package-lock.json` in the packaged tarball, so we have to use a different name.
+            path.resolve(rootDir, "package-lock-proxy.json"),
+            path.resolve(rootDir, "package-lock.json"),
+        );
     });
 }
 
