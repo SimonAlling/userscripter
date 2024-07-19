@@ -39,19 +39,12 @@ jobs:
           npm run build
         env:
           CI: true
-      - name: Pack
-        id: pack
-        run: |
-          echo "tarball=$(pwd)/$(npm pack)" >> $GITHUB_OUTPUT
-      - name: Install CLI tool
-        run: |
-          npm install --global "${{ steps.pack.outputs.tarball }}"
       - name: Bootstrap userscript
         working-directory: ${{ runner.temp }}
         run: |
           mkdir bootstrapped-userscript
           cd $_
-          userscripter init
+          npx tiged@2.12.7 https://github.com/${{ github.repository }}/bootstrap#${{ github.sha }}
           npm ci
           npm run build
   userscripts:

@@ -51,21 +51,16 @@
     }
   },
   "files": [
-    "bin/*",
-    "bootstrap/*",
     "build/*",
     "lib/*"
   ],
-  "bin": {
-    "userscripter": "./bin/cli.js"
-  },
   "scripts": {
     "build-cjs": "npm run clean && npm run compile-cjs",
     "build-esm": "npm run clean && npm run compile-esm",
     "compile-cjs": "tsc -d --module CommonJS -p .",
     "compile-esm": "tsc -d -p .",
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
-    "clean": "rimraf lib build bin",
+    "clean": "rimraf lib build",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
@@ -103,14 +98,10 @@
     "ts-preferences": "^2.0.0"
   },
   "dependencies": {
-    "@types/fs-extra": "^8.0.1",
-    "@types/node": "^12.12.8",
     "@types/sass": "^1.16.0",
     "@types/terser-webpack-plugin": "^2.2.0",
     "@types/webpack": "^4.39.9",
-    "@types/yargs": "^13.0.3",
     "css-loader": "^3.2.0",
-    "fs-extra": "^8.1.0",
     "lines-unlines": "^1.0.0",
     "node-sass-utils": "^1.1.3",
     "raw-loader": "^4.0.0",
@@ -123,7 +114,6 @@
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "userscript-metadata": "^1.0.0",
     "webextension-manifest": "^1.0.0",
-    "webpack": "^4.41.2",
-    "yargs": "^15.0.2"
+    "webpack": "^4.41.2"
   }
 }

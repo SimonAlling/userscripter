@@ -20,9 +20,8 @@ Create [userscripts](https://wiki.greasespot.net/User_script) in a breeze!
 ### Create a new userscript
 
 ```bash
-npm install --global userscripter
 cd path/to/my-new-userscript
-userscripter init
+npx tiged@2.12.7 https://github.com/SimonAlling/userscripter/bootstrap#master
 ```
 
 If everything went well, an `src` directory should have been created, along with some other files like `package.json` and `webpack.config.ts`.
