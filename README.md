@@ -21,7 +21,7 @@ Create [userscripts](https://wiki.greasespot.net/User_script) in a breeze!
 
 ```bash
 cd path/to/my-new-userscript
-******** TODO ********
+npx tiged@2.12.7 https://github.com/SimonAlling/userscripter/bootstrap
 ```
 
 If everything went well, an `src` directory should have been created, along with some other files like `package.json` and `webpack.config.ts`.
