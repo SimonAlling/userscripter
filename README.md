@@ -29,7 +29,7 @@ If everything went well, an `src` directory should have been created, along with
 You should now be able to build the userscript:
 
 ```bash
-npm install
+npm ci
 npm run build
 ```
 

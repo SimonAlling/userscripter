@@ -1,4 +1,5 @@
 {
+  "name": "bootstrapped-userscript",
   "private": true,
   "scripts": {
     "build-webpack-config": "tsc -p tsconfig.webpack.json",

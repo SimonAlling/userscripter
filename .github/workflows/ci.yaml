@@ -50,7 +50,7 @@ jobs:
           mkdir bootstrapped-userscript
           cd $_
           userscripter init
-          npm install
+          npm ci
           npm run build
   userscripts:
     name: Dependent Userscripts
