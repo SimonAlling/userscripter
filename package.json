@@ -51,21 +51,16 @@
     }
   },
   "files": [
-    "bin/*",
-    "bootstrap/*",
     "build/*",
     "lib/*"
   ],
-  "bin": {
-    "userscripter": "./bin/cli.js"
-  },
   "scripts": {
     "build-cjs": "npm run clean && npm run compile-cjs",
     "build-esm": "npm run clean && npm run compile-esm",
     "compile-cjs": "tsc -d --module CommonJS -p .",
     "compile-esm": "tsc -d -p .",
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
-    "clean": "rimraf lib build bin",
+    "clean": "rimraf lib build",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
