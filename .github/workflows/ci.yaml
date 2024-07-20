@@ -39,6 +39,10 @@ jobs:
           npm run build
         env:
           CI: true
+      - name: Pack
+        id: pack
+        run: |
+          echo "tarball=$(pwd)/$(npm pack)" >> $GITHUB_OUTPUT
       - name: Bootstrap userscript
         working-directory: ${{ runner.temp }}
         run: |
@@ -46,6 +50,7 @@ jobs:
           cd $_
           npx tiged@2.12.7 https://github.com/${{ github.repository }}/bootstrap#${{ github.sha }}
           npm ci
+          npm install -E "${{ steps.pack.outputs.tarball }}"
           npm run build
   userscripts:
     name: Dependent Userscripts
