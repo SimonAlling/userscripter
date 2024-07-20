@@ -1,5 +1,5 @@
 import * as log from "./log";
-import * as operations from "./operationsLol";
+import * as operations from "./operations";
 import * as stylesheets from "./stylesheets";
 
 export function run(userscript: {

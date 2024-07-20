@@ -1,6 +1,6 @@
 import { unlines } from "lines-unlines";
 
-import { OperationAndFailure, Reason } from "./operationsLol";
+import { OperationAndFailure, Reason } from "./operations";
 
 export type OperationContext = Readonly<{
     siteName: string
