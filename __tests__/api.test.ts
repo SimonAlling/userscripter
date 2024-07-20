@@ -4,7 +4,7 @@ import * as path from "path";
 import * as index from "../src/lib";
 import * as environment from "../src/lib/environment";
 import * as errors from "../src/lib/errors";
-import * as operations from "../src/lib/operations";
+import * as operations from "../src/lib/operationsLol";
 import * as stylesheets from "../src/lib/stylesheets";
 
 it("exposes the intended API", () => {
@@ -35,7 +35,7 @@ it("exposes everything in lib in index.ts", done => {
       "errors.ts",
       "index.ts",
       "log.ts",
-      "operations.ts",
+      "operationsLol.ts",
       "preferences.ts",
       "stylesheets.ts",
       "userscripter.ts",

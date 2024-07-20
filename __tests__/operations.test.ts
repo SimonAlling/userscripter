@@ -1,4 +1,4 @@
-import { operations } from "../src/lib";
+import { operationsLol } from "../src/lib";
 import {
   ALWAYS,
   DOMCONTENTLOADED,
@@ -8,7 +8,7 @@ import {
   Operation,
   OperationAndFailure,
   operation,
-} from "../src/lib/operations";
+} from "../src/lib/operationsLol";
 
 const mockConsole = {
   log: (message: string) => void message,
@@ -108,7 +108,7 @@ const OPERATIONS_BLABLABLA = [
 
 it("can run operations", () => {
   document.documentElement.innerHTML = HTML_EXAMPLE;
-  operations.run({
+  operationsLol.run({
     ...PLAN,
     operations: OPERATIONS,
   });
@@ -117,7 +117,7 @@ it("can run operations", () => {
 
 it("can log " + BLABLABLA, () => {
   document.documentElement.innerHTML = HTML_WITH_BLABLABLA;
-  operations.run({
+  operationsLol.run({
     ...PLAN,
     operations: OPERATIONS_BLABLABLA,
   });
@@ -127,7 +127,7 @@ it("can log " + BLABLABLA, () => {
 
 it("can handle an internal failure", () => {
   document.documentElement.innerHTML = HTML_WITHOUT_BLABLABLA;
-  operations.run({
+  operationsLol.run({
     ...PLAN,
     operations: OPERATIONS_BLABLABLA,
   });
