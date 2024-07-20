@@ -1,5 +1,7 @@
 # Release workflow
 
+## Release a new version of the npm package
+
   1. Get up to date:
 
      ```bash
@@ -51,3 +53,37 @@
      ```bash
      git clean -xdf && npm publish # `npm publish` should automatically build first (see `prepublishOnly` script).
      ```
+
+## Update the bootstrapped userscript
+
+These steps aren't strictly necessary, but it typically makes sense for the bootstrapped userscript to use the latest version of the package.
+
+  1. Install the newly published version in the bootstrapped userscript:
+
+     ```bash
+     cd "$(git rev-parse --show-toplevel)/bootstrap"
+     git clean -xdf .
+     THE_BOOTSTRAP_BRANCH="bootstrap-${THE_VERSION:?}"
+     git switch --create "${THE_BOOTSTRAP_BRANCH:?}"
+     npm ci
+     npm install -E "userscripter@${THE_VERSION:?}"
+     git add package*.json
+     npm run build
+     ```
+
+  1. Modify the bootstrapped userscript if necessary, then stage the changes:
+
+     ```bash
+     git add -p
+     ```
+
+  1. Commit and push:
+
+     ```bash
+     git commit -m "chore: Use ${THE_VERSION:?} in bootstrapped userscript"
+     git push -u origin "${THE_BOOTSTRAP_BRANCH:?}"
+     ```
+
+  1. Create a PR based on the newly pushed branch.
+
+  1. Review and merge the PR.
