@@ -64,7 +64,7 @@ jobs:
           npm ci
           npm run build
   userscripts:
-    name: Dependent Userscripts – ${{ matrix.repository.humanReadableName }} @ ${{ matrix.repository.refInRepo }}
+    name: Dependent: ${{ matrix.repository.humanReadableName }} @ ${{ matrix.repository.refInRepo }} (Node ${{ matrix.node-version }})
     runs-on: ubuntu-22.04
     strategy:
       matrix:
