@@ -71,8 +71,16 @@ jobs:
         repository:
           - humanReadableName: Better SweClockers
             ownerSlashName: SimonAlling/better-sweclockers
+            refInRepo: master
+            pathInRepo: ""
           - humanReadableName: Example Userscript
             ownerSlashName: SimonAlling/example-userscript
+            refInRepo: master
+            pathInRepo: ""
+          - humanReadableName: Bootstrapped Userscript
+            ownerSlashName: SimonAlling/userscripter
+            refInRepo: ${{ github.sha }} # The purpose here, unlike in the `bootstrap` job, _is_ to check how any changes to the library/package might affect the bootstrapped userscript.
+            pathInRepo: bootstrap/
         node-version: [16.20.2]
       fail-fast: false
     steps:
@@ -97,6 +105,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: ${{ matrix.repository.ownerSlashName }}
+          ref: ${{ matrix.repository.refInRepo }}
           path: dependent-userscripts/${{ matrix.repository.ownerSlashName }} # Must be relative to github.workspace, apparently.
           fetch-depth: 1
       - name: Move userscript
@@ -106,14 +115,14 @@ jobs:
         env:
           TARGET_DIR: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
       - name: Install userscript dependencies
-        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}/${{ matrix.repository.pathInRepo }}
         run: |
           npm ci
       - name: Install Userscripter
-        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}/${{ matrix.repository.pathInRepo }}
         run: |
           npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
-        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}/${{ matrix.repository.pathInRepo }}
         run: |
           npm run build
