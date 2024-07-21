@@ -39,7 +39,16 @@ jobs:
           npm run build
         env:
           CI: true
+  bootstrap:
+    name: Bootstrapped Userscript
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [16.20.2]
+    steps:
       - name: Bootstrap userscript
+        # This step is NOT intended to check how any changes to the library/package might affect the bootstrapped userscript.
+        # It only checks changes to the bootstrapped userscript itself.
         working-directory: ${{ runner.temp }}
         run: |
           mkdir bootstrapped-userscript
