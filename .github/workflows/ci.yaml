@@ -77,7 +77,7 @@ jobs:
             ownerSlashName: SimonAlling/example-userscript
             refInRepo: master
             pathInRepo: ""
-          - humanReadableName: Bootstrapped userscript
+          - humanReadableName: Bootstrapped Userscript
             ownerSlashName: SimonAlling/userscripter
             refInRepo: ${{ github.sha }}
             pathInRepo: bootstrap/
