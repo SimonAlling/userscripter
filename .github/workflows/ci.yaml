@@ -12,7 +12,7 @@ on:
 
 jobs:
   nightly:
-    name: CI Build
+    name: Check package (Node ${{ matrix.node-version }})
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -40,7 +40,7 @@ jobs:
         env:
           CI: true
   bootstrap:
-    name: Bootstrapped Userscript
+    name: Check bootstrapped userscript (Node ${{ matrix.node-version }})
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -64,13 +64,15 @@ jobs:
           npm ci
           npm run build
   userscripts:
-    name: Dependent Userscripts
+    name: "Dependent: ${{ matrix.repository.humanReadableName }} (Node ${{ matrix.node-version }})"
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         repository:
-          - SimonAlling/better-sweclockers
-          - SimonAlling/example-userscript
+          - humanReadableName: Better SweClockers
+            ownerSlashName: SimonAlling/better-sweclockers
+          - humanReadableName: Example Userscript
+            ownerSlashName: SimonAlling/example-userscript
         node-version: [16.20.2]
       fail-fast: false
     steps:
@@ -94,24 +96,24 @@ jobs:
       - name: Clone userscript
         uses: actions/checkout@v2
         with:
-          repository: ${{ matrix.repository }}
-          path: dependent-userscripts/${{ matrix.repository }} # Must be relative to github.workspace, apparently.
+          repository: ${{ matrix.repository.ownerSlashName }}
+          path: dependent-userscripts/${{ matrix.repository.ownerSlashName }} # Must be relative to github.workspace, apparently.
           fetch-depth: 1
       - name: Move userscript
         run: |
           mkdir -p "${TARGET_DIR}"
-          mv --no-target-directory "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository }}" "${TARGET_DIR}"
+          mv --no-target-directory "${{ github.workspace }}/dependent-userscripts/${{ matrix.repository.ownerSlashName }}" "${TARGET_DIR}"
         env:
-          TARGET_DIR: ${{ runner.temp }}/${{ matrix.repository }}
+          TARGET_DIR: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
       - name: Install userscript dependencies
-        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
         run: |
           npm ci
       - name: Install Userscripter
-        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
         run: |
           npm install "${{ steps.pack.outputs.tarball }}"
       - name: Build userscript
-        working-directory: ${{ runner.temp }}/${{ matrix.repository }}
+        working-directory: ${{ runner.temp }}/${{ matrix.repository.ownerSlashName }}
         run: |
           npm run build
