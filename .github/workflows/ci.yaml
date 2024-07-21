@@ -64,18 +64,21 @@ jobs:
           npm ci
           npm run build
   userscripts:
-    name: Dependent Userscripts
+    name: Dependent Userscripts – ${{ matrix.repository.humanReadableName }} @ ${{ matrix.repository.refInRepo }}
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         repository:
-          - ownerSlashName: SimonAlling/better-sweclockers
+          - humanReadableName: Better SweClockers
+            ownerSlashName: SimonAlling/better-sweclockers
             refInRepo: master
             pathInRepo: ""
-          - ownerSlashName: SimonAlling/example-userscript
+          - humanReadableName: Example Userscript
+            ownerSlashName: SimonAlling/example-userscript
             refInRepo: master
             pathInRepo: ""
-          - ownerSlashName: SimonAlling/userscripter
+          - humanReadableName: Bootstrapped userscript
+            ownerSlashName: SimonAlling/userscripter
             refInRepo: ${{ github.sha }}
             pathInRepo: bootstrap/
         node-version: [16.20.2]
