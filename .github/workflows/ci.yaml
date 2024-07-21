@@ -79,7 +79,7 @@ jobs:
             pathInRepo: ""
           - humanReadableName: Bootstrapped Userscript
             ownerSlashName: SimonAlling/userscripter
-            refInRepo: ${{ github.sha }}
+            refInRepo: ${{ github.sha }} # The purpose here, unlike in the `bootstrap` job, _is_ to check how any changes to the library/package might affect the bootstrapped userscript.
             pathInRepo: bootstrap/
         node-version: [16.20.2]
       fail-fast: false
