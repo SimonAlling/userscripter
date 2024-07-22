@@ -26,7 +26,7 @@
 
   1. Create a PR based on the newly pushed branch.
 
-     > [!WARNING]
+     > ⚠️ **Warning** <!-- Change to [!WARNING] when possible (see #142). -->
      >
      > The PR description should include a brief summary of the user-facing changes included in the release.
      >
