@@ -58,6 +58,9 @@
 
 These steps aren't strictly necessary, but it typically makes sense for the bootstrapped userscript to use the latest version of the package.
 
+> [!IMPORTANT]
+> This can only be done if a new version of the package was successfully published in the previous section.
+
   1. Install the newly published version in the bootstrapped userscript:
 
      ```bash
