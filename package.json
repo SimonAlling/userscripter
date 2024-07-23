@@ -65,21 +65,10 @@
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
     "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
     "test": "npm run lint && npm run jest",
-    "jest": "jest",
+    "jest": "jest --config ./jest.config.mjs",
     "verify": "npm ci && repository-check-dirty && npm run build && npm test && npm pack"
   },
   "sideEffects": false,
-  "jest": {
-    "testEnvironment": "jsdom",
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "testRegex": ".+\\.test\\.ts$",
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ]
-  },
   "devDependencies": {
     "@types/jest": "27.5.2",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
