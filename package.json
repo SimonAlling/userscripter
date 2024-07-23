@@ -82,7 +82,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@typescript-eslint/parser": "^4.33.0",
     "cli-confirm": "^1.0.1",
     "eslint": "^7.25.0",
     "eslint-plugin-import": "^2.22.1",
@@ -92,7 +92,7 @@
     "rimraf": "5.0.7",
     "ts-jest": "^24.1.0",
     "ts-preferences": "^2.0.0",
-    "typescript": "4.2.3"
+    "typescript": "4.4.4"
   },
   "peerDependencies": {
     "ts-preferences": "^2.0.0"
