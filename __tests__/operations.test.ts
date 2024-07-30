@@ -1,14 +1,14 @@
-import { operations } from "../src/lib";
+import { operations } from "../src/run-time";
 import {
   ALWAYS,
   DOMCONTENTLOADED,
-} from "../src/lib/environment";
-import { failureDescriber } from "../src/lib/errors";
+} from "../src/run-time/environment";
+import { failureDescriber } from "../src/run-time/errors";
 import {
   Operation,
   OperationAndFailure,
   operation,
-} from "../src/lib/operations";
+} from "../src/run-time/operations";
 
 const mockConsole = {
   log: (message: string) => void message,

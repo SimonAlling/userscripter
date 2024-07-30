@@ -1,5 +1,5 @@
 node_modules/
-lib/**
-build/**
+run-time/**
+build-time/**
 *.tgz
 *.html

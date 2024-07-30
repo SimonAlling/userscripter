@@ -1,7 +1,7 @@
 import sass from "sass";
 
-import { getGlobalFrom, withDartSassEncodedParameters } from "../src/build/internal/sass";
-import { DEFAULT_BUILD_CONFIG } from "../src/build/internal/webpack";
+import { getGlobalFrom, withDartSassEncodedParameters } from "../src/build-time/internal/sass";
+import { DEFAULT_BUILD_CONFIG } from "../src/build-time/internal/webpack";
 
 import * as CONFIG from "./config-example";
 

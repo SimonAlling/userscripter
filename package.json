@@ -22,28 +22,28 @@
   "bugs": {
     "url": "https://github.com/simonalling/userscripter/issues"
   },
-  "main": "lib/index",
+  "main": "run-time/index",
   "exports": {
     ".": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.js"
+      "import": "./run-time/index.mjs",
+      "require": "./run-time/index.js"
     },
-    "./build": {
-      "import": "./build/index.mjs",
-      "require": "./build/index.js"
+    "./build-time": {
+      "import": "./build-time/index.mjs",
+      "require": "./build-time/index.js"
     },
-    "./lib/*": {
-      "import": "./lib/*.mjs",
-      "require": "./lib/*.js"
+    "./run-time/*": {
+      "import": "./run-time/*.mjs",
+      "require": "./run-time/*.js"
     }
   },
   "typesVersions": {
     "*": {
-      "build": [
-        "./build/index.d.ts"
+      "build-time": [
+        "./build-time/index.d.ts"
       ],
-      "lib/*": [
-        "./lib/*.d.ts"
+      "run-time/*": [
+        "./run-time/*.d.ts"
       ],
       "*": [
         "This prevents imports of internal modules from compiling in TypeScript."
@@ -51,8 +51,8 @@
     }
   },
   "files": [
-    "build/*",
-    "lib/*"
+    "build-time/*",
+    "run-time/*"
   ],
   "scripts": {
     "build-cjs": "npm run clean && npm run compile-cjs",
@@ -60,10 +60,10 @@
     "compile-cjs": "tsc -d --module CommonJS -p .",
     "compile-esm": "tsc -d -p .",
     "build": "npm run clean && npm run compile-esm && npm run rename && npm run compile-cjs",
-    "clean": "rimraf lib build",
+    "clean": "rimraf run-time build-time",
     "lint": "eslint . --ext .ts",
     "prepublishOnly": "npm run verify && cli-confirm 'Publish?'",
-    "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"lib/**\" \"build/**\"",
+    "rename": "renamer --force --find \"/\\.js$/\" --replace \".mjs\" \"run-time/**\" \"build-time/**\"",
     "test": "npm run lint && npm run jest",
     "jest": "jest --config ./jest.config.mjs",
     "verify": "npm ci && repository-check-dirty && npm run build && npm test && npm pack"

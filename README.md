@@ -73,7 +73,7 @@ USERSCRIPTER_MODE=production USERSCRIPTER_VERBOSE=true npm run build
 You can also customize the object _returned_ from `createWebpackConfig` in `webpack.config.ts`:
 
 ```typescript
-import { createWebpackConfig } from 'userscripter/build';
+import { createWebpackConfig } from 'userscripter/build-time';
 
 const webpackConfig = createWebpackConfig({
     // …
