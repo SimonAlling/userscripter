@@ -1,5 +1,5 @@
-import { ALWAYS } from "userscripter/lib/environment";
-import { Stylesheets, stylesheet } from "userscripter/lib/stylesheets";
+import { ALWAYS } from "userscripter/run-time/environment";
+import { Stylesheets, stylesheet } from "userscripter/run-time/stylesheets";
 
 const STYLESHEETS = {
     main: stylesheet({

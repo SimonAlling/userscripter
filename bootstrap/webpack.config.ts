@@ -3,7 +3,7 @@ import {
     createWebpackConfig,
     DEFAULT_BUILD_CONFIG,
     DEFAULT_METADATA_SCHEMA,
-} from "userscripter/build";
+} from "userscripter/build-time";
 
 import METADATA from "./metadata";
 import * as CONFIG from "./src/config";
