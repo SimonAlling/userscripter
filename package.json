@@ -22,23 +22,7 @@
   "bugs": {
     "url": "https://github.com/simonalling/userscripter/issues"
   },
-  "exports": {
-    "./build-time-only-do-not-import-in-run-time-code": "./build/index.js",
-    "./lib/*": "./lib/*.js"
-  },
-  "typesVersions": {
-    "*": {
-      "build-time-only-do-not-import-in-run-time-code": [
-        "./build/index.d.ts"
-      ],
-      "lib/*": [
-        "./lib/*.d.ts"
-      ],
-      "*": [
-        "This prevents imports of internal modules from compiling in TypeScript."
-      ]
-    }
-  },
+  "main": "lib/index",
   "files": [
     "bin/*",
     "bootstrap/*",
@@ -66,13 +50,6 @@
   "jest": {
     "transform": {
       "^.+\\.ts$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsConfig": {
-          "resolveJsonModule": true
-        }
-      }
     },
     "testRegex": ".+\\.test\\.ts$",
     "moduleFileExtensions": [
