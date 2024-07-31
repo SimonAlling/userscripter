@@ -1,4 +1,7 @@
-import * as packageJson from "../package.json";
+import * as fs from "fs";
+import * as path from "path";
+
+import * as index from "../src/run-time";
 import * as environment from "../src/run-time/environment";
 import * as errors from "../src/run-time/errors";
 import * as operations from "../src/run-time/operations";
@@ -24,7 +27,19 @@ it("exposes the intended API", () => {
   expect(stylesheets.disable).toBeDefined();
 });
 
-it("exposes everything in run-time/", () => {
-  expect(packageJson.exports["./run-time/*"]).toEqual({ import: "./run-time/*.mjs", require: "./run-time/*.js" });
-  expect(packageJson.typesVersions["*"]["run-time/*"]).toEqual([ "./run-time/*.d.ts" ]);
+it("exposes everything in run-time in index.ts", async () => {
+  const filenames = await fs.promises.readdir(path.resolve(__dirname, "..", "src", "run-time"));
+  expect(filenames).toEqual([
+    "environment.ts",
+    "errors.ts",
+    "index.ts",
+    "log.ts",
+    "operations.ts",
+    "preferences.ts",
+    "stylesheets.ts",
+    "userscripter.ts",
+  ]);
+  const modulesThatAreExported = Object.keys(index);
+  const modulesThatShouldBeExported = filenames.map(n => n.replace(/\.ts$/, "")).filter(n => n !== "index");
+  expect(modulesThatAreExported).toEqual(modulesThatShouldBeExported);
 });

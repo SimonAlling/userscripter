@@ -1,14 +1,7 @@
 export default {
   "testEnvironment": "jsdom",
   "transform": {
-    "^.+\\.ts$": [
-      "ts-jest",
-      {
-        tsconfig: {
-          resolveJsonModule: true,
-        },
-      },
-    ],
+    "^.+\\.ts$": "ts-jest",
   },
   "testRegex": ".+\\.test\\.ts$",
   "moduleFileExtensions": [
