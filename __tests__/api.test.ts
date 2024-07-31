@@ -1,11 +1,11 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import * as index from "../src/lib";
-import * as environment from "../src/lib/environment";
-import * as errors from "../src/lib/errors";
-import * as operations from "../src/lib/operations";
-import * as stylesheets from "../src/lib/stylesheets";
+import * as index from "../src/run-time";
+import * as environment from "../src/run-time/environment";
+import * as errors from "../src/run-time/errors";
+import * as operations from "../src/run-time/operations";
+import * as stylesheets from "../src/run-time/stylesheets";
 
 it("exposes the intended API", () => {
   const a: environment.Condition = environment.ALWAYS;
@@ -27,8 +27,8 @@ it("exposes the intended API", () => {
   expect(stylesheets.disable).toBeDefined();
 });
 
-it("exposes everything in lib in index.ts", async () => {
-  const filenames = await fs.promises.readdir(path.resolve(__dirname, "..", "src", "lib"));
+it("exposes everything in run-time in index.ts", async () => {
+  const filenames = await fs.promises.readdir(path.resolve(__dirname, "..", "src", "run-time"));
   expect(filenames).toEqual([
     "environment.ts",
     "errors.ts",
