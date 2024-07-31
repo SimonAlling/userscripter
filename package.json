@@ -22,12 +22,7 @@
   "bugs": {
     "url": "https://github.com/simonalling/userscripter/issues"
   },
-  "main": "run-time/index",
   "exports": {
-    ".": {
-      "import": "./run-time/index.mjs",
-      "require": "./run-time/index.js"
-    },
     "./build-time": {
       "import": "./build-time/index.mjs",
       "require": "./build-time/index.js"
