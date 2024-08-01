@@ -1,5 +1,6 @@
 import * as path from "path";
 
+import * as sass from "sass";
 import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import * as Metadata from "userscript-metadata";
@@ -166,9 +167,12 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                         {
                             loader: require.resolve("sass-loader"),
                             options: {
+                                implementation: sass,
                                 sassOptions: {
                                     functions: { [withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal },
                                 },
+                                additionalData: undefined,
+                                webpackImporter: true,
                             },
                         },
                     ],
