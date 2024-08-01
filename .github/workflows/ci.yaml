@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node-version: [16.20.2]
+        node-version: [16.20.2, 18.20.4]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        node-version: [16.20.2]
+        node-version: [16.20.2, 18.20.4]
     steps:
       - uses: actions/checkout@v2
         with:
@@ -81,7 +81,7 @@ jobs:
             ownerSlashName: SimonAlling/userscripter
             refInRepo: ${{ github.sha }} # The purpose here, unlike in the `bootstrap` job, _is_ to check how any changes to the library/package might affect the bootstrapped userscript.
             pathInRepo: bootstrap/
-        node-version: [16.20.2]
+        node-version: [16.20.2, 18.20.4]
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
