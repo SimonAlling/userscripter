@@ -144,10 +144,23 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                         {
                             loader: require.resolve("css-loader"),
                             options: {
+                                url: true,
+                                import: true,
                                 sourceMap: false,
                                 modules: {
+                                    auto: undefined,
+                                    mode: "local",
+                                    exportGlobals: false,
                                     localIdentName: "[local]",
+                                    context: undefined,
+                                    hashPrefix: "", // Documented default is undefined, but actual default seems to be "" based on source code (in css-loader v3.6.0).
+                                    // getLocalIdent: Documented default is undefined, but that doesn't work (in css-loader v3.6.0).
+                                    localIdentRegExp: undefined, // Documented default is undefined, but actual default seems to be null based on source code, but null is not allowed (in css-loader v3.6.0).
                                 },
+                                importLoaders: 0,
+                                localsConvention: "asIs",
+                                onlyLocals: false,
+                                esModule: false,
                             },
                         },
                         {
