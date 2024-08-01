@@ -153,8 +153,8 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                                     exportGlobals: false,
                                     localIdentName: "[local]",
                                     context: undefined,
-                                    hashPrefix: "", // Documented default is undefined, but actual default is "" based on source code (v3.6.0).
-                                    // getLocalIdent: Documented default is undefined, but that is not allowed (v3.6.0).
+                                    hashPrefix: "", // Documented default is undefined, but actual default seems to be "" based on source code (in css-loader v3.6.0).
+                                    // getLocalIdent: Documented default is undefined, but that doesn't work (in css-loader v3.6.0).
                                     // localIdentRegExp: Documented default is undefined, but that is not allowed (v3.6.0).
                                 },
                                 importLoaders: 0,
