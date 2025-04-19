@@ -14,7 +14,7 @@
     "ts-preferences": "^2.0.0",
     "typescript": "4.5.5",
     "userscript-metadata": "^1.0.0",
-    "userscripter": "5.0.0",
+    "userscripter": "5.1.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   }
