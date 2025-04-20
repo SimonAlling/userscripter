@@ -71,11 +71,11 @@ jobs:
         repository:
           - humanReadableName: Better SweClockers
             ownerSlashName: SimonAlling/better-sweclockers
-            refInRepo: e63484ef0091c8c92de1bc6e3c2ddb0749735a8b
+            refInRepo: 64ddf8a1541356261c4eebeeedfdb408b41b2d42
             pathInRepo: ""
           - humanReadableName: Example Userscript
             ownerSlashName: SimonAlling/example-userscript
-            refInRepo: d1d30ea54062a620179784159f9a922d30ecc696
+            refInRepo: b42b8717c421cf5dca5c6e4bc2ee8396125bd6bb
             pathInRepo: ""
           - humanReadableName: Bootstrapped Userscript
             ownerSlashName: SimonAlling/userscripter
