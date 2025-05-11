@@ -38,6 +38,9 @@ function toSassDimension(s: string): SassDimension {
     }
     const number = parts[1];
     const unit = parts[2];
+    if (number === undefined || unit === undefined) {
+        return s;
+    }
     if (CSS_UNITS.includes(unit)) {
         return new SassUtils.SassDimension(parseInt(number, 10), unit);
     }
@@ -59,7 +62,7 @@ function toSassDimension_recursively(x: any): any {
 }
 
 function dig(obj: any, keys: string[], wholeName: string): any {
-    if (keys.length === 0) {
+    if (keys[0] === undefined) {
         return obj;
     } else {
         const deeper = obj[keys[0]];
