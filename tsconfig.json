@@ -24,6 +24,7 @@
         "outDir": ".",
         "removeComments": true,
         "rootDir": "src",
+        "skipLibCheck": true,
         "strict": true,
         "target": "es2018",
     },
