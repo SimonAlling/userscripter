@@ -21,7 +21,7 @@ export class UserscripterWebpackPlugin {
         buildConfigErrors: ReadonlyArray<BuildConfigError<any>>
         envVarErrors: readonly EnvVarError[]
         envVars: ReadonlyArray<readonly [string, string | undefined]>
-        manifest?: Manifest
+        manifest: Manifest | undefined
         metadataStringified: string
         metadataValidationResult: Metadata.ValidationResult<Metadata.Metadata>
         overriddenBuildConfig: BuildConfig
