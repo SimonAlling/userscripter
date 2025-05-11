@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "~src/*": [ "./src/*" ]
+            "~src/*": [ "./src/*" ],
         },
         "target": "es6",
         "skipLibCheck": true,
@@ -14,14 +14,14 @@
         "allowSyntheticDefaultImports": true,
         "lib": [
             "esnext",
-            "dom"
+            "dom",
         ],
         "jsx": "react",
-        "jsxFactory": "h"
+        "jsxFactory": "h",
     },
     "include": [
         "./src/*.d.ts",
         "./src/**/*.tsx",
-        "./src/**/*.ts"
-    ]
+        "./src/**/*.ts",
+    ],
 }

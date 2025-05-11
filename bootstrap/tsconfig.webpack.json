@@ -2,9 +2,9 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "module": "commonjs",
-        "outDir": ".userscripter-temp"
+        "outDir": ".userscripter-temp",
     },
     "include": [
-        "webpack.config.ts"
-    ]
+        "webpack.config.ts",
+    ],
 }
