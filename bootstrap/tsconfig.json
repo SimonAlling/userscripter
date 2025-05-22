@@ -1,23 +1,23 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "~src/*": [ "./src/*" ],
-        },
-        "target": "es6",
-        "skipLibCheck": true,
-        "strict": true,
-        "module": "es2015",
-        "moduleResolution": "node",
-        "preserveConstEnums": true,
-        "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
+        "esModuleInterop": true,
+        "jsx": "react",
+        "jsxFactory": "h",
         "lib": [
             "esnext",
             "dom",
         ],
-        "jsx": "react",
-        "jsxFactory": "h",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "paths": {
+            "~src/*": [ "./src/*" ],
+        },
+        "preserveConstEnums": true,
+        "skipLibCheck": true,
+        "strict": true,
+        "target": "es6",
     },
     "include": [
         "./src/*.d.ts",
