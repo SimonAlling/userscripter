@@ -1,7 +1,7 @@
 import * as Metadata from "userscript-metadata";
 import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
-import {RawSource} from "webpack-sources";
+import { RawSource } from "webpack-sources";
 
 import {
     BuildConfig,
@@ -11,7 +11,7 @@ import {
     envVarName,
 } from "./configuration";
 import * as Msg from "./messages";
-import {BuildConfigError} from "./validation";
+import { BuildConfigError } from "./validation";
 
 const MANIFEST_FILE = "manifest.json";
 const MANIFEST_INDENTATION = 2;

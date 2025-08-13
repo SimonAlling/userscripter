@@ -11,11 +11,11 @@ import {
     overrideBuildConfig,
     WebpackConfigParameters,
 } from "./configuration";
-import {Mode} from "./mode";
-import {getGlobalFrom, withDartSassEncodedParameters} from "./sass";
-import {concat} from "./utilities";
-import {buildConfigErrors} from "./validation";
-import {UserscripterWebpackPlugin} from "./webpack-plugin";
+import { Mode } from "./mode";
+import { getGlobalFrom, withDartSassEncodedParameters } from "./sass";
+import { concat } from "./utilities";
+import { buildConfigErrors } from "./validation";
+import { UserscripterWebpackPlugin } from "./webpack-plugin";
 
 const EXTENSIONS = {
     TS: ["ts", "tsx"],
@@ -167,7 +167,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                             loader: require.resolve("sass-loader"),
                             options: {
                                 sassOptions: {
-                                    functions: {[withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal},
+                                    functions: { [withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal },
                                 },
                             },
                         },

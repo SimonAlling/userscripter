@@ -1,46 +1,47 @@
 extends:
-    - eslint:recommended
-    - plugin:@typescript-eslint/recommended
+  - eslint:recommended
+  - plugin:@typescript-eslint/recommended
 plugins:
-    - import
+  - import
 root: true
 rules:
-    "@typescript-eslint/ban-tslint-comment": error
-    "@typescript-eslint/explicit-module-boundary-types": off
-    "@typescript-eslint/no-explicit-any": off
-    "@typescript-eslint/no-namespace": [ error ]
-    "@typescript-eslint/no-unused-vars": off
-    "arrow-spacing": [ error, { before: true, after: true } ]
-    "block-spacing": [ error, always ]
-    "comma-style": [ error, last ]
-    "comma-dangle": [
-        error,
-        {
-            arrays: "always-multiline",
-            objects: "always-multiline",
-            imports: "always-multiline",
-            exports: "always-multiline",
-            functions: "always-multiline",
-        },
-    ]
-    "import/order": [
-        error,
-        {
-            alphabetize: { order: asc },
-            groups: [ builtin, external, parent, sibling ],
-            newlines-between: always,
-        },
-    ]
-    "key-spacing": [ error, { beforeColon: false, afterColon: true, mode: minimum } ]
-    "keyword-spacing": [ error, { before: true, after: true } ]
-    "no-console": error
-    "no-constant-condition": error
-    "no-duplicate-imports": [ error, { includeExports: true } ]
-    "no-unused-vars": off # Should be turned off when using @typescript-eslint.
-    "no-unused-expressions": error
-    "no-var": error
-    "prefer-const": error
-    "quotes": [ error, "double", { allowTemplateLiterals: true, avoidEscape: true } ]
-    "semi-spacing": [ error, { before: false, after: true } ]
-    "semi": [ error, always ]
-    "spaced-comment": [ error, always ]
+  "@typescript-eslint/ban-tslint-comment": error
+  "@typescript-eslint/explicit-module-boundary-types": off
+  "@typescript-eslint/no-explicit-any": off
+  "@typescript-eslint/no-namespace": [ error ]
+  "@typescript-eslint/no-unused-vars": off
+  "arrow-spacing": [ error, { before: true, after: true } ]
+  "block-spacing": [ error, always ]
+  "comma-style": [ error, last ]
+  "comma-dangle": [
+    error,
+    {
+      arrays: "always-multiline",
+      objects: "always-multiline",
+      imports: "always-multiline",
+      exports: "always-multiline",
+      functions: "always-multiline",
+    },
+  ]
+  "import/order": [
+    error,
+    {
+      alphabetize: { order: asc },
+      groups: [ builtin, external, parent, sibling ],
+      newlines-between: always,
+    },
+  ]
+  "key-spacing": [ error, { beforeColon: false, afterColon: true, mode: minimum } ]
+  "keyword-spacing": [ error, { before: true, after: true } ]
+  "no-console": error
+  "no-constant-condition": error
+  "no-duplicate-imports": [ error, { includeExports: true } ]
+  "no-unused-vars": off # Should be turned off when using @typescript-eslint.
+  "no-unused-expressions": error
+  "no-var": error
+  "object-curly-spacing": [ error, always ]
+  "prefer-const": error
+  "quotes": [ error, "double", { allowTemplateLiterals: true, avoidEscape: true } ]
+  "semi-spacing": [ error, { before: false, after: true } ]
+  "semi": [ error, always ]
+  "spaced-comment": [ error, always ]
