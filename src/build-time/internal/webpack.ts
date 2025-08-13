@@ -1,22 +1,21 @@
 import * as path from "path";
 
-import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
 
 import {
     BuildConfig,
-    WebpackConfigParameters,
     distFileName,
     envVars,
     overrideBuildConfig,
+    WebpackConfigParameters,
 } from "./configuration";
-import { Mode } from "./mode";
-import { getGlobalFrom, withDartSassEncodedParameters } from "./sass";
-import { concat } from "./utilities";
-import { buildConfigErrors } from "./validation";
-import { UserscripterWebpackPlugin } from "./webpack-plugin";
+import {Mode} from "./mode";
+import {getGlobalFrom, withDartSassEncodedParameters} from "./sass";
+import {concat} from "./utilities";
+import {buildConfigErrors} from "./validation";
+import {UserscripterWebpackPlugin} from "./webpack-plugin";
 
 const EXTENSIONS = {
     TS: ["ts", "tsx"],
@@ -76,9 +75,11 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         verbose,
     } = overridden.buildConfig;
     const getGlobal = getGlobalFrom(sassVariables);
+
     function finalName(name: string): string {
         return name + (nightly ? " Nightly" : "");
     }
+
     function finalVersion(version: string): string {
         switch (true) {
             case nightly && appendDateToVersion.nightly:
@@ -89,6 +90,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 return version;
         }
     }
+
     const finalMetadata = (() => {
         const unfinishedMetadata = x.metadata(overridden.buildConfig);
         return {
@@ -123,12 +125,12 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             entrypoints: false,
             colors: true,
             logging: verbose ? "verbose" : "info",
-        } as webpack.Stats.ToStringOptionsObject, // because the `logging` property is not recognized
+        },
         module: {
             rules: [
                 {
                     test: filenameExtensionRegex(EXTENSIONS.SVG),
-                    loaders: [
+                    use: [
                         {
                             loader: require.resolve("raw-loader"),
                         },
@@ -136,7 +138,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 },
                 {
                     test: filenameExtensionRegex(EXTENSIONS.SASS),
-                    loaders: [
+                    use: [
                         // Loaders must be require.resolved here so that Webpack is guaranteed to find them.
                         {
                             loader: require.resolve("to-string-loader"),
@@ -167,7 +169,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                             loader: require.resolve("sass-loader"),
                             options: {
                                 sassOptions: {
-                                    functions: { [withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal },
+                                    functions: {[withDartSassEncodedParameters(sassVariableGetter, getGlobal)]: getGlobal},
                                 },
                             },
                         },
@@ -176,7 +178,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 {
                     test: filenameExtensionRegex(EXTENSIONS.TS),
                     include: resolveIn(rootDir)(sourceDir),
-                    loaders: [
+                    use: [
                         {
                             loader: require.resolve("ts-loader"),
                         },
@@ -205,11 +207,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         ],
         optimization: {
             minimize: mode === Mode.production,
-            minimizer: [
-                new TerserPlugin({
-                    parallel: true,
-                }),
-            ],
         },
     };
 }
