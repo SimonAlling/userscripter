@@ -156,7 +156,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                                     exportGlobals: false,
                                     exportLocalsConvention: "asIs",
                                     localIdentName: "[local]",
-                                    localIdentContext: undefined,
                                     // getLocalIdent: Documented default is undefined, but that doesn't work (in css-loader v3.6.0).
                                     localIdentRegExp: undefined, // Documented default is undefined, but actual default seems to be null based on source code, but null is not allowed (in css-loader v3.6.0).
                                 },
@@ -182,6 +181,12 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                             loader: require.resolve("ts-loader"),
                         },
                     ],
+                },
+                {
+                    test: /\.m?js$/,
+                    resolve: {
+                        fullySpecified: false, // disable the behaviour
+                    },
                 },
             ],
         },

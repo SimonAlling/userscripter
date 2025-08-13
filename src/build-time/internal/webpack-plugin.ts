@@ -1,7 +1,7 @@
 import * as Metadata from "userscript-metadata";
 import Manifest from "webextension-manifest";
 import * as webpack from "webpack";
-import {RawSource, Source} from "webpack-sources";
+import {RawSource} from "webpack-sources";
 
 import {
     BuildConfig,
@@ -16,7 +16,7 @@ import {BuildConfigError} from "./validation";
 const MANIFEST_FILE = "manifest.json";
 const MANIFEST_INDENTATION = 2;
 
-export class UserscripterWebpackPlugin {
+export class UserscripterWebpackPlugin implements webpack.WebpackPluginInstance {
     constructor(private readonly x: {
         buildConfigErrors: ReadonlyArray<BuildConfigError<any>>
         envVarErrors: readonly EnvVarError[]
@@ -42,26 +42,38 @@ export class UserscripterWebpackPlugin {
         } = this.x;
         const metadataAssetName = distFileName(overriddenBuildConfig.id, "meta");
         const userscriptAssetName = distFileName(overriddenBuildConfig.id, "user");
-        compiler.hooks.afterCompile.tap(
+        compiler.hooks.compilation.tap(
             UserscripterWebpackPlugin.name,
-            compilation => {
-                // Create metadata file:
-                compilation.assets[metadataAssetName] = new RawSource(metadataStringified);
-                // Prepend metadata to compiled userscript (must be done after minification so metadata isn't removed in production mode):
-                const compiledUserscript = compilation.assets[userscriptAssetName] as Source | undefined;
-                if (compiledUserscript !== undefined) { // `instanceof RawSource` and `instanceof Source` don't work.
-                    compilation.assets[userscriptAssetName] = new RawSource(
-                        metadataStringified + "\n" + compiledUserscript.source(),
-                    );
-                } else {
-                    compilation.errors.push(Error(Msg.compilationAssetNotFound(userscriptAssetName)));
-                }
-                // Create manifest file if requested:
-                if (manifest !== undefined) {
-                    compilation.assets[MANIFEST_FILE] = new RawSource(
-                        JSON.stringify(manifest, null, MANIFEST_INDENTATION),
-                    );
-                }
+            (compilation) => {
+                compilation.hooks.afterProcessAssets.tap(
+                    UserscripterWebpackPlugin.name, (assets) => {
+                        const logger = compilation.getLogger(UserscripterWebpackPlugin.name);
+
+                        // Create metadata file:
+                        compilation.emitAsset(metadataAssetName, new RawSource(metadataStringified));
+
+                        // Prepend metadata to compiled userscript (must be done after minification so metadata isn't removed in production mode):
+                        const compiledUserscript = assets[userscriptAssetName];
+                        if (compiledUserscript !== undefined) { // `instanceof RawSource` and `instanceof Source` don't work.
+                            compilation.updateAsset(userscriptAssetName, new RawSource(
+                                metadataStringified + "\n" + compiledUserscript.source()));
+                        } else {
+                            compilation.errors.push(Error(Msg.compilationAssetNotFound(userscriptAssetName)));
+                        }
+
+                        // Create manifest file if requested:
+                        if (manifest !== undefined) {
+                            compilation.emitAsset(MANIFEST_FILE, new RawSource(
+                                JSON.stringify(manifest, null, MANIFEST_INDENTATION),
+                            ));
+                        }
+
+                        // Log metadata:
+                        const metadataAsset = compilation.assets[metadataAssetName];
+                        if (metadataAsset) {
+                            logger.info(metadataAsset.source());
+                        }
+                    });
             },
         );
         compiler.hooks.afterEmit.tap(
@@ -105,12 +117,9 @@ export class UserscripterWebpackPlugin {
                         logger.info(`Hint: Use ${fullEnvVarName}=true to display more information.`);
                     }
                 }
-                // Log metadata:
                 if (!compilation.getStats().hasErrors()) {
-                    const metadataAsset: unknown = compilation.assets[metadataAssetName];
-                    if (metadataAsset instanceof RawSource) {
-                        logger.info(metadataAsset.source());
-                    } else {
+                    const metadataAsset = compilation.assets[metadataAssetName];
+                    if (!metadataAsset) {
                         compilation.warnings.push(Error(Msg.compilationAssetNotFound(metadataAssetName)));
                     }
                 }
