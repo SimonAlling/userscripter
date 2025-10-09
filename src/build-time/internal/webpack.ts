@@ -6,10 +6,10 @@ import * as webpack from "webpack";
 
 import {
     BuildConfig,
+    WebpackConfigParameters,
     distFileName,
     envVars,
     overrideBuildConfig,
-    WebpackConfigParameters,
 } from "./configuration";
 import { Mode } from "./mode";
 import { getGlobalFrom, withDartSassEncodedParameters } from "./sass";
