@@ -3,3 +3,4 @@ run-time/**
 build-time/**
 *.tgz
 *.html
+.idea

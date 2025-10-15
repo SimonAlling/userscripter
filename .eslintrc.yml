@@ -39,6 +39,7 @@ rules:
     "no-unused-vars": off # Should be turned off when using @typescript-eslint.
     "no-unused-expressions": error
     "no-var": error
+    "object-curly-spacing": [ error, always ]
     "prefer-const": error
     "quotes": [ error, "double", { allowTemplateLiterals: true, avoidEscape: true } ]
     "semi-spacing": [ error, { before: false, after: true } ]

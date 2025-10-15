@@ -1,6 +1,5 @@
 import * as path from "path";
 
-import TerserPlugin from "terser-webpack-plugin";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
@@ -76,9 +75,11 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         verbose,
     } = overridden.buildConfig;
     const getGlobal = getGlobalFrom(sassVariables);
+
     function finalName(name: string): string {
         return name + (nightly ? " Nightly" : "");
     }
+
     function finalVersion(version: string): string {
         switch (true) {
             case nightly && appendDateToVersion.nightly:
@@ -89,6 +90,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 return version;
         }
     }
+
     const finalMetadata = (() => {
         const unfinishedMetadata = x.metadata(overridden.buildConfig);
         return {
@@ -123,12 +125,12 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
             entrypoints: false,
             colors: true,
             logging: verbose ? "verbose" : "info",
-        } as webpack.Stats.ToStringOptionsObject, // because the `logging` property is not recognized
+        },
         module: {
             rules: [
                 {
                     test: filenameExtensionRegex(EXTENSIONS.SVG),
-                    loaders: [
+                    use: [
                         {
                             loader: require.resolve("raw-loader"),
                         },
@@ -136,7 +138,7 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 },
                 {
                     test: filenameExtensionRegex(EXTENSIONS.SASS),
-                    loaders: [
+                    use: [
                         // Loaders must be require.resolved here so that Webpack is guaranteed to find them.
                         {
                             loader: require.resolve("to-string-loader"),
@@ -150,16 +152,14 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                                 modules: {
                                     auto: undefined,
                                     mode: "local",
+                                    exportOnlyLocals: false,
                                     exportGlobals: false,
+                                    exportLocalsConvention: "asIs",
                                     localIdentName: "[local]",
-                                    context: undefined,
-                                    hashPrefix: "", // Documented default is undefined, but actual default seems to be "" based on source code (in css-loader v3.6.0).
                                     // getLocalIdent: Documented default is undefined, but that doesn't work (in css-loader v3.6.0).
                                     localIdentRegExp: undefined, // Documented default is undefined, but actual default seems to be null based on source code, but null is not allowed (in css-loader v3.6.0).
                                 },
                                 importLoaders: 0,
-                                localsConvention: "asIs",
-                                onlyLocals: false,
                                 esModule: false,
                             },
                         },
@@ -176,11 +176,17 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
                 {
                     test: filenameExtensionRegex(EXTENSIONS.TS),
                     include: resolveIn(rootDir)(sourceDir),
-                    loaders: [
+                    use: [
                         {
                             loader: require.resolve("ts-loader"),
                         },
                     ],
+                },
+                {
+                    test: /\.m?js$/,
+                    resolve: {
+                        fullySpecified: false, // disable the behaviour
+                    },
                 },
             ],
         },
@@ -205,11 +211,6 @@ export function createWebpackConfig(x: WebpackConfigParameters): webpack.Configu
         ],
         optimization: {
             minimize: mode === Mode.production,
-            minimizer: [
-                new TerserPlugin({
-                    parallel: true,
-                }),
-            ],
         },
     };
 }
